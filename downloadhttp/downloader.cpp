@@ -14,7 +14,7 @@ void Downloader::getData()
 {
     QString qurl = message;
     QUrl urlN;
-    QString site = "http://176.195.178.253/sendMessage?token=1231232sdfsdf13&text=";
+    QString site = "http://pyserverchat.std-864.ist.mospolytech.ru/sendMessage?text=";
     QString site1 = site + message;
    urlN.setQuery(site1);
     QNetworkRequest request;
@@ -30,7 +30,7 @@ void Downloader::resirvedText(QString str)
 
 void Downloader::chatData()
 {
-    QUrl url("http://176.195.178.253/ismessage");
+    QUrl url("http://pyserverchat.std-864.ist.mospolytech.ru/ismessage");
     QNetworkRequest request;
     request.setUrl(url);
     manager->get(request);

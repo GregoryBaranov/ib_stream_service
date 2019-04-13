@@ -1,5 +1,5 @@
 #include "downloader.h"
-#include <windows.h>
+//#include <windows.h>
 #include <QUrl>
 #include <string>
 using namespace  std;

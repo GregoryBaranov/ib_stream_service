@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -13,7 +13,7 @@ temp = []
 
 @app.route('/')
 def default():
-    return ("index")
+    return render_template("index.html")
 
 
 @app.route('/sendMessage')
@@ -32,6 +32,6 @@ def ismessage():
     return (a)
 
 
-#if __name__ == '__main__':
-    #app.Debug = True
-    #app.run('0.0.0.0', 5007)
+if __name__ == '__main__':
+    app.Debug = True
+    app.run('0.0.0.0', 5007)

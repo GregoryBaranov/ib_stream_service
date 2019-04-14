@@ -1,48 +1,127 @@
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
+﻿<!DOCTYPE html>
+<html lang="ru">
+
+<head>
     <title>Flask_Chat_App</title>
-  </head>
-  <body>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 
-    <h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
-    <div class="message_holder"></div>
 
-    <form action="" method="POST">
-      <input type="text" class="username" placeholder="User Name"/>
-      <input type="text" class="message" placeholder="Messages"/>
-      <input type="submit"/>
-    </form>
+
+</head>
+
+<body>
+
+
+
+    <div class="container mt-4" id="cont1">
+
+        <div class="row">
+            <div id="output" style="height: 400px; " class="message_holder overflow-auto border alert alert-success col-lg-6 col-sm-12 mb-0"></div>
+
+        </div>
+
+
+        <form action="" method="POST">
+            <div class="row">
+                <input type="text" class="message border border-primary col-lg-6 col-sm-12" placeholder="Messages" />
+            </div>
+            <div class="row">
+                <input type="button" class="btn btn-info btn-hide col-lg-2 col-sm-6 col-6" value="Скрыть чат">
+                <div class="col-lg-2 col-sm-2 col-2 "></div>
+                <input class="btn btn-success btn-send col-lg-2 col-sm-4 col-4 " type="submit" />
+            </div>
+        </form>
+
+
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            <input type="button" id="temp" class="btn btn-info col-lg-2 col-sm-4 col-6" value="Показать чат">
+        </div>
+    </div>
+
+    
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
-    <script type="text/javascript">
-      var socket = io.connect('http://' + document.domain + ':' + location.port);
+    <script type="text/javascript" charset="utf-8">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var nameusr = "Пользователь написал:";
 
-      socket.on( 'connect', function() {
-        socket.emit( 'my event', {
-          data: 'User Connected'
-        } )
-        var form = $( 'form' ).on( 'submit', function( e ) {
-          e.preventDefault()
-          let user_name = $( 'input.username' ).val()
-          let user_input = $( 'input.message' ).val()
-          socket.emit( 'my event', {
-            user_name : user_name,
-            message : user_input
-          } )
-          $( 'input.message' ).val( '' ).focus()
-        } )
-      } )
-      socket.on( 'my response', function( msg ) {
-        console.log( msg )
-        if( typeof msg.user_name !== 'undefined' ) {
-          $( 'h3' ).remove()
-          $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.user_name+'</b> '+msg.message+'</div>' )
+
+
+         $(document).ready(function() {
+        
+        function scrollToBottom() {
+            $('#output').scrollTop($('#output')[0].scrollHeight);
         }
-      })
+
+        $("#output").change(function() {
+            scrollToBottom();
+        });
+
+
+         $('#temp').hide();
+        
+        $('.btn-hide').on('click', function() {
+                $('#cont1').slideToggle(700);
+                $('#temp').show();
+
+            });
+
+
+            $('#temp').on('click', function() {
+                $('#cont1').slideToggle(700);
+
+                $('#temp').hide();
+
+
+            });
+             });
+        
+        
+
+        socket.on('connect', function() {
+            socket.emit('my event', {
+//                data: 'Привет, мир'
+                
+            })
+            var form = $('form').on('submit', function(e) {
+                e.preventDefault()
+                //          let user_name = $( 'input.username' ).val()
+                let user_input = $('input.message').val()
+                socket.emit('my event', {
+                    //            user_name : user_name,
+                    message: user_input
+                })
+                $('input.message').val('').focus()
+            })
+        })
+        socket.on('my response', function(msg) {
+            console.log(msg)
+            if (typeof msg.message !== 'undefined') {
+                var output = document.getElementById("output");
+                $('h3').remove()
+//                var newmsg = "<xmp style='color: red; font-size: 18px;font-family: 'Roboto', sans-serif;'>" + msg.message + "</xmp>"
+                $('div.message_holder').append('<div class="m-2 shadow-lg p-3 bg-white rounded"  ><b style="color: #000; ">' + nameusr + '</b> ' + msg.message + '</div>')
+                if (output.selectionStart == output.selectionEnd) {
+                    output.scrollTop = output.scrollHeight;
+                }
+            }
+        })
+
     </script>
 
-  </body>
-  </html>
+<!--    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

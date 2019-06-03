@@ -12,23 +12,36 @@ Client::Client(QObject *parent) : QObject(parent)
 {
     clientSocket = new QWebSocket();
     connect(clientSocket, SIGNAL(textMessageReceived(QString)), this, SLOT(onReceiveMessage(QString)));
-    connect(clientSocket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+    connect(clientSocket, SIGNAL(disconnected()), this, SLOT(Disconnected()));
 
 
     QNetworkRequest request(QUrl("https://ip.up66.ru/"));
         QNetworkAccessManager *mngr = new QNetworkAccessManager(this);
         connect(mngr, SIGNAL(finished(QNetworkReply*)), SLOT(getResponse(QNetworkReply*)));
-        connect(downloader, SIGNAL(onReady(QString)), this, SLOT(readFile(QString)));
+
+
         mngr->get(request);
 
 }
 
-/* Сокет для обработки разьединения с сервером
- */
-void Client::onDisconnected()
+
+
+void Client::Disconnected()
 {
+    qDebug() << "deleteLater";
     clientSocket->deleteLater();
+
 }
+
+void Client::disconnectSocket(){
+     clientSocket->deleteLater();
+     clientSocket->abort();
+     clientSocket->close();
+}
+
+
+
+
 
 /* Соединяется с сервером
  */
@@ -47,7 +60,8 @@ void Client::connectSocket(const QString& host, unsigned int port)
     qUrl.setHost(_host);
     qUrl.setScheme("ws");
 
-//    connect(clientSocket, SIGNAL(connected()), SLOT(slotConnected()));
+
+
 
     clientSocket->open(qUrl);
 }

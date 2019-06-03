@@ -7,6 +7,10 @@
 #include <QTextEdit>
 #include <QListWidget>
 #include "client.h"
+#include <QLabel>
+
+#include <QStandardItemModel>
+#include <QMouseEvent>
 
 
 namespace Ui {
@@ -22,27 +26,37 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+
+
 private:
     Ui::MainWindow *ui;
-    QPushButton* connectBtn;
-    QPushButton* sendMessageBtn;
-    QPushButton* loginBtn;
-    QListWidget* userList;
+
     QLineEdit* hostEdt;
-    QLineEdit* messageEdt;
-    QTextEdit* messageBoard;
+    QLabel* boxMsg;
+
 
     Client* client;
 
-    // Переменная, от которой будем отталкиваться при работе с перемещением и изменением размера окна
 
+
+    // Переменная, от которой будем отталкиваться при работе с перемещением и изменением размера окна
 
 private slots:
     void onConnectBtnClick();
+    void onDisconnectBtnClick();
     void onSendMessageBtnClick();
     void onReceiveMessage(QString message);
     void onReceiveServiceMessage(QString message);
-    void on_pushButton_clicked();
+
+
+    void on_Settings_clicked();
+
+    void on_HideSettings_clicked();
+
+    void on_btn_close_clicked();
+
+
+
 protected:
 
 };

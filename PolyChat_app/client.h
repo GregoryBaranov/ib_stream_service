@@ -13,7 +13,8 @@ class Client : public QObject
     Q_OBJECT
 public:
     explicit Client(QObject *parent = 0);
-    void connectSocket(const QString& host, unsigned int port = 5007);//facassanxt.ru:
+    void connectSocket(const QString& host, unsigned int port);//facassanxt.ru:
+    void disconnectSocket();
 
     void sendMessage(const QString& message);
     void requestExternalAddress();
@@ -22,6 +23,7 @@ private:
     unsigned int _port;
     QString _host;
     QWebSocket *clientSocket;
+
     QNetworkAccessManager *manager;
     QString temp = "";
     QString ip;
@@ -36,10 +38,8 @@ signals:
 
 private slots:
     void onReceiveMessage(QString message);
-    void onDisconnected();
+    void Disconnected();
     void getResponse(QNetworkReply *reply);
-
-
 };
 
 #endif // CLIENT_H

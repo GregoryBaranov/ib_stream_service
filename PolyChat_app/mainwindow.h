@@ -26,16 +26,18 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
+    void disable();
 
 private:
     Ui::MainWindow *ui;
 
     QLineEdit* hostEdt;
     QLabel* boxMsg;
-
+    QString design;
 
     Client* client;
+
+    void btn_max();
 
 
 
@@ -56,6 +58,10 @@ private slots:
     void on_btn_close_clicked();
 
 
+
+    void on_DarkDesign_clicked();
+
+    void on_WhiteDesign_clicked();
 
 protected:
 

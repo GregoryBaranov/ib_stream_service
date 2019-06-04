@@ -28,7 +28,7 @@ Client::Client(QObject *parent) : QObject(parent)
 
 void Client::Disconnected()
 {
-    qDebug() << "deleteLater";
+
     clientSocket->deleteLater();
 
 }

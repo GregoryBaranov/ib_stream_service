@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setMouseTracking(true);   // Включаем отслеживание курсора без нажатых кнопокы
 
-    ui->btn_close->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/QWebSocket/PolyChat/ChatClient/image/close.png); margin: 0px; border: 0px; ");
+    ui->btn_close->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/close-gray.png); margin: 0px; border: 0px; ");
 
     connect(ui->btn_close, &QToolButton::clicked, this, &MainWindow::close);
 
@@ -32,25 +32,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->send, SIGNAL(clicked()), this, SLOT(onSendMessageBtnClick()));
 
      connect(ui->btn_minimize, &QToolButton::clicked, this, &MainWindow::showMinimized);
-     ui->btn_minimize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/QWebSocket/PolyChat/ChatClient/image/window-minimize.png); icon-size: 12px; margin: 0px;");
+     ui->btn_minimize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-minimize-gray.png); icon-size: 12px; margin: 0px;");
 
      connect(ui->connect, &QToolButton::clicked, this, &MainWindow::onConnectBtnClick);
      connect(ui->Disconnect, &QToolButton::clicked, this, &MainWindow::onDisconnectBtnClick);
 
 
 
-     ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/QWebSocket/PolyChat/ChatClient/image/window-maximize.png); background-repeat: no-repeat; margin: 0px;");
+     ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-maximize-gray.png); background-repeat: no-repeat; margin: 0px;");
 
-     connect(ui->btn_maximize, &QToolButton::clicked, [this](){
-         if (this->isMaximized()) {
-
-            ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/QWebSocket/PolyChat/ChatClient/image/window-maximize.png); background-repeat: no-repeat; margin: 0px;");
-             this->showNormal();
-         } else {
-                ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/QWebSocket/PolyChat/ChatClient/image/window-restore.png); background-repeat: no-repeat; margin: 0px;");
-             this->showMaximized();
-         }
-     });
+     btn_max();
 
 
 
@@ -59,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->hostEdit->setStyleSheet("background:#3d3d3d;");
     ui->spinPort->setStyleSheet("background:#3d3d3d;");
     ui->connect->setStyleSheet("background:#3d3d3d;");
-    ui->HideSettings->setStyleSheet("background:#3d3d3d;");
+    ui->HideSettings->setStyleSheet("background:#3d3d3d; color: #fff;");
      ui->groupBox->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 1px solid #000;");
 
 
@@ -85,6 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
      ui->groupBox->hide();
      ui->send->setDisabled(true);
      ui->Disconnect->hide();
+     ui->HideSettings->hide();
 }
 
 MainWindow::~MainWindow()
@@ -92,16 +84,34 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::btn_max(){
+
+        connect(ui->btn_maximize, &QToolButton::clicked, [this](){
+            if (this->isMaximized())
+            {
+                ui->btn_maximize->setStyleSheet(" background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-maximize-gray.png); background-repeat: no-repeat; margin: 0px;");
+                this->showNormal();
+            }
+            else
+            {
+                ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-restore-gray.png); background-repeat: no-repeat; margin: 0px;");
+                this->showMaximized();
+            }
+        });
+
+
+}
+
 // Слот для кнопки соединения с сервером
 
 void MainWindow::onConnectBtnClick()
 {
+    ui->connect->setDisabled(true);
     ui->send->setDisabled(false);
     ui->messageBoard->append("Connection attempt...");
     unsigned int port = ui->spinPort->value();
     client->connectSocket(ui->hostEdit->text(), port);
 }
-
 
 void MainWindow::onDisconnectBtnClick(){
     client->sendMessage("Disconnect");
@@ -144,6 +154,8 @@ void  MainWindow::onReceiveServiceMessage(QString message)
 void MainWindow::on_Settings_clicked()
 {
     ui->groupBox->show();
+    ui->Settings->hide();
+     ui->HideSettings->show();
 }
 
 
@@ -151,6 +163,8 @@ void MainWindow::on_Settings_clicked()
 void MainWindow::on_HideSettings_clicked()
 {
     ui->groupBox->hide();
+    ui->HideSettings->hide();
+    ui->Settings->show();
 }
 
 
@@ -160,3 +174,29 @@ void MainWindow::on_btn_close_clicked()
 }
 
 
+
+void MainWindow::on_DarkDesign_clicked()
+{
+    ui->messageEdt->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#3d3d3d; color: #fff;");
+    ui->send->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#3d3d3d; color: #fff;");
+    ui->hostEdit->setStyleSheet("background:#3d3d3d;");
+    ui->spinPort->setStyleSheet("background:#3d3d3d;");
+    ui->connect->setStyleSheet("background:#3d3d3d;");
+    ui->groupBox->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 1px solid #000;");
+    ui->messageBoard->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 1px solid #000;");
+    ui->nameEdit->setStyleSheet("background:#3d3d3d; color:#fff;");
+
+}
+
+void MainWindow::on_WhiteDesign_clicked()
+{
+    ui->messageEdt->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#fff; color:#000;");
+    ui->send->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#fff; color:#000;");
+    ui->hostEdit->setStyleSheet("background:#fff; border: 1px solid #000;");
+    ui->spinPort->setStyleSheet("background:#fff; border: 1px solid #000;");
+    ui->connect->setStyleSheet("background:#fff;");
+    ui->groupBox->setStyleSheet("background:#fff; color:#000; border: 1px solid #000;");
+    ui->messageBoard->setStyleSheet("background:#fff; color:#000; border: 1px solid #000;");
+    ui->nameEdit->setStyleSheet("background:#fff; color:#000; border: 1px solid #000;");
+
+}

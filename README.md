@@ -4,6 +4,14 @@
 
 Ссылка на сайт: http://facassanxt.ru:5000/
 
+Необходимо установить для запуска сервера (flask, flask_socketio, flask_sockets, websockets).
+Команды для установки:
+pip install flask
+pip install flask_socketio
+pip install flask_sockets
+pip install websockets
+
+
 ## Участники
 
 | Учебная группа | Имя пользователя | ФИО                      |

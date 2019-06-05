@@ -35,3 +35,6 @@ PRE_TARGETDEPS += .beforebuild
 before_build.target = .beforebuild
 before_build.depends = FORCE
 before_build.commands = chcp 1251
+
+RESOURCES += \
+    image.qrc

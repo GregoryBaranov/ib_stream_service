@@ -28,14 +28,14 @@ def transform_view():
     response = make_response(result)
     response.headers["Content-Disposition"] = "attachment; filename=result.csv"
     return response
-	
+
 @app.route('/')
 def sessions():
     return render_template('session.html')
 
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
-	
+
 @sockets.route('/')
 def echo_socket(ws):
     print(ws)
@@ -56,7 +56,7 @@ def echo_socket(ws):
     if ws.closed:
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
-		
+
 @socketio.on('my event')
 def handle_my_custom_event(json, methods=['GET', 'POST']):
     print(json)

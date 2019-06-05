@@ -25,58 +25,44 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->messageEdt->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#3d3d3d; color: #fff;");
     ui->messageEdt->setPlaceholderText("Message...");
-
-
     ui->send->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#3d3d3d; color: #fff;");
 
     connect(ui->send, SIGNAL(clicked()), this, SLOT(onSendMessageBtnClick()));
 
-     connect(ui->btn_minimize, &QToolButton::clicked, this, &MainWindow::showMinimized);
-     ui->btn_minimize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-minimize-gray.png); icon-size: 12px; margin: 0px;");
+    connect(ui->btn_minimize, &QToolButton::clicked, this, &MainWindow::showMinimized);
+    ui->btn_minimize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-minimize-gray.png); icon-size: 12px; margin: 0px;");
 
-     connect(ui->connect, &QToolButton::clicked, this, &MainWindow::onConnectBtnClick);
-     connect(ui->Disconnect, &QToolButton::clicked, this, &MainWindow::onDisconnectBtnClick);
+    connect(ui->connect, &QToolButton::clicked, this, &MainWindow::onConnectBtnClick);
+    connect(ui->Disconnect, &QToolButton::clicked, this, &MainWindow::onDisconnectBtnClick);
 
+    btn_max();
 
-
-     ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-maximize-gray.png); background-repeat: no-repeat; margin: 0px;");
-
-     btn_max();
-
-
-
-
+    ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-maximize-gray.png); background-repeat: no-repeat; margin: 0px;");
     ui->Settings->setStyleSheet("background:#3d3d3d; color:#fff;");
     ui->hostEdit->setStyleSheet("background:#3d3d3d;");
     ui->spinPort->setStyleSheet("background:#3d3d3d;");
     ui->connect->setStyleSheet("background:#3d3d3d;");
-    ui->HideSettings->setStyleSheet("background:#3d3d3d; color: #fff;");
-     ui->groupBox->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 1px solid #000;");
-
 
     ui->messageBoard->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 1px solid #000;");
     this->setStyleSheet("font: 12pt Microsoft YaHei UI;");
 
     ui->nameEdit->setStyleSheet("background:#3d3d3d; color:#fff;");
-     ui->nameEdit->setPlaceholderText("Name");
+    ui->nameEdit->setPlaceholderText("Name");
 
     client = new Client(this);
-    connect(client, SIGNAL(receiveMessage(QString)), this, SLOT(onReceiveMessage(QString)));
-    connect(client, SIGNAL(receiveServiceMessage(QString)), this, SLOT(onReceiveServiceMessage(QString)));
 
     ui->hostEdit->setText("31.10.65.179");
     ui->spinPort->setMaximum(999999999);
     ui->spinPort->setValue(5000);
 
-//    unsigned int port = ui->spinPort->value();
+    ui->send->setDisabled(true);
+    ui->Disconnect->hide();
 
-//    client->connectSocket(ui->hostEdit->text(), port);
+    connect(client, SIGNAL(receiveMessage(QString)),
+            this, SLOT(onReceiveMessage(QString)));
+    connect(client, SIGNAL(receiveServiceMessage(QString)),
+            this, SLOT(onReceiveServiceMessage(QString)));
 
-
-     ui->groupBox->hide();
-     ui->send->setDisabled(true);
-     ui->Disconnect->hide();
-     ui->HideSettings->hide();
 }
 
 MainWindow::~MainWindow()
@@ -86,19 +72,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::btn_max(){
 
-        connect(ui->btn_maximize, &QToolButton::clicked, [this](){
-            if (this->isMaximized())
-            {
-                ui->btn_maximize->setStyleSheet(" background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-maximize-gray.png); background-repeat: no-repeat; margin: 0px;");
-                this->showNormal();
-            }
-            else
-            {
-                ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-restore-gray.png); background-repeat: no-repeat; margin: 0px;");
-                this->showMaximized();
-            }
-        });
-
+    connect(ui->btn_maximize, &QToolButton::clicked, [this](){
+        if (this->isMaximized())
+        {
+            ui->btn_maximize->setStyleSheet(" background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-maximize-gray.png); background-repeat: no-repeat; margin: 0px;");
+            this->showNormal();
+        }
+        else
+        {
+            ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-restore-gray.png); background-repeat: no-repeat; margin: 0px;");
+            this->showMaximized();
+        }
+    });
 
 }
 
@@ -126,8 +111,8 @@ void MainWindow::onDisconnectBtnClick(){
 void MainWindow::onSendMessageBtnClick()
 {
 
-        client->sendMessage(ui->nameEdit->text() + ": " + ui->messageEdt->text());
-        ui->messageEdt->clear();
+    client->sendMessage(ui->nameEdit->text() + ": " + ui->messageEdt->text());
+    ui->messageEdt->clear();
 
 }
 
@@ -135,14 +120,12 @@ void MainWindow::onSendMessageBtnClick()
 
 void MainWindow::onReceiveMessage(QString message)
 {
-   QString fullMessage = QString("[%1] %2")
-           .arg(QDateTime::currentDateTime().toString("hh:mm:ss"))
-           .arg(message);
+    QString fullMessage = QString("[%1] %2")
+            .arg(QDateTime::currentDateTime().toString("hh:mm:ss"))
+            .arg(message);
 
-   ui->messageBoard->append(fullMessage);
+    ui->messageBoard->append(fullMessage);
 }
-
-
 
 // Слот для получения сервисного сообщения
 
@@ -153,24 +136,26 @@ void  MainWindow::onReceiveServiceMessage(QString message)
 
 void MainWindow::on_Settings_clicked()
 {
-    ui->groupBox->show();
-    ui->Settings->hide();
-     ui->HideSettings->show();
+    if(ui->pnlSettings->isVisible())
+    {
+        ui->pnlSettings->hide();
+    }
+    else {
+        ui->pnlSettings->show();
+    }
 }
 
 
 
 void MainWindow::on_HideSettings_clicked()
 {
-    ui->groupBox->hide();
-    ui->HideSettings->hide();
     ui->Settings->show();
 }
 
 
 void MainWindow::on_btn_close_clicked()
 {
-        client->sendMessage("Disconnect");
+    client->sendMessage("Disconnect");
 }
 
 
@@ -182,7 +167,7 @@ void MainWindow::on_DarkDesign_clicked()
     ui->hostEdit->setStyleSheet("background:#3d3d3d;");
     ui->spinPort->setStyleSheet("background:#3d3d3d;");
     ui->connect->setStyleSheet("background:#3d3d3d;");
-    ui->groupBox->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 1px solid #000;");
+    //ui->groupBox->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 1px solid #000;");
     ui->messageBoard->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 1px solid #000;");
     ui->nameEdit->setStyleSheet("background:#3d3d3d; color:#fff;");
 
@@ -195,8 +180,6 @@ void MainWindow::on_WhiteDesign_clicked()
     ui->hostEdit->setStyleSheet("background:#fff; border: 1px solid #000;");
     ui->spinPort->setStyleSheet("background:#fff; border: 1px solid #000;");
     ui->connect->setStyleSheet("background:#fff;");
-    ui->groupBox->setStyleSheet("background:#fff; color:#000; border: 1px solid #000;");
     ui->messageBoard->setStyleSheet("background:#fff; color:#000; border: 1px solid #000;");
     ui->nameEdit->setStyleSheet("background:#fff; color:#000; border: 1px solid #000;");
-
 }

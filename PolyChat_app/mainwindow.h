@@ -8,10 +8,8 @@
 #include <QListWidget>
 #include "client.h"
 #include <QLabel>
-
 #include <QStandardItemModel>
 #include <QMouseEvent>
-
 
 namespace Ui {
 class MainWindow;
@@ -20,7 +18,6 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -34,13 +31,8 @@ private:
     QLineEdit* hostEdt;
     QLabel* boxMsg;
     QString design;
-
     Client* client;
-
     void btn_max();
-
-
-
     // Переменная, от которой будем отталкиваться при работе с перемещением и изменением размера окна
 
 private slots:
@@ -50,17 +42,10 @@ private slots:
     void onReceiveMessage(QString message);
     void onReceiveServiceMessage(QString message);
 
-
     void on_Settings_clicked();
-
     void on_HideSettings_clicked();
-
     void on_btn_close_clicked();
-
-
-
     void on_DarkDesign_clicked();
-
     void on_WhiteDesign_clicked();
 
 protected:

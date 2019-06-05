@@ -13,7 +13,7 @@ class Client : public QObject
     Q_OBJECT
 public:
     explicit Client(QObject *parent = 0);
-    void connectSocket(const QString& host, unsigned int port);//facassanxt.ru:
+    void connectSocket(const QString& host, unsigned int port); //facassanxt.ru:
     void disconnectSocket();
 
     void sendMessage(const QString& message);

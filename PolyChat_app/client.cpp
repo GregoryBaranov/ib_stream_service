@@ -7,45 +7,35 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 
-
 Client::Client(QObject *parent) : QObject(parent)
 {
     clientSocket = new QWebSocket();
     connect(clientSocket, SIGNAL(textMessageReceived(QString)), this, SLOT(onReceiveMessage(QString)));
     connect(clientSocket, SIGNAL(disconnected()), this, SLOT(Disconnected()));
 
-
     QNetworkRequest request(QUrl("https://ip.up66.ru/"));
-        QNetworkAccessManager *mngr = new QNetworkAccessManager(this);
-        connect(mngr, SIGNAL(finished(QNetworkReply*)), SLOT(getResponse(QNetworkReply*)));
+    QNetworkAccessManager *mngr = new QNetworkAccessManager(this);
+    connect(mngr, SIGNAL(finished(QNetworkReply*)), SLOT(getResponse(QNetworkReply*)));
 
-
-        mngr->get(request);
-
+    mngr->get(request);
 }
 
 
-
-void Client::Disconnected()
+void Client::Disconnected() // Отключение от сервера
 {
-
     clientSocket->deleteLater();
-
-}
-
-void Client::disconnectSocket(){
-     clientSocket->deleteLater();
-     clientSocket->abort();
-     clientSocket->close();
 }
 
 
+void Client::disconnectSocket()
+{
+    clientSocket->deleteLater();
+    clientSocket->abort();
+    clientSocket->close();
+}
 
 
-
-/* Соединяется с сервером
- */
-void Client::connectSocket(const QString& host, unsigned int port)
+void Client::connectSocket(const QString& host, unsigned int port) // Соединяется с сервером
 {
     if (clientSocket != NULL && clientSocket->isValid())
     {
@@ -60,39 +50,31 @@ void Client::connectSocket(const QString& host, unsigned int port)
     qUrl.setHost(_host);
     qUrl.setScheme("ws");
 
-
-
-
     clientSocket->open(qUrl);
 }
 
-// Отправляет текстовое сообщение
 
-void Client::sendMessage(const QString& message)
+void Client::sendMessage(const QString& message) // Отправляет текстовое сообщение
 {
-
     clientSocket->sendTextMessage(message);
-
 }
 
 
-
-void Client::getResponse(QNetworkReply *reply)
+void Client::getResponse(QNetworkReply *reply) // Принимает ответ от сервера
 {
     qDebug() << reply->readAll();
     ip = reply->readAll();
     emit onReady(ip);
 }
 
-void Client::requestExternalAddress(){
-    /////////////////////
-}
 
-// Слот для приема сообщений
-
-void Client::onReceiveMessage(QString message)
+void Client::requestExternalAddress() //
 {
 
-        emit receiveMessage(message);
+}
 
+
+void Client::onReceiveMessage(QString message) // Слот для приема сообщений
+{
+    emit receiveMessage(message);
 }

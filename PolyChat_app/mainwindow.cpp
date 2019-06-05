@@ -3,7 +3,6 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include "client.h"
-
 #include <QFileDialog>
 #include <QDir>
 #include <QGraphicsDropShadowEffect>
@@ -65,14 +64,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
+
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-void MainWindow::btn_max(){
 
-    connect(ui->btn_maximize, &QToolButton::clicked, [this](){
+void MainWindow::btn_max() //?
+{
+    connect(ui->btn_maximize, &QToolButton::clicked, [this]()
+    {
         if (this->isMaximized())
         {
             ui->btn_maximize->setStyleSheet(" background:#3d3d3d; background-image: url(C:/GitHub/PolyChat/PolyChat_app/image/window-maximize-gray.png); background-repeat: no-repeat; margin: 0px;");
@@ -84,12 +86,10 @@ void MainWindow::btn_max(){
             this->showMaximized();
         }
     });
-
 }
 
-// Слот для кнопки соединения с сервером
 
-void MainWindow::onConnectBtnClick()
+void MainWindow::onConnectBtnClick() // Слот для кнопки соединения с сервером
 {
     ui->connect->setDisabled(true);
     ui->send->setDisabled(false);
@@ -98,7 +98,9 @@ void MainWindow::onConnectBtnClick()
     client->connectSocket(ui->hostEdit->text(), port);
 }
 
-void MainWindow::onDisconnectBtnClick(){
+
+void MainWindow::onDisconnectBtnClick() // Слот для кнопки отключения от сервера (можно удалить)
+{
     client->sendMessage("Disconnect");
     ui->messageBoard->append("Disconnect attempt...");
     ui->send->setDisabled(true);
@@ -106,9 +108,8 @@ void MainWindow::onDisconnectBtnClick(){
     client->deleteLater();
 }
 
-// Слот для кнопки отправки сообщения
 
-void MainWindow::onSendMessageBtnClick()
+void MainWindow::onSendMessageBtnClick() // Слот для кнопки отправки сообщения
 {
 
     client->sendMessage(ui->nameEdit->text() + ": " + ui->messageEdt->text());
@@ -116,9 +117,8 @@ void MainWindow::onSendMessageBtnClick()
 
 }
 
-// Слот для получения сообщения
 
-void MainWindow::onReceiveMessage(QString message)
+void MainWindow::onReceiveMessage(QString message) // Слот для получения сообщения
 {
     QString fullMessage = QString("[%1] %2")
             .arg(QDateTime::currentDateTime().toString("hh:mm:ss"))
@@ -127,14 +127,14 @@ void MainWindow::onReceiveMessage(QString message)
     ui->messageBoard->append(fullMessage);
 }
 
-// Слот для получения сервисного сообщения
 
-void  MainWindow::onReceiveServiceMessage(QString message)
+void MainWindow::onReceiveServiceMessage(QString message) // Слот для получения сервисного сообщения
 {
     ui->messageBoard->append(message);
 }
 
-void MainWindow::on_Settings_clicked()
+
+void MainWindow::on_Settings_clicked() // Слот для отображения/скрытия меню настроек
 {
     if(ui->pnlSettings->isVisible())
     {
@@ -146,21 +146,19 @@ void MainWindow::on_Settings_clicked()
 }
 
 
-
-void MainWindow::on_HideSettings_clicked()
+void MainWindow::on_HideSettings_clicked()  // Слот для скрытия меню настроек
 {
     ui->Settings->show();
 }
 
 
-void MainWindow::on_btn_close_clicked()
+void MainWindow::on_btn_close_clicked() // Слот для отключения от сервера
 {
     client->sendMessage("Disconnect");
 }
 
 
-
-void MainWindow::on_DarkDesign_clicked()
+void MainWindow::on_DarkDesign_clicked() // Слот для переключения на темную тему
 {
     ui->messageEdt->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#3d3d3d; color: #fff;");
     ui->send->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#3d3d3d; color: #fff;");
@@ -173,7 +171,8 @@ void MainWindow::on_DarkDesign_clicked()
 
 }
 
-void MainWindow::on_WhiteDesign_clicked()
+
+void MainWindow::on_WhiteDesign_clicked() // Слот для переключения на светлую тему
 {
     ui->messageEdt->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#fff; color:#000;");
     ui->send->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#fff; color:#000;");

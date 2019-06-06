@@ -8,73 +8,43 @@ import socket
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
 socketio = SocketIO(app)
 sockets = Sockets(app)
 application = app
 
-def transform(text_file_contents):
-    return text_file_contents.replace("=", ",")
-@app.route('/transform', methods=["POST"])
-def transform_view():
-    file = request.files['data_file']
-    if not file:
-        return "No file"
-
-    file_contents = file.stream.read().decode("utf-8","ignore")
-
-    result = transform(file_contents)
-
-    response = make_response(result)
-    response.headers["Content-Disposition"] = "attachment; filename=result.csv"
-    return response
-
 @app.route('/')
 def sessions():
-    return render_template('session.html')
+    return render_template('session.html') #Возврат страницы чата при переходе на сайт 
 
-def messageReceived(methods=['GET', 'POST']):
-    print('message was received!!!')
-
-@sockets.route('/')
-def echo_socket(ws):
+@sockets.route('/') #Сокет для Qt приложения
+def echo_socket(ws):  #Получение сокета
     print(ws)
-    list.append(ws)
-    while not ws.closed:
-        message = ws.receive()
-        ws.send(message)
+    while not ws.closed: #Пока есть соединение
+        message = ws.receive() #Считываем сообщение от QT
+        ws.send('streamer:' + message) #Отправляем их обратно на QT
         print(message)
-        data = {'id': 'streamer','message': message}
-        socketio.emit('my response', data)
-
+        data = {'id': 'streamer','message': message} #Записываем в Json
+        socketio.emit('my response', data) #Пересылаем сообщение от QT в браузер
+        streamer = ws #Записываем сокет в глобальную переменную для отправки с браузера
         if message == "Disconnect":
-            print("=====================================")
-            print(list.remove(ws))
-            print(list)
-            print("=====================================")
-            ws.close()
-    if ws.closed:
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            ws.close() #Qt стример отключился
 
 
-@socketio.on('my event')
-def handle_my_custom_event(json, methods=['GET', 'POST']):
+@socketio.on('my event') #socketio на event'ах
+def handle_my_custom_event(json): #Получаем Json
     print(json)
-    data = {'id': json['id'].encode().decode('utf8','replace'),'message': json['message'].encode().decode('utf8','replace').replace('<', '&lt')}
-    print(json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
-    socketio.emit('my response', data, callback=messageReceived)
-    print(list)
-    print(len(list))
-    i = 0
-    while i < len(list):
-        ws = list[i]
-        ws.send(json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
-        i = i + 1
+    if json['message'].encode().decode('utf8','replace').replace('<', '&lt') != "": #Если в Json есть собщение, то
+        data = {'id': json['id'].encode().decode('utf8','replace'), #Исправляем кодировку
+                'message': json['message'].encode().decode('utf8','replace').replace('<', '&lt')} #Заменяем знак '<' на спецсимвол для защиты от html разметки 
+        print(json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
+        socketio.emit('my response', data) #Отправляем сообщение в браузер
+    if streamer != "": #Если есть QT стример, то
+        streamer.send(json['message'].encode().decode('utf8','replace').replace('<', '&lt')) #Отправляем QT стримеру сообщение
 
 if __name__ == "__main__":
-    global list
-    list = []
+    global streamer #Глобальная переменная стримера
+    streamer = ""
     from gevent import pywsgi
     from geventwebsocket.handler import WebSocketHandler
-    server = pywsgi.WSGIServer(('0.0.0.0', 5000), app, handler_class=WebSocketHandler)
-    server.serve_forever()
+    server = pywsgi.WSGIServer(('0.0.0.0', 5000), app, handler_class=WebSocketHandler) #Настройка сервера
+    server.serve_forever() #Запуск сервера

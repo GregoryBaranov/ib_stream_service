@@ -18,16 +18,18 @@ def sessions():
 
 @sockets.route('/') #Сокет для Qt приложения
 def echo_socket(ws):  #Получение сокета
-    print(ws)
+    print(ws) #Проверка сокета
+    streamer.append(ws) #Записываем сокет в лист
     while not ws.closed: #Пока есть соединение
         message = ws.receive() #Считываем сообщение от QT
-        ws.send('streamer:' + message) #Отправляем их обратно на QT
+        ws.send('Streamer: ' + message) #Отправляем их обратно на QT
         print(message)
         data = {'id': 'streamer','message': message} #Записываем в Json
         socketio.emit('my response', data) #Пересылаем сообщение от QT в браузер
-        streamer = ws #Записываем сокет в глобальную переменную для отправки с браузера
         if message == "Disconnect":
             ws.close() #Qt стример отключился
+            streamer.clear() #Очищаем лист от сокета
+            print(streamer) #Проверка пустоты
 
 
 @socketio.on('my event') #socketio на event'ах
@@ -36,14 +38,14 @@ def handle_my_custom_event(json): #Получаем Json
     if json['message'].encode().decode('utf8','replace').replace('<', '&lt') != "": #Если в Json есть собщение, то
         data = {'id': json['id'].encode().decode('utf8','replace'), #Исправляем кодировку
                 'message': json['message'].encode().decode('utf8','replace').replace('<', '&lt')} #Заменяем знак '<' на спецсимвол для защиты от html разметки 
-        print(json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
+        print(json['id'].encode().decode('utf8','replace') + ':' + json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
         socketio.emit('my response', data) #Отправляем сообщение в браузер
-    if streamer != "": #Если есть QT стример, то
-        streamer.send(json['message'].encode().decode('utf8','replace').replace('<', '&lt')) #Отправляем QT стримеру сообщение
+    if streamer: # Если есть стример, то
+        streamer[0].send(json['id'].encode().decode('utf8','replace') + json['message'].encode().decode('utf8','replace').replace('<', '&lt')) #Отправляем QT стримеру сообщение
 
 if __name__ == "__main__":
     global streamer #Глобальная переменная стримера
-    streamer = ""
+    streamer = [] # Лист для сокета
     from gevent import pywsgi
     from geventwebsocket.handler import WebSocketHandler
     server = pywsgi.WSGIServer(('0.0.0.0', 5000), app, handler_class=WebSocketHandler) #Настройка сервера

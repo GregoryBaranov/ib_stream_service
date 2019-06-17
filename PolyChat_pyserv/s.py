@@ -38,7 +38,7 @@ def handle_my_custom_event(json): #Получаем Json
     if json['message'].encode().decode('utf8','replace').replace('<', '&lt') != "": #Если в Json есть собщение, то
         data = {'id': json['id'].encode().decode('utf8','replace'), #Исправляем кодировку
                 'message': json['message'].encode().decode('utf8','replace').replace('<', '&lt')} #Заменяем знак '<' на спецсимвол для защиты от html разметки 
-        print(json['id'].encode().decode('utf8','replace') + ':' + json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
+        print(json['id'].encode().decode('utf8','replace') + json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
         socketio.emit('my response', data) #Отправляем сообщение в браузер
     if streamer: # Если есть стример, то
         streamer[0].send(json['id'].encode().decode('utf8','replace') + json['message'].encode().decode('utf8','replace').replace('<', '&lt')) #Отправляем QT стримеру сообщение

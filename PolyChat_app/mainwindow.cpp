@@ -76,6 +76,9 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setStyleSheet("font: 12pt Microsoft YaHei UI;");
 
+    // позволяет нажать кнопку send с помощью Enter
+    ui->send->setShortcut(Qt::Key_Return);
+
     // Логическая блокировка кнопок DarkDesign (семены темы) и Disconnect
     ui->Disconnect->setDisabled(true);
     ui->DarkDesign->setDisabled(true);

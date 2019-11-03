@@ -26,10 +26,33 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    // Свойство с точкой предыдущей позиции мыши
+    // Относительно данной точки идёт пересчёт позиции окна
+    // Или размеров окна. При этом свойство устанавливается при нажатии мыши
+    // по окну и в ряде иных случаев
+    Q_PROPERTY(QPoint previousPosition READ previousPosition WRITE setPreviousPosition NOTIFY previousPositionChanged)
 
+    // тип клика мыши, при перемещении курсора по этому типу будем определять
+    // что именно нужно сделать, перенести окно, или изменить его размер с одной из сторон
+    enum MouseType {
+        None = 0,
+        Top,
+        Bottom,
+        Left,
+        Right,
+        Move
+    };
 public:
     explicit MainWindow(QWidget *parent = 0); // явный конструктор
     ~MainWindow();
+
+    QPoint previousPosition() const;
+
+public slots:
+    void setPreviousPosition(QPoint previousPosition);
+
+signals:
+    void previousPositionChanged(QPoint previousPosition);
 
 private:
     Ui::MainWindow *ui;
@@ -42,6 +65,17 @@ private:
 
     void mainApplicationDesigner(); // Дефолтный фид приложения
     void settingDesigner(); // Вид и проверки для hostEdit, spinPort, connect;
+
+    // Переменная, от которой будем отталкиваться при работе с перемещением и изменением размера окна
+    MouseType m_leftMouseButtonPressed;
+    QPoint m_previousPosition;
+
+    MouseType checkResizableField(QMouseEvent *event);
+
+protected:
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
 
 private slots:
     void onReceiveMessage(QString message); // Слот для получения сообщения

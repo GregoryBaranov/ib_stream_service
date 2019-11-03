@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QGraphicsDropShadowEffect>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -75,6 +76,15 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     this->setWindowFlag(Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setStyleSheet("font: 12pt Microsoft YaHei UI;");
+    this->setMouseTracking(true); // отслеживание курсора мыши без нажатых кнопокы
+
+    QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);
+    shadowEffect->setBlurRadius(9); // Устанавливаем радиус размытия
+    shadowEffect->setOffset(0);     // Устанавливаем смещение тени
+
+    ui->centralWidget->setGraphicsEffect(shadowEffect);   // Устанавливаем эффект тени на окно
+    ui->centralWidget->layout()->setMargin(0);            // Устанавливаем размер полей
+    ui->centralWidget->layout()->setSpacing(0);
 
     // позволяет нажать кнопку send с помощью Enter
     ui->send->setShortcut(Qt::Key_Return);
@@ -103,6 +113,147 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
 
     // Только для чтения информации
     ui->messageBoard->setReadOnly(true);
+}
+
+QPoint MainWindow::previousPosition() const
+{
+    return m_previousPosition;
+}
+
+void MainWindow::setPreviousPosition(QPoint previousPosition)
+{
+    if (m_previousPosition == previousPosition)
+        return;
+
+    m_previousPosition = previousPosition;
+    emit previousPositionChanged(previousPosition);
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    // При клике левой кнопкой мыши
+    if (event->button() == Qt::LeftButton ) {
+        // Определяем, в какой области произошёл клик
+        m_leftMouseButtonPressed = checkResizableField(event);
+        setPreviousPosition(event->pos()); // и устанавливаем позицию клика
+    }
+    return QWidget::mousePressEvent(event);
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    // При отпускании левой кнопки мыши сбрасываем состояние клика
+    if (event->button() == Qt::LeftButton) {
+        m_leftMouseButtonPressed = None;
+    }
+    return QWidget::mouseReleaseEvent(event);
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    // При перемещении мыши, проверяем статус нажатия левой кнопки мыши
+    switch (m_leftMouseButtonPressed) {
+    case Move: {
+        // При этом проверяем, не максимизировано ли окно
+        if (isMaximized()) {
+            // При перемещении из максимизированного состояния
+            // Необходимо вернуть окно в нормальное состояние и установить стили кнопки
+            // А также путём нехитрых вычислений пересчитать позицию окна,
+            // чтобы оно оказалось под курсором
+            this->layout()->setMargin(9);
+            auto part = event->screenPos().x() / width();
+            this->showNormal();
+            auto offsetX = width() * part;
+            setGeometry(event->screenPos().x() - offsetX, 0, width(), height());
+            setPreviousPosition(QPoint(offsetX, event->y()));
+        } else {
+            // Если окно не максимизировано, то просто перемещаем его относительно
+            // последней запомненной позиции, пока не отпустим кнопку мыши
+            auto dx = event->x() - m_previousPosition.x();
+            auto dy = event->y() - m_previousPosition.y();
+            setGeometry(x() + dx, y() + dy, width(), height());
+        }
+        break;
+    }
+    case Top: {
+        // Для изменения размеров также проверяем на максимизацию
+        // поскольку мы же не можем изменить размеры у максимизированного окна
+        if (!isMaximized()) {
+            auto dy = event->y() - m_previousPosition.y();
+            setGeometry(x(), y() + dy, width(), height() - dy);
+        }
+        break;
+    }
+    case Bottom: {
+        if (!isMaximized()) {
+            auto dy = event->y() - m_previousPosition.y();
+            setGeometry(x(), y(), width(), height() + dy);
+            setPreviousPosition(event->pos());
+        }
+        break;
+    }
+    case Left: {
+        if (!isMaximized()) {
+            auto dx = event->x() - m_previousPosition.x();
+            setGeometry(x() + dx, y(), width() - dx, height());
+        }
+        break;
+    }
+    case Right: {
+        if (!isMaximized()) {
+            auto dx = event->x() - m_previousPosition.x();
+            setGeometry(x(), y(), width() + dx, height());
+            setPreviousPosition(event->pos());
+        }
+        break;
+    }
+    default:
+        // Если курсор перемещается по окну без зажатой кнопки,
+        // то просто отслеживаем в какой области он находится
+        // и изменяем его курсор
+        checkResizableField(event);
+        break;
+    }
+    return QWidget::mouseMoveEvent(event);
+}
+
+MainWindow::MouseType MainWindow::checkResizableField(QMouseEvent *event)
+{
+    QPointF position = event->screenPos();  // Определяем позицию курсора на экране
+    qreal x = this->x();                    // координаты окна приложения, ...
+    qreal y = this->y();                    // ... то есть координату левого верхнего угла окна
+    qreal width = this->width();            // А также ширину ...
+    qreal height = this->height();          // ... и высоту окна
+
+    // Определяем области, в которых может находиться курсор мыши
+    // По ним будет определён статус клика
+    QRectF rectTop(x + 9, y, width - 18, 7);
+    QRectF rectBottom(x + 9, y + height - 7, width - 18, 7);
+    QRectF rectLeft(x, y + 9, 7, height - 18);
+    QRectF rectRight(x + width - 7, y + 9, 7, height - 18);
+    QRectF rectInterface(x + 9, y + 9, width - 18, height - 18);
+
+    // И в зависимости от области, в которой находится курсор
+    // устанавливаем внешний вид курсора и возвращаем его статус
+    if (rectTop.contains(position)) {
+        setCursor(Qt::SizeVerCursor);
+        return Top;
+    } else if (rectBottom.contains(position)) {
+        setCursor(Qt::SizeVerCursor);
+        return Bottom;
+    } else if (rectLeft.contains(position)) {
+        setCursor(Qt::SizeHorCursor);
+        return Left;
+    } else if (rectRight.contains(position)) {
+        setCursor(Qt::SizeHorCursor);
+        return Right;
+    } else if (rectInterface.contains(position)){
+        setCursor(QCursor());
+        return Move;
+    } else {
+        setCursor(QCursor());
+        return None;
+    }
 }
 
 // Кнопка каоторая отвечает за свёртывание и развертывание программы в маленький и большой режимы

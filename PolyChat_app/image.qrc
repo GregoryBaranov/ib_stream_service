@@ -25,5 +25,7 @@
         <file>image/window-restore.png</file>
         <file>image/x.png</file>
         <file>image/xx.png</file>
+        <file>image/top_logo.png</file>
+        <file>image/_114579-839.jpg</file>
     </qresource>
 </RCC>

@@ -46,6 +46,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::settingDesigner() // Вид и проверки для hostEdit, spinPort, connect;
 {
+    ui->listViewUser->hide();
+    ui->verticalSp->show();
     /* Создаем строку для регулярного выражения */
     QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
 
@@ -78,6 +80,13 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     this->setStyleSheet("font: 12pt Microsoft YaHei UI;");
     this->setMouseTracking(true); // отслеживание курсора мыши без нажатых кнопокы
 
+    // Разрешаем остлеживание по курсора по всему приложению
+    ui->centralWidget->setMouseTracking(true);
+    ui->titleBar->setMouseTracking(true);
+    ui->pnlSettings->setMouseTracking(true);
+    ui->pnlStream->setMouseTracking(true);
+    ui->pnlChat->setMouseTracking(true);
+
     QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);
     shadowEffect->setBlurRadius(9); // Устанавливаем радиус размытия
     shadowEffect->setOffset(0);     // Устанавливаем смещение тени
@@ -109,7 +118,15 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     ui->messageBoard->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
     ui->titleBar->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
     ui->pnlSettings->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
+    ui->pnlStream->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
+    ui->pnlChat->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
     ui->messageEdt->setPlaceholderText("Message...");
+    ui->StartSession->setStyleSheet("background:#3d3d3d; color:#fff;");
+    ui->StopSession->setStyleSheet("background:#3d3d3d; color:#fff;");
+    ui->verticalSp->setStyleSheet("background: transparent; border-color: transparent;");
+    ui->label->setText("<img src=\":/image/top_logo.png\"  />");
+    ui->label->setDisabled(true);
+//    ui->mdiArea->setStyleSheet("background: url(:/image/_114579-839.jpg) no-repeat; "); // фэйкстрим
 
     // Только для чтения информации
     ui->messageBoard->setReadOnly(true);
@@ -211,6 +228,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
         // Если курсор перемещается по окну без зажатой кнопки,
         // то просто отслеживаем в какой области он находится
         // и изменяем его курсор
+//        ui->messageEdt->setText(QString("%1:%2").arg(mouseEv->x()).arg(mouseEv->y())); // получить кординаты мыши
         checkResizableField(event);
         break;
     }
@@ -251,7 +269,6 @@ MainWindow::MouseType MainWindow::checkResizableField(QMouseEvent *event)
         setCursor(QCursor());
         return Move;
     } else {
-        setCursor(QCursor());
         return None;
     }
 }
@@ -290,7 +307,7 @@ void MainWindow::onConnectBtnClick() // Слот для кнопки соеди�
     connect(client, SIGNAL(disconnected()), client, SLOT(deleteLater()));
 }
 
-void MainWindow::onDisconnectBtnClick() // Слот для кнопки отключения от сервера (можно удалить)
+void MainWindow::onDisconnectBtnClick() // Слот для кнопки отключения от сервера
 {
     // Логическая блокировка кнопок Disconnect и разблокировка connect
     ui->connect->setDisabled(false);
@@ -352,6 +369,10 @@ void MainWindow::on_DarkDesign_clicked() // Слот для переключен
     ui->messageBoard->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
     ui->titleBar->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
     ui->pnlSettings->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
+    ui->pnlStream->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
+    ui->pnlChat->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
+    ui->StartSession->setStyleSheet("background:#3d3d3d; color:#fff;");
+    ui->StopSession->setStyleSheet("background:#3d3d3d; color:#fff;");
 }
 
 void MainWindow::on_WhiteDesign_clicked() // Слот для переключения на светлую тему
@@ -362,6 +383,8 @@ void MainWindow::on_WhiteDesign_clicked() // Слот для переключе�
 
     // Выставление стиля для темы "White"
     ui->send->setStyleSheet("background:#fff; color:#000;");
+    ui->StartSession->setStyleSheet("background:#fff; color:#000;");
+    ui->StopSession->setStyleSheet("background:#fff; color:#000;");
     ui->Disconnect->setStyleSheet("background:#fff;");
     ui->DarkDesign->setStyleSheet("background:#fff;");
     ui->WhiteDesign->setStyleSheet("background:#fff;");
@@ -372,4 +395,20 @@ void MainWindow::on_WhiteDesign_clicked() // Слот для переключе�
     ui->messageBoard->setStyleSheet("background:#fff; color:#000; border: 2px solid #000;");
     ui->titleBar->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
     ui->pnlSettings->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
+    ui->pnlStream->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
+    ui->pnlChat->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
+}
+
+void MainWindow::on_BtnUserControl_clicked()
+{
+    if(ui->listViewUser->isVisible()){
+        ui->listViewUser->hide();
+        ui->verticalSp->show();
+    }
+    else
+    {
+        ui->listViewUser->show();
+        ui->verticalSp->hide();
+    }
+
 }

@@ -69,7 +69,7 @@ private:
     // Переменная, от которой будем отталкиваться при работе с перемещением и изменением размера окна
     MouseType m_leftMouseButtonPressed;
     QPoint m_previousPosition;
-
+    QMouseEvent *mouseEv;
     MouseType checkResizableField(QMouseEvent *event);
 
 protected:
@@ -86,6 +86,7 @@ private slots:
     void on_btn_close_clicked(); // Слот для отключения от сервера
     void on_DarkDesign_clicked(); // Слот для переключения на темную тему
     void on_WhiteDesign_clicked(); // Слот для переключения на светлую тему
+    void on_BtnUserControl_clicked();
 };
 
 #endif // MAINWINDOW_H

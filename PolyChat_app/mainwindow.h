@@ -71,6 +71,7 @@ private:
     QPoint m_previousPosition;
     QMouseEvent *mouseEv;
     MouseType checkResizableField(QMouseEvent *event);
+    QListWidgetItem *user_in_list;
 
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -87,6 +88,8 @@ private slots:
     void on_DarkDesign_clicked(); // Слот для переключения на темную тему
     void on_WhiteDesign_clicked(); // Слот для переключения на светлую тему
     void on_BtnUserControl_clicked();
+    void on_To_Ban_Button_clicked();
+    void on_Mute_Button_clicked();
 };
 
 #endif // MAINWINDOW_H

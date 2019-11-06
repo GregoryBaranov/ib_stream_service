@@ -42,12 +42,16 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete user_in_list;
 }
 
 void MainWindow::settingDesigner() // Вид и проверки для hostEdit, spinPort, connect;
 {
     ui->listViewUser->hide();
     ui->verticalSp->show();
+    ui->To_Ban_Button->hide();
+    ui->Mute_Button->hide();
+
     /* Создаем строку для регулярного выражения */
     QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
 
@@ -80,7 +84,7 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     this->setStyleSheet("font: 12pt Microsoft YaHei UI;");
     this->setMouseTracking(true); // отслеживание курсора мыши без нажатых кнопокы
 
-    // Разрешаем остлеживание по курсора по всему приложению
+    // Разрешаем остлеживание курсора по всему приложению (блокам)
     ui->centralWidget->setMouseTracking(true);
     ui->titleBar->setMouseTracking(true);
     ui->pnlSettings->setMouseTracking(true);
@@ -101,6 +105,7 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     // Логическая блокировка кнопок DarkDesign (семены темы) и Disconnect
     ui->Disconnect->setDisabled(true);
     ui->DarkDesign->setDisabled(true);
+    ui->label->setDisabled(true);
 
     // Выставление стиля для дефолтной темы "Dark"
     ui->hostEdit->setStyleSheet("background:#3d3d3d;");
@@ -125,8 +130,15 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     ui->StopSession->setStyleSheet("background:#3d3d3d; color:#fff;");
     ui->verticalSp->setStyleSheet("background: transparent; border-color: transparent;");
     ui->label->setText("<img src=\":/image/top_logo.png\"  />");
-    ui->label->setDisabled(true);
-//    ui->mdiArea->setStyleSheet("background: url(:/image/_114579-839.jpg) no-repeat; "); // фэйкстрим
+
+    //----------------------------------------- фэйковое добавление пользователей -------------------------------------------
+    char names[][255] = {"Timur", "Alex", "Vasya"};
+
+    for (int index=0; index<sizeof(names)/sizeof(names[0]); index++){
+        user_in_list = new QListWidgetItem(QIcon(":/image/student.png"), names[index]);
+        ui->listViewUser->addItem(user_in_list);
+    }
+    //----------------------------------------- фэйковое добавление пользователей -------------------------------------------
 
     // Только для чтения информации
     ui->messageBoard->setReadOnly(true);
@@ -403,12 +415,45 @@ void MainWindow::on_BtnUserControl_clicked()
 {
     if(ui->listViewUser->isVisible()){
         ui->listViewUser->hide();
+        ui->To_Ban_Button->hide();
+        ui->Mute_Button->hide();
         ui->verticalSp->show();
     }
     else
     {
         ui->listViewUser->show();
+        ui->To_Ban_Button->show();
+        ui->Mute_Button->show();
         ui->verticalSp->hide();
     }
 
+}
+
+void MainWindow::on_To_Ban_Button_clicked()
+{
+    // to do
+    // Реализовать запрос на сервер для бана пользователя с трансляции
+    QListWidgetItem* item;
+    item = ui->listViewUser->currentItem();
+
+    QString status = "БАН ПОЛЬЗОВАТЕЛЯ " + ui->listViewUser->currentItem()->text(); // само сообщение
+
+    client->sendMessage(status); // отправка оповещения на сайт
+
+    delete item;
+}
+
+void MainWindow::on_Mute_Button_clicked()
+{
+    QListWidgetItem* item;
+    item = ui->listViewUser->currentItem();
+
+    QString status = "ПОЛЬЗОВАТЕЛЬ " + ui->listViewUser->currentItem()->text() + " ПОЛУЧИЛ MUTE";
+
+    client->sendMessage(status); // отправка оповещения на сайт
+
+    user_in_list = new QListWidgetItem(QIcon(":/image/mute.png"), ui->listViewUser->currentItem()->text());
+    ui->listViewUser->addItem(user_in_list);
+
+    delete item;
 }

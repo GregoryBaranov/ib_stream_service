@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1014</width>
-    <height>451</height>
+    <height>673</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,30 +24,6 @@
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(61, 61, 61);
-color: rgb(255, 255, 255);
-padding:1px;</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1">
         <widget class="QPushButton" name="Settings">
          <property name="minimumSize">
@@ -126,6 +102,30 @@ padding:1px;</string>
          </property>
         </widget>
        </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(61, 61, 61);
+color: rgb(255, 255, 255);
+padding:1px;</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="4">
         <widget class="QPushButton" name="btn_close">
          <property name="minimumSize">
@@ -160,29 +160,6 @@ padding:1px;</string>
     <item row="1" column="0">
      <widget class="QWidget" name="pnlStream" native="true">
       <layout class="QGridLayout" name="gridLayout_7">
-       <item row="1" column="0" colspan="2">
-        <widget class="QMdiArea" name="mdiArea">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="3" column="0">
         <widget class="QPushButton" name="StartSession">
          <property name="minimumSize">
@@ -195,6 +172,19 @@ padding:1px;</string>
           <string>Запустить</string>
          </property>
         </widget>
+       </item>
+       <item row="0" column="0">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item row="3" column="1">
         <widget class="QPushButton" name="StopSession">
@@ -209,8 +199,18 @@ padding:1px;</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <spacer name="verticalSpacer_2">
+       <item row="1" column="0" colspan="2">
+        <widget class="QMdiArea" name="mdiArea">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -294,20 +294,17 @@ padding:1px;</string>
     <item row="1" column="2">
      <widget class="QWidget" name="pnlSettings" native="true">
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="6" column="0" colspan="2">
-        <widget class="QListWidget" name="listViewUser"/>
+       <item row="10" column="0">
+        <widget class="QPushButton" name="To_Ban_Button">
+         <property name="text">
+          <string>To ban</string>
+         </property>
+        </widget>
        </item>
        <item row="4" column="1">
         <widget class="QPushButton" name="WhiteDesign">
          <property name="text">
           <string>White</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QPushButton" name="BtnUserControl">
-         <property name="text">
-          <string>User control</string>
          </property>
         </widget>
        </item>
@@ -324,17 +321,20 @@ padding:1px;</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QPushButton" name="DarkDesign">
+       <item row="5" column="0" colspan="2">
+        <widget class="QPushButton" name="BtnUserControl">
          <property name="text">
-          <string>Dark</string>
+          <string>User control</string>
          </property>
         </widget>
        </item>
-       <item row="8" column="0" colspan="2">
-        <widget class="QLabel" name="verticalSp">
+       <item row="2" column="0" colspan="2">
+        <widget class="QSpinBox" name="spinPort"/>
+       </item>
+       <item row="11" column="0" colspan="2">
+        <widget class="QPushButton" name="ShowBlacklist">
          <property name="text">
-          <string/>
+          <string>Blacklist</string>
          </property>
         </widget>
        </item>
@@ -348,8 +348,54 @@ padding:1px;</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QSpinBox" name="spinPort"/>
+       <item row="4" column="0">
+        <widget class="QPushButton" name="DarkDesign">
+         <property name="text">
+          <string>Dark</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2">
+        <widget class="QWidget" name="GroupUserListWidget" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>70</height>
+          </size>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLineEdit" name="lineSearchUserList">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="placeholderText">
+             <string>Search...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QListWidget" name="listViewUser"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="14" column="0" colspan="2">
+        <widget class="QLabel" name="verticalSp">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QPushButton" name="Mute_Button">
+         <property name="text">
+          <string>Mute</string>
+         </property>
+        </widget>
        </item>
        <item row="3" column="0">
         <widget class="QPushButton" name="Disconnect">
@@ -364,18 +410,32 @@ padding:1px;</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
-        <widget class="QPushButton" name="To_Ban_Button">
-         <property name="text">
-          <string>To ban</string>
+       <item row="12" column="0" colspan="2">
+        <widget class="QWidget" name="GroupBanWidget" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>70</height>
+          </size>
          </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QPushButton" name="Mute_Button">
-         <property name="text">
-          <string>Mute</string>
-         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0">
+           <widget class="QLineEdit" name="lineSearchBanUserList">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="placeholderText">
+             <string>Search...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QListWidget" name="user_blacklist"/>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>

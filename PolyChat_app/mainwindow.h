@@ -8,6 +8,7 @@
 #include <QTextEdit>
 #include <QListWidget>
 #include <QLabel>
+#include <list>
 #include <QStandardItemModel>
 #include <QMouseEvent>
 #include <QMessageBox>
@@ -18,6 +19,8 @@
 #include <QToolButton>
 #include <QRegExp>
 #include <QRegExpValidator>
+
+using namespace std;
 
 namespace Ui {
 class MainWindow;
@@ -43,10 +46,29 @@ class MainWindow : public QMainWindow
         Move
     };
 public:
-    explicit MainWindow(QWidget *parent = 0); // явный конструктор
+    explicit MainWindow(QWidget *parent = nullptr); // явный конструктор
     ~MainWindow();
 
     QPoint previousPosition() const;
+
+    template<class T1, class T2>
+    bool checkUserInList(const list<T1> &lst, T2 username)
+    {
+        for (auto i = lst.cbegin(); i != lst.cend(); i++)
+        {
+            if (username == *i)
+            {
+                return true;
+            }
+            else
+            {
+                continue;
+            }
+        }
+        return false;
+    }
+
+    void hide_all(QListWidget *listWidjet);
 
 public slots:
     void setPreviousPosition(QPoint previousPosition);
@@ -73,6 +95,10 @@ private:
     MouseType checkResizableField(QMouseEvent *event);
     QListWidgetItem *user_in_list;
 
+    list<QString> mute_user_list;
+    list<QString> bun_user_list;
+    QStringList userList;
+
 protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
@@ -90,6 +116,12 @@ private slots:
     void on_BtnUserControl_clicked();
     void on_To_Ban_Button_clicked();
     void on_Mute_Button_clicked();
+    void on_ShowBlacklist_clicked();
+    void slot_UnbrokenUser(QListWidgetItem*);
+    void slot_UnMuteUser(QListWidgetItem*);
+
+    void on_lineSearchUserList_textChanged(const QString &arg1);
+    void on_lineSearchBanUserList_textChanged(const QString &arg1);
 };
 
 #endif // MAINWINDOW_H

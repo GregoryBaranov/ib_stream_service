@@ -37,6 +37,14 @@ MainWindow::MainWindow(QWidget *parent) :
     // connect для кнопки закрытия приложения
     connect(ui->btn_close, &QToolButton::clicked,
             this, &MainWindow::close);
+
+    connect(ui->user_blacklist, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+            this, SLOT(slot_UnbrokenUser(QListWidgetItem*)));
+
+    connect(ui->listViewUser, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+            this, SLOT(slot_UnMuteUser(QListWidgetItem*)));
+
+    //    QObject::connect(mListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
 }
 
 MainWindow::~MainWindow()
@@ -47,10 +55,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::settingDesigner() // Вид и проверки для hostEdit, spinPort, connect;
 {
-    ui->listViewUser->hide();
+    ui->GroupUserListWidget->hide();
     ui->verticalSp->show();
     ui->To_Ban_Button->hide();
     ui->Mute_Button->hide();
+    ui->GroupBanWidget->hide();
 
     /* Создаем строку для регулярного выражения */
     QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
@@ -102,40 +111,19 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     // позволяет нажать кнопку send с помощью Enter
     ui->send->setShortcut(Qt::Key_Return);
 
-    // Логическая блокировка кнопок DarkDesign (семены темы) и Disconnect
-    ui->Disconnect->setDisabled(true);
-    ui->DarkDesign->setDisabled(true);
     ui->label->setDisabled(true);
 
-    // Выставление стиля для дефолтной темы "Dark"
-    ui->hostEdit->setStyleSheet("background:#3d3d3d;");
-    ui->spinPort->setStyleSheet("background:#3d3d3d;");
-    ui->connect->setStyleSheet("background:#3d3d3d;");
-    ui->Settings->setStyleSheet("background:#3d3d3d; color:#fff;");
-    ui->btn_close->setStyleSheet("background:#3d3d3d; background-image: url(:/image/close-gray.png);");
-    ui->send->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#3d3d3d; color: #fff; border: 2px solid #000;");
-    ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(:/image/window-maximize-gray.png);");
-    ui->btn_minimize->setStyleSheet("background:#3d3d3d; background-image: url(:/image/window-minimize-gray.png);");
-    ui->Disconnect->setStyleSheet("background:#3d3d3d;");
-    ui->DarkDesign->setStyleSheet("background:#3d3d3d;");
-    ui->WhiteDesign->setStyleSheet("background:#3d3d3d;");
-    ui->messageEdt->setStyleSheet("background:#3d3d3d; color: #fff; border: 2px solid #000;");
-    ui->messageBoard->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
-    ui->titleBar->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
-    ui->pnlSettings->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
-    ui->pnlStream->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
-    ui->pnlChat->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
-    ui->messageEdt->setPlaceholderText("Message...");
-    ui->StartSession->setStyleSheet("background:#3d3d3d; color:#fff;");
-    ui->StopSession->setStyleSheet("background:#3d3d3d; color:#fff;");
-    ui->verticalSp->setStyleSheet("background: transparent; border-color: transparent;");
-    ui->label->setText("<img src=\":/image/top_logo.png\"  />");
+    //    ui->listViewUser->setSelectionMode(QAbstractItemView::MultiSelection);
+
+
+    on_DarkDesign_clicked();
 
     //----------------------------------------- фэйковое добавление пользователей -------------------------------------------
-    char names[][255] = {"Timur", "Alex", "Vasya"};
+    char names[][255] = {"Timur", "Alex", "Vasya", "Marina", "Demid", "Arseniy", "Serega"};
 
     for (int index=0; index<sizeof(names)/sizeof(names[0]); index++){
         user_in_list = new QListWidgetItem(QIcon(":/image/student.png"), names[index]);
+        userList.append(names[index]);
         ui->listViewUser->addItem(user_in_list);
     }
     //----------------------------------------- фэйковое добавление пользователей -------------------------------------------
@@ -240,7 +228,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
         // Если курсор перемещается по окну без зажатой кнопки,
         // то просто отслеживаем в какой области он находится
         // и изменяем его курсор
-//        ui->messageEdt->setText(QString("%1:%2").arg(mouseEv->x()).arg(mouseEv->y())); // получить кординаты мыши
+        //        ui->messageEdt->setText(QString("%1:%2").arg(mouseEv->x()).arg(mouseEv->y())); // получить кординаты мыши
         checkResizableField(event);
         break;
     }
@@ -370,21 +358,29 @@ void MainWindow::on_DarkDesign_clicked() // Слот для переключен
     ui->WhiteDesign->setDisabled(false);
 
     // Выставление стиля для темы "Dark"
-    ui->send->setStyleSheet("background:#3d3d3d; color: #fff; border: 2px solid #000;");
-    ui->connect->setStyleSheet("background:#3d3d3d;");
-    ui->messageEdt->setStyleSheet("background:#3d3d3d; color: #fff; border: 2px solid #000;");
+    // Выставление стиля для дефолтной темы "Dark"
     ui->hostEdit->setStyleSheet("background:#3d3d3d;");
     ui->spinPort->setStyleSheet("background:#3d3d3d;");
+    ui->connect->setStyleSheet("background:#3d3d3d;");
+    ui->Settings->setStyleSheet("background:#3d3d3d; color:#fff;");
+    ui->btn_close->setStyleSheet("background:#3d3d3d; background-image: url(:/image/close-gray.png);");
+    ui->send->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#3d3d3d; color: #fff; border: 2px solid #000;");
+    ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(:/image/window-maximize-gray.png);");
+    ui->btn_minimize->setStyleSheet("background:#3d3d3d; background-image: url(:/image/window-minimize-gray.png);");
     ui->Disconnect->setStyleSheet("background:#3d3d3d;");
     ui->DarkDesign->setStyleSheet("background:#3d3d3d;");
     ui->WhiteDesign->setStyleSheet("background:#3d3d3d;");
+    ui->messageEdt->setStyleSheet("background:#3d3d3d; color: #fff; border: 2px solid #000;");
     ui->messageBoard->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
     ui->titleBar->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
     ui->pnlSettings->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
     ui->pnlStream->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
     ui->pnlChat->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
+    ui->messageEdt->setPlaceholderText("Message...");
     ui->StartSession->setStyleSheet("background:#3d3d3d; color:#fff;");
     ui->StopSession->setStyleSheet("background:#3d3d3d; color:#fff;");
+    ui->verticalSp->setStyleSheet("background: transparent; border-color: transparent;");
+    ui->label->setText("<img src=\":/image/top_logo.png\"  />");
 }
 
 void MainWindow::on_WhiteDesign_clicked() // Слот для переключения на светлую тему
@@ -413,15 +409,16 @@ void MainWindow::on_WhiteDesign_clicked() // Слот для переключе�
 
 void MainWindow::on_BtnUserControl_clicked()
 {
-    if(ui->listViewUser->isVisible()){
-        ui->listViewUser->hide();
+    if(ui->GroupUserListWidget->isVisible()){
+        ui->GroupUserListWidget->hide();
         ui->To_Ban_Button->hide();
         ui->Mute_Button->hide();
         ui->verticalSp->show();
+
     }
     else
     {
-        ui->listViewUser->show();
+        ui->GroupUserListWidget->show();
         ui->To_Ban_Button->show();
         ui->Mute_Button->show();
         ui->verticalSp->hide();
@@ -433,27 +430,102 @@ void MainWindow::on_To_Ban_Button_clicked()
 {
     // to do
     // Реализовать запрос на сервер для бана пользователя с трансляции
-    QListWidgetItem* item;
-    item = ui->listViewUser->currentItem();
+    if(ui->listViewUser->currentItem())
+    {
+        QString status = "БАН ПОЛЬЗОВАТЕЛЯ " + ui->listViewUser->currentItem()->text(); // само сообщение
 
-    QString status = "БАН ПОЛЬЗОВАТЕЛЯ " + ui->listViewUser->currentItem()->text(); // само сообщение
+        client->sendMessage(status); // отправка оповещения на сайт
 
-    client->sendMessage(status); // отправка оповещения на сайт
+        QString username = ui->listViewUser->currentItem()->text();
+        user_in_list = new QListWidgetItem(QIcon(":/image/ban.png"), username);
+        ui->user_blacklist->addItem(user_in_list);
 
-    delete item;
+        bun_user_list.push_back(username);
+        //        userList.removeOne(username);
+
+        delete ui->listViewUser->currentItem();
+    }
 }
 
 void MainWindow::on_Mute_Button_clicked()
 {
-    QListWidgetItem* item;
-    item = ui->listViewUser->currentItem();
+    if(ui->listViewUser->currentItem())
+    {
+        QString status = "ПОЛЬЗОВАТЕЛЬ " + ui->listViewUser->currentItem()->text() + " ПОЛУЧИЛ MUTE";
 
-    QString status = "ПОЛЬЗОВАТЕЛЬ " + ui->listViewUser->currentItem()->text() + " ПОЛУЧИЛ MUTE";
+        client->sendMessage(status); // отправка оповещения на сайт
 
-    client->sendMessage(status); // отправка оповещения на сайт
+        QString username = ui->listViewUser->currentItem()->text();
+        user_in_list = new QListWidgetItem(QIcon(":/image/mute.png"), username);
+        ui->listViewUser->addItem(user_in_list);
 
-    user_in_list = new QListWidgetItem(QIcon(":/image/mute.png"), ui->listViewUser->currentItem()->text());
-    ui->listViewUser->addItem(user_in_list);
+        mute_user_list.push_back(username);
+        //        userList.removeOne(username);
 
-    delete item;
+        delete ui->listViewUser->currentItem();
+    }
+}
+
+void MainWindow::on_ShowBlacklist_clicked()
+{
+    if(ui->GroupBanWidget->isVisible())
+    {
+        ui->GroupBanWidget->hide();
+        ui->verticalSp->show();
+    }
+    else
+    {
+        ui->GroupBanWidget->show();
+        ui->verticalSp->hide();
+    }
+}
+
+void MainWindow::slot_UnbrokenUser(QListWidgetItem* item)
+{
+    QString username = ui->user_blacklist->currentItem()->text();
+    item = new QListWidgetItem(QIcon(":/image/student.png"), username);
+    ui->listViewUser->addItem(item);
+
+    bun_user_list.remove(username);// Удаляем user-a из списка ban_user_list
+
+
+    delete ui->user_blacklist->currentItem();
+}
+
+void MainWindow::slot_UnMuteUser(QListWidgetItem* item)
+{
+    QString username = ui->listViewUser->currentItem()->text();
+
+    if (checkUserInList(mute_user_list, username) == true) // проверка есть ли user в списке замьюченых
+    {
+        checkUserInList(mute_user_list, username);
+        item = new QListWidgetItem(QIcon(":/image/student.png"), username);
+        ui->listViewUser->addItem(item);
+
+        mute_user_list.remove(username); // Удаляем user-a из списка mute_user_list
+
+        delete ui->listViewUser->currentItem();
+    }
+}
+
+void MainWindow::on_lineSearchUserList_textChanged(const QString &arg1)
+{
+    hide_all(ui->listViewUser);
+    QList<QListWidgetItem*> matches ( ui->listViewUser->findItems(arg1, Qt::MatchFlag::MatchContains) );
+    for(QListWidgetItem* item : matches)
+        item->setHidden(false);
+}
+
+void MainWindow::on_lineSearchBanUserList_textChanged(const QString &arg1)
+{
+    hide_all(ui->user_blacklist);
+    QList<QListWidgetItem*> matches ( ui->user_blacklist->findItems(arg1, Qt::MatchFlag::MatchContains) );
+    for(QListWidgetItem* item : matches)
+        item->setHidden(false);
+}
+
+void MainWindow::hide_all(QListWidget *listWidjet)
+{
+    for(int row(0); row < listWidjet->count(); row++ )
+        listWidjet->item(row)->setHidden(true);
 }

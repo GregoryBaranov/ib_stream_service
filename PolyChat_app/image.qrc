@@ -29,5 +29,8 @@
         <file>image/_114579-839.jpg</file>
         <file>image/mute.png</file>
         <file>image/student.png</file>
+        <file>image/ban.png</file>
+        <file>image/search.png</file>
+        <file>image/white_search.png</file>
     </qresource>
 </RCC>

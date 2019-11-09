@@ -60,7 +60,6 @@ public:
 
     template<class T1, class T2>
     bool checkUserInList(const list<T1> &lst, T2 username); // проверка есть юзер или нет
-
     void hide_all(QListWidget *listWidjet); // скрывает все не нужные элименты
 
 public slots:
@@ -95,9 +94,10 @@ private:
     BellStatus statusBell; // enum для проверки статуса окна
 
 protected:
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
+    // функции отслеживания мыши
+    void mousePressEvent(QMouseEvent *event); // Позиция клика
+    void mouseReleaseEvent(QMouseEvent *event); // Когда кнопка мыши отжата вызываем ->
+    void mouseMoveEvent(QMouseEvent *event); // Изменение размера (тут отслеживают клик и конечное состояние окна)
 
 private slots:
     void onReceiveMessage(QString message); // Слот для получения сообщения
@@ -108,16 +108,16 @@ private slots:
     void on_btn_close_clicked(); // Слот для отключения от сервера
     void on_DarkDesign_clicked(); // Слот для переключения на темную тему
     void on_WhiteDesign_clicked(); // Слот для переключения на светлую тему
-    void on_BtnUserControl_clicked();
-    void on_To_Ban_Button_clicked();
-    void on_Mute_Button_clicked();
-    void on_ShowBlacklist_clicked();
-    void slot_UnbrokenUser(QListWidgetItem*);
-    void slot_UnMuteUser(QListWidgetItem*);
-    void on_lineSearchUserList_textChanged(const QString &arg1);
-    void on_lineSearchBanUserList_textChanged(const QString &arg1);
-    void on_ChatBtn_clicked();
-    void on_messageBoard_textChanged();
+    void on_BtnUserControl_clicked(); // Слот отображения списка пользоватеей
+    void on_To_Ban_Button_clicked(); // Слот для бана пользователей
+    void on_Mute_Button_clicked(); // Слот для мьюта пользователей
+    void on_ShowBlacklist_clicked();// Слот для отображения черного списка (забаненых)
+    void slot_UnbrokenUser(QListWidgetItem*); // Слот разбана
+    void slot_UnMuteUser(QListWidgetItem*); // Слот размьюта
+    void on_lineSearchUserList_textChanged(const QString &arg1); // при вызове определенного сигнала делаем поиск
+    void on_lineSearchBanUserList_textChanged(const QString &arg1); // при вызове определенного сигнала делаем поиск
+    void on_ChatBtn_clicked(); // Скрытие чата
+    void on_messageBoard_textChanged();// при вызове определенного сигнала что-то делаем.....
 };
 
 #endif // MAINWINDOW_H

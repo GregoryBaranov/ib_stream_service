@@ -33,5 +33,8 @@
         <file>image/search.png</file>
         <file>image/white_search.png</file>
         <file>image/bell.png</file>
+        <file>image/messagedef.png</file>
+        <file>image/messageNew.png</file>
+        <file>image/settings-cogwheel-button.png</file>
     </qresource>
 </RCC>

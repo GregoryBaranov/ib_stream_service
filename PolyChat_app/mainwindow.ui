@@ -156,7 +156,7 @@ padding:1px;</string>
           <string notr="true">color: rgb(255, 255, 255);</string>
          </property>
          <property name="text">
-          <string>Settings</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -178,7 +178,7 @@ padding:1px;</string>
           <string notr="true">color: rgb(255, 255, 255);</string>
          </property>
          <property name="text">
-          <string>Chat</string>
+          <string/>
          </property>
         </widget>
        </item>

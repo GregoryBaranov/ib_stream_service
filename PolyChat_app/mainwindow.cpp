@@ -38,9 +38,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->btn_close, &QToolButton::clicked,
             this, &MainWindow::close);
 
+    // connect двойного клика в виджете по значению
     connect(ui->user_blacklist, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
             this, SLOT(slot_UnbrokenUser(QListWidgetItem*)));
 
+    // connect двойного клика в виджете по значению
     connect(ui->listViewUser, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
             this, SLOT(slot_UnMuteUser(QListWidgetItem*)));
 }
@@ -390,6 +392,11 @@ void MainWindow::on_DarkDesign_clicked() // Слот для переключен
     ui->StopSession->setStyleSheet("background:#3d3d3d; color:#fff;");
     ui->verticalSp->setStyleSheet("background: transparent; border-color: transparent;");
     ui->label->setText("<img src=\":/image/top_logo.png\"  />");
+    ui->Settings->setIcon(QIcon(":/image/settings-cogwheel-button.png"));
+    ui->Settings->setIconSize(QSize(35,35));
+
+    ui->ChatBtn->setIcon(QIcon(":/image/messagedef.png"));
+    ui->ChatBtn->setIconSize(QSize(45,45));
 }
 
 void MainWindow::on_WhiteDesign_clicked() // Слот для переключения на светлую тему
@@ -414,6 +421,7 @@ void MainWindow::on_WhiteDesign_clicked() // Слот для переключе�
     ui->pnlSettings->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
     ui->pnlStream->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
     ui->pnlChat->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
+    ui->ChatBtn->setStyleSheet("background:#3d3d3d; qproperty-icon: url(:/image/mailingdef.png);");
 }
 
 void MainWindow::on_BtnUserControl_clicked()
@@ -452,7 +460,6 @@ void MainWindow::on_To_Ban_Button_clicked()
         bun_user_list.push_back(username);
 
         delete ui->listViewUser->currentItem();
-        delete user_in_list;
     }
 }
 
@@ -471,7 +478,6 @@ void MainWindow::on_Mute_Button_clicked()
         mute_user_list.push_back(username);
 
         delete ui->listViewUser->currentItem();
-        delete user_in_list;
     }
 }
 
@@ -576,7 +582,8 @@ void MainWindow::on_ChatBtn_clicked()
         animation->setEndValue(500);
         animation->start();
 
-        ui->ChatBtn->setStyleSheet("background:#3d3d3d; qproperty-icon: url();");
+        ui->ChatBtn->setIcon(QIcon(":/image/messagedef.png"));
+        ui->ChatBtn->setIconSize(QSize(45,45));
         statusBell = showChat;
     }
 }
@@ -586,6 +593,7 @@ void MainWindow::on_messageBoard_textChanged()
 {
     if(statusBell == hideChat)
     {
-        ui->ChatBtn->setStyleSheet("background:#3d3d3d; qproperty-icon: url(:/image/bell.png);");
+        ui->ChatBtn->setIcon(QIcon(":/image/messageNew.png"));
+        ui->ChatBtn->setIconSize(QSize(45,45));
     }
 }

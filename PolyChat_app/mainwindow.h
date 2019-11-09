@@ -19,6 +19,8 @@
 #include <QToolButton>
 #include <QRegExp>
 #include <QRegExpValidator>
+#include <QPropertyAnimation>
+#include <QThread>
 
 using namespace std;
 
@@ -45,59 +47,52 @@ class MainWindow : public QMainWindow
         Right,
         Move
     };
+
+    // для отслеживания состояния окна чата
+    enum BellStatus{
+        showChat,
+        hideChat
+    };
+
 public:
     explicit MainWindow(QWidget *parent = nullptr); // явный конструктор
-    ~MainWindow();
-
-    QPoint previousPosition() const;
+    ~MainWindow(); // деструктор
 
     template<class T1, class T2>
-    bool checkUserInList(const list<T1> &lst, T2 username)
-    {
-        for (auto i = lst.cbegin(); i != lst.cend(); i++)
-        {
-            if (username == *i)
-            {
-                return true;
-            }
-            else
-            {
-                continue;
-            }
-        }
-        return false;
-    }
+    bool checkUserInList(const list<T1> &lst, T2 username); // проверка есть юзер или нет
 
-    void hide_all(QListWidget *listWidjet);
+    void hide_all(QListWidget *listWidjet); // скрывает все не нужные элименты
 
 public slots:
-    void setPreviousPosition(QPoint previousPosition);
+    void setPreviousPosition(QPoint previousPosition); // устанавливаем новую предыдущую позицию
 
 signals:
-    void previousPositionChanged(QPoint previousPosition);
+    void previousPositionChanged(QPoint previousPosition); // новая предыдущая позиция
 
 private:
     Ui::MainWindow *ui;
 
     Client* client;
 
-    // Кнопка каоторая отвечает за свёртывание и развертывание
-    // программы в маленький и большой режимы
-    void btn_max();
-
+    void btn_max();  // свёртывание и развертывание программы в маленький и большой режимы
     void mainApplicationDesigner(); // Дефолтный фид приложения
     void settingDesigner(); // Вид и проверки для hostEdit, spinPort, connect;
 
     // Переменная, от которой будем отталкиваться при работе с перемещением и изменением размера окна
-    MouseType m_leftMouseButtonPressed;
-    QPoint m_previousPosition;
-    QMouseEvent *mouseEv;
-    MouseType checkResizableField(QMouseEvent *event);
-    QListWidgetItem *user_in_list;
+    MouseType m_leftMouseButtonPressed; // enum значения курсора
+    QPoint m_previousPosition; // предыдущая позиция
 
-    list<QString> mute_user_list;
-    list<QString> bun_user_list;
-    QStringList userList;
+    // проверка состояния курсора и получение его внешнего вида
+    MouseType checkResizableField(QMouseEvent *event);
+    QPoint previousPosition() const; // получение предыдущей позиции
+
+    QListWidgetItem *user_in_list; // выбранное значение из списка
+
+    list<QString> mute_user_list; // список немых
+    list<QString> bun_user_list; // cписок забаненных
+    QStringList userList; // все пользователи
+
+    BellStatus statusBell; // enum для проверки статуса окна
 
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -119,9 +114,10 @@ private slots:
     void on_ShowBlacklist_clicked();
     void slot_UnbrokenUser(QListWidgetItem*);
     void slot_UnMuteUser(QListWidgetItem*);
-
     void on_lineSearchUserList_textChanged(const QString &arg1);
     void on_lineSearchBanUserList_textChanged(const QString &arg1);
+    void on_ChatBtn_clicked();
+    void on_messageBoard_textChanged();
 };
 
 #endif // MAINWINDOW_H

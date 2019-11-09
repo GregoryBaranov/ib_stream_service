@@ -32,5 +32,6 @@
         <file>image/ban.png</file>
         <file>image/search.png</file>
         <file>image/white_search.png</file>
+        <file>image/bell.png</file>
     </qresource>
 </RCC>

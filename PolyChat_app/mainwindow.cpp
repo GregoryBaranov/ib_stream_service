@@ -43,8 +43,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->listViewUser, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
             this, SLOT(slot_UnMuteUser(QListWidgetItem*)));
-
-    //    QObject::connect(mListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
 }
 
 MainWindow::~MainWindow()
@@ -113,10 +111,9 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
 
     ui->label->setDisabled(true);
 
-    //    ui->listViewUser->setSelectionMode(QAbstractItemView::MultiSelection);
-
-
     on_DarkDesign_clicked();
+
+    statusBell = showChat;
 
     //----------------------------------------- фэйковое добавление пользователей -------------------------------------------
     char names[][255] = {"Timur", "Alex", "Vasya", "Marina", "Demid", "Arseniy", "Serega"};
@@ -228,7 +225,6 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
         // Если курсор перемещается по окну без зажатой кнопки,
         // то просто отслеживаем в какой области он находится
         // и изменяем его курсор
-        //        ui->messageEdt->setText(QString("%1:%2").arg(mouseEv->x()).arg(mouseEv->y())); // получить кординаты мыши
         checkResizableField(event);
         break;
     }
@@ -296,6 +292,7 @@ void MainWindow::btn_max()
 
 void MainWindow::onConnectBtnClick() // Слот для кнопки соединения с сервером
 {
+    qDebug() << "connect";
     // Логическая блокировка кнопок connect и разблокировка Disconnect
     ui->connect->setDisabled(true);
     ui->Disconnect->setDisabled(false);
@@ -336,13 +333,24 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
 void MainWindow::on_Settings_clicked() // Слот для отображения/скрытия меню настроек
 {
-    if(ui->pnlSettings->isVisible()) // Если открыт то закрываем, иначе отображаем
+    static int ShowOrHide = 0;
+    if(++ShowOrHide % 2) // Если открыт то закрываем, иначе отображаем
     {
-        ui->pnlSettings->hide();
+        QPropertyAnimation *animation = new QPropertyAnimation(ui->pnlSettings, "maximumWidth"); //wdgSMS is your widget
+        animation->setDuration(150);
+        animation->setStartValue(302);
+        animation->setEndValue(0);
+        animation->start();
+
+
     }
     else
     {
-        ui->pnlSettings->show();
+        QPropertyAnimation *animation = new QPropertyAnimation(ui->pnlSettings, "maximumWidth");
+        animation->setDuration(150);
+        animation->setStartValue(0);
+        animation->setEndValue(302);
+        animation->start();
     }
 }
 
@@ -362,6 +370,7 @@ void MainWindow::on_DarkDesign_clicked() // Слот для переключен
     ui->hostEdit->setStyleSheet("background:#3d3d3d;");
     ui->spinPort->setStyleSheet("background:#3d3d3d;");
     ui->connect->setStyleSheet("background:#3d3d3d;");
+    ui->ChatBtn->setStyleSheet("background:#3d3d3d;");
     ui->Settings->setStyleSheet("background:#3d3d3d; color:#fff;");
     ui->btn_close->setStyleSheet("background:#3d3d3d; background-image: url(:/image/close-gray.png);");
     ui->send->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#3d3d3d; color: #fff; border: 2px solid #000;");
@@ -441,9 +450,9 @@ void MainWindow::on_To_Ban_Button_clicked()
         ui->user_blacklist->addItem(user_in_list);
 
         bun_user_list.push_back(username);
-        //        userList.removeOne(username);
 
         delete ui->listViewUser->currentItem();
+        delete user_in_list;
     }
 }
 
@@ -460,9 +469,9 @@ void MainWindow::on_Mute_Button_clicked()
         ui->listViewUser->addItem(user_in_list);
 
         mute_user_list.push_back(username);
-        //        userList.removeOne(username);
 
         delete ui->listViewUser->currentItem();
+        delete user_in_list;
     }
 }
 
@@ -487,7 +496,6 @@ void MainWindow::slot_UnbrokenUser(QListWidgetItem* item)
     ui->listViewUser->addItem(item);
 
     bun_user_list.remove(username);// Удаляем user-a из списка ban_user_list
-
 
     delete ui->user_blacklist->currentItem();
 }
@@ -528,4 +536,56 @@ void MainWindow::hide_all(QListWidget *listWidjet)
 {
     for(int row(0); row < listWidjet->count(); row++ )
         listWidjet->item(row)->setHidden(true);
+}
+
+template<class T1, class T2>
+bool MainWindow::checkUserInList(const list<T1> &lst, T2 username)
+{
+    for (auto i = lst.cbegin(); i != lst.cend(); i++)
+    {
+        if (username == *i)
+        {
+            return true;
+        }
+        else
+        {
+            continue;
+        }
+    }
+    return false;
+}
+
+void MainWindow::on_ChatBtn_clicked()
+{
+    QPropertyAnimation *animation = new QPropertyAnimation(ui->pnlChat, "maximumWidth");
+    static int ShowOrHide = 0;
+
+    if(++ShowOrHide % 2) // Если открыт то закрываем, иначе отображаем
+    {
+        animation->setDuration(150);
+        animation->setStartValue(500);
+        animation->setEndValue(0);
+        animation->start();
+
+        statusBell = hideChat;
+    }
+    else
+    {
+        animation->setDuration(150);
+        animation->setStartValue(0);
+        animation->setEndValue(500);
+        animation->start();
+
+        ui->ChatBtn->setStyleSheet("background:#3d3d3d; qproperty-icon: url();");
+        statusBell = showChat;
+    }
+}
+
+
+void MainWindow::on_messageBoard_textChanged()
+{
+    if(statusBell == hideChat)
+    {
+        ui->ChatBtn->setStyleSheet("background:#3d3d3d; qproperty-icon: url(:/image/bell.png);");
+    }
 }

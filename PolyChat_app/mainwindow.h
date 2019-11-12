@@ -21,6 +21,8 @@
 #include <QRegExpValidator>
 #include <QPropertyAnimation>
 #include <QThread>
+#include <random>
+#include <ctime>
 
 using namespace std;
 
@@ -92,7 +94,6 @@ private:
     QStringList userList; // все пользователи
 
     BellStatus statusBell; // enum для проверки статуса окна
-
 protected:
     // функции отслеживания мыши
     void mousePressEvent(QMouseEvent *event); // Позиция клика
@@ -101,6 +102,8 @@ protected:
 
 private slots:
     void onReceiveMessage(QString message); // Слот для получения сообщения
+    void onNumberSession(QString session);
+    void onFailedConnect();
     void onConnectBtnClick(); // Слот для кнопки соединения с сервером
     void onDisconnectBtnClick(); // Слот для кнопки отключения от сервера (можно удалить)
     void onSendMessageBtnClick(); // Слот для кнопки отправки сообщения
@@ -118,6 +121,8 @@ private slots:
     void on_lineSearchBanUserList_textChanged(const QString &arg1); // при вызове определенного сигнала делаем поиск
     void on_ChatBtn_clicked(); // Скрытие чата
     void on_messageBoard_textChanged();// при вызове определенного сигнала что-то делаем.....
+    void on_StartSession_clicked();
+    void on_StopSession_clicked();
 };
 
 #endif // MAINWINDOW_H

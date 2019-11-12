@@ -18,6 +18,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(client, SIGNAL(receiveMessage(QString)),
             this, SLOT(onReceiveMessage(QString)));
 
+    // connect для получения номера сессии
+    connect(client, SIGNAL(newNumberSession(QString)),
+            this, SLOT(onNumberSession(QString)));
+
     // connect для кнопки подключиться
     connect(ui->connect, &QToolButton::clicked,
             this, &MainWindow::onConnectBtnClick);
@@ -25,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // connect для кнопки отключится
     connect(ui->Disconnect, &QToolButton::clicked,
             this, &MainWindow::onDisconnectBtnClick);
+
+    connect(client, SIGNAL(disconnected()),
+            client, SLOT(deleteLater()));
 
     // connect для кнопки отправить сообщение
     connect(ui->send, SIGNAL(clicked()),
@@ -37,6 +44,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // connect для кнопки закрытия приложения
     connect(ui->btn_close, &QToolButton::clicked,
             this, &MainWindow::close);
+
+    // connect при сигнале failedConnect
+    connect(client, SIGNAL(failedConnect()),
+            this, SLOT(onFailedConnect()));
 
     // connect двойного клика в виджете по значению
     connect(ui->user_blacklist, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
@@ -112,6 +123,9 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     ui->send->setShortcut(Qt::Key_Return);
 
     ui->label->setDisabled(true);
+
+    ui->StartSession->setDisabled(false);
+    ui->StopSession->setDisabled(true);
 
     on_DarkDesign_clicked();
 
@@ -302,12 +316,15 @@ void MainWindow::onConnectBtnClick() // Слот для кнопки соеди�
     ui->messageBoard->append("Connection attempt...");
     unsigned int port = ui->spinPort->value();
     client->connectSocket(ui->hostEdit->text(), port);
-
-    connect(client, SIGNAL(disconnected()), client, SLOT(deleteLater()));
 }
 
 void MainWindow::onDisconnectBtnClick() // Слот для кнопки отключения от сервера
 {
+    // Если произошел disconnect, то проверяем логику кнопок
+    // Логическая блокировка кнопки запуска и остановки стрима
+    ui->StartSession->setDisabled(false);
+    ui->StopSession->setDisabled(true);
+
     // Логическая блокировка кнопок Disconnect и разблокировка connect
     ui->connect->setDisabled(false);
     ui->Disconnect->setDisabled(true);
@@ -392,11 +409,13 @@ void MainWindow::on_DarkDesign_clicked() // Слот для переключен
     ui->StopSession->setStyleSheet("background:#3d3d3d; color:#fff;");
     ui->verticalSp->setStyleSheet("background: transparent; border-color: transparent;");
     ui->label->setText("<img src=\":/image/top_logo.png\"  />");
-    ui->Settings->setIcon(QIcon(":/image/settings-cogwheel-button.png"));
-    ui->Settings->setIconSize(QSize(35,35));
+    ui->lable_session_num->setText("*****");
 
     ui->ChatBtn->setIcon(QIcon(":/image/messagedef.png"));
     ui->ChatBtn->setIconSize(QSize(45,45));
+
+    ui->Settings->setIcon(QIcon(":/image/settings-cogwheel-button.png"));
+    ui->Settings->setIconSize(QSize(35,35));
 }
 
 void MainWindow::on_WhiteDesign_clicked() // Слот для переключения на светлую тему
@@ -421,7 +440,6 @@ void MainWindow::on_WhiteDesign_clicked() // Слот для переключе�
     ui->pnlSettings->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
     ui->pnlStream->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
     ui->pnlChat->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
-    ui->ChatBtn->setStyleSheet("background:#3d3d3d; qproperty-icon: url(:/image/mailingdef.png);");
 }
 
 void MainWindow::on_BtnUserControl_clicked()
@@ -512,7 +530,6 @@ void MainWindow::slot_UnMuteUser(QListWidgetItem* item)
 
     if (checkUserInList(mute_user_list, username) == true) // проверка есть ли user в списке замьюченых
     {
-        checkUserInList(mute_user_list, username);
         item = new QListWidgetItem(QIcon(":/image/student.png"), username);
         ui->listViewUser->addItem(item);
 
@@ -568,7 +585,7 @@ void MainWindow::on_ChatBtn_clicked()
 
     if(++ShowOrHide % 2) // Если открыт то закрываем, иначе отображаем
     {
-        animation->setDuration(150);
+        animation->setDuration(100);
         animation->setStartValue(500);
         animation->setEndValue(0);
         animation->start();
@@ -577,7 +594,7 @@ void MainWindow::on_ChatBtn_clicked()
     }
     else
     {
-        animation->setDuration(150);
+        animation->setDuration(100);
         animation->setStartValue(0);
         animation->setEndValue(500);
         animation->start();
@@ -596,4 +613,35 @@ void MainWindow::on_messageBoard_textChanged()
         ui->ChatBtn->setIcon(QIcon(":/image/messageNew.png"));
         ui->ChatBtn->setIconSize(QSize(45,45));
     }
+}
+
+void MainWindow::on_StartSession_clicked()
+{
+    ui->StartSession->setDisabled(true);
+    ui->StopSession->setDisabled(false);
+}
+
+void MainWindow::on_StopSession_clicked()
+{
+    ui->StartSession->setDisabled(false);
+    ui->StopSession->setDisabled(true);
+
+    ui->lable_session_num->setText("");
+}
+
+void MainWindow::onNumberSession(QString session)
+{
+    ui->lable_session_num->setText(session);
+}
+
+void MainWindow::onFailedConnect()
+{
+    // Если произошел Faile Connect, то проверяем логику кнопок
+    // Логическая блокировка кнопки запуска и остановки стрима
+    ui->StartSession->setDisabled(false);
+    ui->StopSession->setDisabled(true);
+
+    // Логическая блокировка кнопок Disconnect и разблокировка connect
+    ui->connect->setDisabled(false);
+    ui->Disconnect->setDisabled(true);
 }

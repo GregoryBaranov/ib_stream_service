@@ -1,0 +1,40 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/close-gray.png</file>
+        <file>image/close-orange.png</file>
+        <file>image/close.png</file>
+        <file>image/exit.png</file>
+        <file>image/icons8-удалить-32.png</file>
+        <file>image/pause-orange.png</file>
+        <file>image/pause.png</file>
+        <file>image/play-orange.png</file>
+        <file>image/play.png</file>
+        <file>image/plus-orange.png</file>
+        <file>image/plus.png</file>
+        <file>image/skip-next-orange.png</file>
+        <file>image/skip-next.png</file>
+        <file>image/skip-previous-orange.png</file>
+        <file>image/skip-previous.png</file>
+        <file>image/stop-orange.png</file>
+        <file>image/stop.png</file>
+        <file>image/window-maximize-gray.png</file>
+        <file>image/window-maximize.png</file>
+        <file>image/window-minimize-gray.png</file>
+        <file>image/window-minimize.png</file>
+        <file>image/window-restore-gray.png</file>
+        <file>image/window-restore.png</file>
+        <file>image/x.png</file>
+        <file>image/xx.png</file>
+        <file>image/top_logo.png</file>
+        <file>image/_114579-839.jpg</file>
+        <file>image/mute.png</file>
+        <file>image/student.png</file>
+        <file>image/ban.png</file>
+        <file>image/search.png</file>
+        <file>image/white_search.png</file>
+        <file>image/bell.png</file>
+        <file>image/messagedef.png</file>
+        <file>image/messageNew.png</file>
+        <file>image/settings-cogwheel-button.png</file>
+    </qresource>
+</RCC>

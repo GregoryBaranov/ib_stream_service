@@ -5,69 +5,57 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/style.css') }}">
-  <link href="jumbotron.css" rel="stylesheet">
 
 </head>
 
-<body>
+<body scroll="no" style="overflow: hidden"> 
+  <!-- scroll="no" style="overflow: hidden"> -->
+  <!-- <div id="particles-js"></div> -->
+
+
+
+
   <main>
-    <div class="container ">
-      <div class="row mt-4"></div>
-      <div class="row mt-4"></div>
-      <div class="row mt-4"></div>
-      <div class="row mt-4"></div>
-      <div class="row mt-4"></div>
-      <div class="row mt-4"></div>
-      <div class="col-sm-12">
-        <div class="panel panel-primary headPanel">
-          <div class="panel-heading">
+    <div class="panel panel-primary headPanel">
+      <div class="panel-heading">
+      </div>
+      <div class="videoContent">
+      </div>
+    </div>
+    <input type="button" style="color: #fff;background-color: #428bca;border-color: #428bca;" id="temp"
+      class="btn btn-info " value="Показать чат">
+  </main>
 
-
-
-
-
-
-          </div>
-          <div class="videoContent">
+      <div id="a">
+      <div id="cont1" style="padding: 0px 15px 0px 15px !important;">
+        <div class="row d-flex justify-content-center">
+          <div id="output" style="height: 85vh; width: 100%; " class="message_holder overflow-auto border alert mb-0">
           </div>
         </div>
-        <input type="button" style="color: #fff;background-color: #428bca;border-color: #428bca;" id="temp"
-          class="btn btn-info " value="Показать чат">
-        <!-- <div class="panel  sidePanel" style="background-color: #201f1f;"> -->
-        <div class="panel" id="cont1" style="background-color: #201f1f">
-
-          <div class="scrollbar" id="si">
-            <div class="row d-flex justify-content-center">
-              <div id="output" style="height: 465px; width: 100%; "
-                class="message_holder overflow-auto border alert alert-info  mb-0"></div>
-            </div>
-          </div>
+        <div class="form-control">
           <form action="" method="POST">
-            <div class="row d-flex justify-content-center">
-              <input type="text" style="width: 100%;" class="message border border-primary " placeholder="Messages" />
-            </div>
-            <div class="row">
-              <div class="col d-flex justify-content-center">
-                <input type="button" style="width: 100%;color: #fff;background-color: #428bca;border-color: #428bca;"
-                  class="btn btn-info btn-hide " value="Скрыть чат">
-                <input style="width: 100%; " class="btn btn-success btn-send ml-2" id="as" type="submit"
-                  value="Отправить">
-              </div>
-            </div>
+            <input type="text" style="width: 100%;" class="message" placeholder="Messages" />
+            <input type="button" style="width: 100%;color: #fff;background-color: #428bca;border-color: #428bca;"
+              class="btn btn-info btn-hide " value="Скрыть чат">
+            <input style="width: 100%; " class="btn btn-success btn-send ml-2" id="as" type="submit" value="Отправить">
           </form>
         </div>
       </div>
     </div>
-    <div id="particles-js"></div>
 </body>
-</main>
 
 </html>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity=<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"</script>  <script src="http://threejs.org/examples/js/libs/stats.min.js"</script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity=<script
+  src="//code.jquery.com/jquery-1.11.1.min.js">
+</script>
+<script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" </script> <script
+  src="http://threejs.org/examples/js/libs/stats.min.js" </script> <script
+  src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+  integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+  integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+  integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">

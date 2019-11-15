@@ -5,14 +5,37 @@ height: 100%;
 background-color: #201f1f; 
 background-repeat: no-repeat; 
 bottom: 0;
- } 
- 
+} 
+
+#a{
+  z-index: 1;
+  width: 25%;
+  position: absolute;
+  right: 0;
+}
+
+.message{
+  border: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+input:active, :hover, :focus {
+  outline: 0;
+  outline-offset: 0;
+}
+
+main{
+  margin: 1% auto !important;
+}
 
 .modal-body{
   background: #201f1f;
-  border: solid;
+  border: 1px double white;
+  border-radius: 35px;
 }
-
+.modal-content {
+  background: None;
+}
 /* STRUCTURE */
 
 #formContent {

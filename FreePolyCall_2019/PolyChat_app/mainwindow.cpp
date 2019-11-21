@@ -30,9 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->Disconnect, &QToolButton::clicked,
             this, &MainWindow::onDisconnectBtnClick);
 
-    connect(client, SIGNAL(disconnected()),
-            client, SLOT(deleteLater()));
-
     // connect для кнопки отправить сообщение
     connect(ui->send, SIGNAL(clicked()),
             this, SLOT(onSendMessageBtnClick()));
@@ -62,6 +59,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete user_in_list;
+    delete popUp;
 }
 
 void MainWindow::settingDesigner() // Вид и проверки для hostEdit, spinPort, connect;
@@ -104,33 +102,27 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     this->setStyleSheet("font: 12pt Microsoft YaHei UI;");
     this->setMouseTracking(true); // отслеживание курсора мыши без нажатых кнопокы
 
-    // Разрешаем остлеживание курсора по всему приложению (блокам)
-    ui->centralWidget->setMouseTracking(true);
-    ui->titleBar->setMouseTracking(true);
-    ui->pnlSettings->setMouseTracking(true);
-    ui->pnlStream->setMouseTracking(true);
-    ui->pnlChat->setMouseTracking(true);
-
-    QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);
-    shadowEffect->setBlurRadius(9); // Устанавливаем радиус размытия
-    shadowEffect->setOffset(0);     // Устанавливаем смещение тени
-
-    ui->centralWidget->setGraphicsEffect(shadowEffect);   // Устанавливаем эффект тени на окно
-    ui->centralWidget->layout()->setMargin(0);            // Устанавливаем размер полей
-    ui->centralWidget->layout()->setSpacing(0);
+    cursorTracking(); // отслеживание курсора
+    shadowEffect(); // эффект тени для растягивания окна приложения
 
     // позволяет нажать кнопку send с помощью Enter
     ui->send->setShortcut(Qt::Key_Return);
 
     ui->label->setDisabled(true);
 
+    // логика для кнопок
     ui->StartSession->setDisabled(false);
     ui->StopSession->setDisabled(true);
+    // Только для чтения информации
+    ui->messageBoard->setReadOnly(true);
 
+    // дефолтная тема приложения
     on_DarkDesign_clicked();
 
+    // дефолтный статус о состоянии окна чата
     statusBell = showChat;
 
+    // Надо будет убрать
     //----------------------------------------- фэйковое добавление пользователей -------------------------------------------
     char names[][255] = {"Timur", "Alex", "Vasya", "Marina", "Demid", "Arseniy", "Serega"};
 
@@ -140,9 +132,27 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
         ui->listViewUser->addItem(user_in_list);
     }
     //----------------------------------------- фэйковое добавление пользователей -------------------------------------------
+}
 
-    // Только для чтения информации
-    ui->messageBoard->setReadOnly(true);
+void MainWindow::cursorTracking()
+{
+    // Разрешаем остлеживание курсора по всему приложению (блокам)
+    ui->centralWidget->setMouseTracking(true);
+    ui->titleBar->setMouseTracking(true);
+    ui->pnlSettings->setMouseTracking(true);
+    ui->pnlStream->setMouseTracking(true);
+    ui->pnlChat->setMouseTracking(true);
+}
+
+void MainWindow::shadowEffect()
+{
+    QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);
+    shadowEffect->setBlurRadius(9); // Устанавливаем радиус размытия
+    shadowEffect->setOffset(0);     // Устанавливаем смещение тени
+
+    ui->centralWidget->setGraphicsEffect(shadowEffect);   // Устанавливаем эффект тени на окно
+    ui->centralWidget->layout()->setMargin(0);            // Устанавливаем размер полей
+    ui->centralWidget->layout()->setSpacing(0);
 }
 
 QPoint MainWindow::previousPosition() const
@@ -347,7 +357,23 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
             .arg(QDateTime::currentDateTime().toString("hh:mm:ss")) // отображает время прихода сообщения
             .arg(message); // само сообщение
 
+    popUpТotification(message);
+
     ui->messageBoard->append(fullMessage); // отображение пришедшего сообщения
+}
+
+void MainWindow::popUpТotification(QString msg)
+{
+    if(statusBell == hideChat)
+    {
+        popUp = new PopUp();
+
+        if (msg.split(":")[0] != "")
+        {
+            popUp->setPopupText(msg.split(":")[0] + " прислал сообщение!");
+            popUp->show();
+        }
+    }
 }
 
 void MainWindow::on_Settings_clicked() // Слот для отображения/скрытия меню настроек
@@ -373,9 +399,15 @@ void MainWindow::on_Settings_clicked() // Слот для отображения
     }
 }
 
-void MainWindow::on_btn_close_clicked() // Слот для отключения от сервера
+void MainWindow::on_btn_close_clicked() // Слот выхода из приложения сервера
 {
-    client->sendMessage("Disconnect");
+    client->sendMessage("Disconnect"); // Сигнал о выходе стримира из приложения
+    closeApp(); // Закрытие приложения
+}
+
+int MainWindow::closeApp() // Закрытие приложения
+{
+    exit(0);
 }
 
 void MainWindow::on_DarkDesign_clicked() // Слот для переключения на темную тему
@@ -442,7 +474,7 @@ void MainWindow::on_WhiteDesign_clicked() // Слот для переключе�
     ui->pnlChat->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
 }
 
-void MainWindow::on_BtnUserControl_clicked()
+void MainWindow::on_BtnUserControl_clicked() // Открытие/закрытие панельки со списком юзеров
 {
     if(ui->GroupUserListWidget->isVisible()){
         ui->GroupUserListWidget->hide();
@@ -461,7 +493,7 @@ void MainWindow::on_BtnUserControl_clicked()
 
 }
 
-void MainWindow::on_To_Ban_Button_clicked()
+void MainWindow::on_To_Ban_Button_clicked() // Панелька со списком юзеров со статусом бан
 {
     // to do
     // Реализовать запрос на сервер для бана пользователя с трансляции
@@ -481,7 +513,7 @@ void MainWindow::on_To_Ban_Button_clicked()
     }
 }
 
-void MainWindow::on_Mute_Button_clicked()
+void MainWindow::on_Mute_Button_clicked() // Сигнал о мьюте пользователя
 {
     if(ui->listViewUser->currentItem())
     {
@@ -499,7 +531,7 @@ void MainWindow::on_Mute_Button_clicked()
     }
 }
 
-void MainWindow::on_ShowBlacklist_clicked()
+void MainWindow::on_ShowBlacklist_clicked() // Открытие/закрытие панельки с забаненными пользователями
 {
     if(ui->GroupBanWidget->isVisible())
     {
@@ -513,7 +545,7 @@ void MainWindow::on_ShowBlacklist_clicked()
     }
 }
 
-void MainWindow::slot_UnbrokenUser(QListWidgetItem* item)
+void MainWindow::slot_UnbrokenUser(QListWidgetItem* item) // Метод для разбана пользователя
 {
     QString username = ui->user_blacklist->currentItem()->text();
     item = new QListWidgetItem(QIcon(":/image/student.png"), username);
@@ -524,7 +556,7 @@ void MainWindow::slot_UnbrokenUser(QListWidgetItem* item)
     delete ui->user_blacklist->currentItem();
 }
 
-void MainWindow::slot_UnMuteUser(QListWidgetItem* item)
+void MainWindow::slot_UnMuteUser(QListWidgetItem* item) // Метод для размьюта пользователя
 {
     QString username = ui->listViewUser->currentItem()->text();
 
@@ -539,7 +571,7 @@ void MainWindow::slot_UnMuteUser(QListWidgetItem* item)
     }
 }
 
-void MainWindow::on_lineSearchUserList_textChanged(const QString &arg1)
+void MainWindow::on_lineSearchUserList_textChanged(const QString &arg1) // поиск в списке пользователей
 {
     hide_all(ui->listViewUser);
     QList<QListWidgetItem*> matches ( ui->listViewUser->findItems(arg1, Qt::MatchFlag::MatchContains) );
@@ -547,7 +579,7 @@ void MainWindow::on_lineSearchUserList_textChanged(const QString &arg1)
         item->setHidden(false);
 }
 
-void MainWindow::on_lineSearchBanUserList_textChanged(const QString &arg1)
+void MainWindow::on_lineSearchBanUserList_textChanged(const QString &arg1) // поиск в списке забаненных
 {
     hide_all(ui->user_blacklist);
     QList<QListWidgetItem*> matches ( ui->user_blacklist->findItems(arg1, Qt::MatchFlag::MatchContains) );
@@ -555,12 +587,14 @@ void MainWindow::on_lineSearchBanUserList_textChanged(const QString &arg1)
         item->setHidden(false);
 }
 
+// метод для скрытия неподходящих пользователей при поимке
 void MainWindow::hide_all(QListWidget *listWidjet)
 {
     for(int row(0); row < listWidjet->count(); row++ )
         listWidjet->item(row)->setHidden(true);
 }
 
+// метод для проверки на наличие в списке (bool)
 template<class T1, class T2>
 bool MainWindow::checkUserInList(const list<T1> &lst, T2 username)
 {
@@ -578,6 +612,7 @@ bool MainWindow::checkUserInList(const list<T1> &lst, T2 username)
     return false;
 }
 
+// Анимация открытия и закрытия чата
 void MainWindow::on_ChatBtn_clicked()
 {
     QPropertyAnimation *animation = new QPropertyAnimation(ui->pnlChat, "maximumWidth");
@@ -590,7 +625,7 @@ void MainWindow::on_ChatBtn_clicked()
         animation->setEndValue(0);
         animation->start();
 
-        statusBell = hideChat;
+        statusBell = hideChat; // Статус для оповещения
     }
     else
     {
@@ -601,27 +636,28 @@ void MainWindow::on_ChatBtn_clicked()
 
         ui->ChatBtn->setIcon(QIcon(":/image/messagedef.png"));
         ui->ChatBtn->setIconSize(QSize(45,45));
-        statusBell = showChat;
+        statusBell = showChat; // Статус для оповещения
     }
 }
 
 
 void MainWindow::on_messageBoard_textChanged()
 {
-    if(statusBell == hideChat)
+    if(statusBell == hideChat) // Если статус чата hideChat то
     {
+        // делаем оповещение о наличии нового сообщения
         ui->ChatBtn->setIcon(QIcon(":/image/messageNew.png"));
         ui->ChatBtn->setIconSize(QSize(45,45));
     }
 }
 
-void MainWindow::on_StartSession_clicked()
+void MainWindow::on_StartSession_clicked() // запуск стрима
 {
     ui->StartSession->setDisabled(true);
     ui->StopSession->setDisabled(false);
 }
 
-void MainWindow::on_StopSession_clicked()
+void MainWindow::on_StopSession_clicked() // остановка стрима
 {
     ui->StartSession->setDisabled(false);
     ui->StopSession->setDisabled(true);
@@ -629,11 +665,15 @@ void MainWindow::on_StopSession_clicked()
     ui->lable_session_num->setText("");
 }
 
+// отоброжение номера трансляции
 void MainWindow::onNumberSession(QString session)
 {
     ui->lable_session_num->setText(session);
 }
 
+// to do
+// Желательно реализовать ping pong проверку
+// При соединении что-то пошло не так
 void MainWindow::onFailedConnect()
 {
     // Если произошел Faile Connect, то проверяем логику кнопок
@@ -645,3 +685,4 @@ void MainWindow::onFailedConnect()
     ui->connect->setDisabled(false);
     ui->Disconnect->setDisabled(true);
 }
+

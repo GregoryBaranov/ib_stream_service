@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>936</width>
-    <height>618</height>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -308,6 +308,13 @@ padding:1px;</string>
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
+       <item row="13" column="0" colspan="2">
+        <widget class="QPushButton" name="ShowBlacklist">
+         <property name="text">
+          <string>Blacklist</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0" colspan="2">
         <widget class="QLineEdit" name="hostEdit">
          <property name="minimumSize">
@@ -315,6 +322,26 @@ padding:1px;</string>
            <width>0</width>
            <height>40</height>
           </size>
+         </property>
+        </widget>
+       </item>
+       <item row="16" column="0" colspan="2">
+        <widget class="QLabel" name="verticalSp">
+         <property name="minimumSize">
+          <size>
+           <width>280</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="QPushButton" name="BtnUserControl">
+         <property name="text">
+          <string>User control</string>
          </property>
         </widget>
        </item>
@@ -367,13 +394,6 @@ padding:1px;</string>
          </layout>
         </widget>
        </item>
-       <item row="6" column="1">
-        <widget class="QPushButton" name="WhiteDesign">
-         <property name="text">
-          <string>White</string>
-         </property>
-        </widget>
-       </item>
        <item row="5" column="0">
         <widget class="QPushButton" name="Disconnect">
          <property name="minimumSize">
@@ -387,55 +407,16 @@ padding:1px;</string>
          </property>
         </widget>
        </item>
-       <item row="14" column="0" colspan="2">
-        <widget class="QWidget" name="GroupBanWidget" native="true">
+       <item row="4" column="1">
+        <widget class="QLabel" name="lable_session_num">
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>70</height>
+           <height>40</height>
           </size>
          </property>
-         <layout class="QGridLayout" name="gridLayout_6">
-          <item row="1" column="0" colspan="2">
-           <widget class="QListWidget" name="user_blacklist"/>
-          </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QLineEdit" name="lineSearchBanUserList">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>40</height>
-             </size>
-            </property>
-            <property name="placeholderText">
-             <string>Search...</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="13" column="0" colspan="2">
-        <widget class="QPushButton" name="ShowBlacklist">
-         <property name="text">
-          <string>Blacklist</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="2">
-        <widget class="QPushButton" name="BtnUserControl">
-         <property name="text">
-          <string>User control</string>
-         </property>
-        </widget>
-       </item>
-       <item row="16" column="0" colspan="2">
-        <widget class="QLabel" name="verticalSp">
-         <property name="minimumSize">
-          <size>
-           <width>280</width>
-           <height>0</height>
-          </size>
+         <property name="styleSheet">
+          <string notr="true"/>
          </property>
          <property name="text">
           <string/>
@@ -455,6 +436,13 @@ padding:1px;</string>
          </property>
         </widget>
        </item>
+       <item row="6" column="1">
+        <widget class="QPushButton" name="WhiteDesign">
+         <property name="text">
+          <string>White</string>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="0">
         <widget class="QSpinBox" name="spinPort">
          <property name="minimumSize">
@@ -465,20 +453,32 @@ padding:1px;</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QLabel" name="lable_session_num">
+       <item row="14" column="0" colspan="2">
+        <widget class="QWidget" name="GroupBanWidget" native="true">
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>40</height>
+           <height>70</height>
           </size>
          </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="2" column="0" colspan="2">
+           <widget class="QListWidget" name="user_blacklist"/>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QLineEdit" name="lineSearchBanUserList">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="placeholderText">
+             <string>Search...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>

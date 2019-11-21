@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "popup.h"
 #include "client.h"
 #include <QPushButton>
 #include <QLineEdit>
@@ -9,6 +10,9 @@
 #include <QListWidget>
 #include <QLabel>
 #include <list>
+#include <string>
+#include <fstream>
+#include <sstream>
 #include <QStandardItemModel>
 #include <QMouseEvent>
 #include <QMessageBox>
@@ -63,21 +67,26 @@ public:
     template<class T1, class T2>
     bool checkUserInList(const list<T1> &lst, T2 username); // проверка есть юзер или нет
     void hide_all(QListWidget *listWidjet); // скрывает все не нужные элименты
+    void popUpТotification(QString msg);
 
 public slots:
     void setPreviousPosition(QPoint previousPosition); // устанавливаем новую предыдущую позицию
 
 signals:
     void previousPositionChanged(QPoint previousPosition); // новая предыдущая позиция
+    void NewSession(QString str); // новая предыдущая позиция
 
 private:
     Ui::MainWindow *ui;
 
     Client* client;
 
+    PopUp *popUp;
+
     void btn_max();  // свёртывание и развертывание программы в маленький и большой режимы
     void mainApplicationDesigner(); // Дефолтный фид приложения
     void settingDesigner(); // Вид и проверки для hostEdit, spinPort, connect;
+    int closeApp();
 
     // Переменная, от которой будем отталкиваться при работе с перемещением и изменением размера окна
     MouseType m_leftMouseButtonPressed; // enum значения курсора
@@ -94,6 +103,9 @@ private:
     QStringList userList; // все пользователи
 
     BellStatus statusBell; // enum для проверки статуса окна
+
+    void cursorTracking(); // отслежживание курсора
+    void shadowEffect(); // эффект для растягивания окна приложения
 protected:
     // функции отслеживания мыши
     void mousePressEvent(QMouseEvent *event); // Позиция клика

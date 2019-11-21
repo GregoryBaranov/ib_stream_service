@@ -8,6 +8,7 @@
 #include <QVariant>
 #include <QAbstractSocket>
 
+
 class Client : public QObject
 {
     Q_OBJECT
@@ -18,6 +19,7 @@ public:
 
     void connectSocket(const QString& host, unsigned int port); // функция установки соединения
     void sendMessage(const QString& message); // функция отправки сообщения
+
     template<class T1, class T2>
     T1 generateSessionNumber(T1 rng, T2 range);
 
@@ -26,7 +28,6 @@ private:
     QString _host;
     QWebSocket *clientSocket;
     int *Namber;
-
 signals:
     void receiveMessage(QString message); // сигнал для получения сообщения
     void newNumberSession(QString num_session);

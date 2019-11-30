@@ -8,6 +8,7 @@
     integrity=<script src="//code.jquery.com/jquery-1.11.1.min.js">
   </script>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/style.css') }}">
+
 </head>
 
 <body scroll="no" style="overflow: hidden">
@@ -19,12 +20,10 @@
     <div class="fadeIn second">
       <div class="row-2 mt-4">
         <div class="col">
-          <button type="button" href="page3" onclick="window.location.href='http://www.google.com/'"
-            class="btn font-weight-bolder">Help c:</button>
+          <button type="button" href="page3" onclick="window.location.href='http://www.google.com/'" class="btn font-weight-bolder">Help c:</button>
         </div>
         <div class="col mb-4">
-          <button type="button" class="btn font-weight-bolder " data-toggle="modal" data-target="#exampleModalCenter"
-            href="/getframe">Connect</button>
+          <button type="button" class="btn font-weight-bolder " data-toggle="modal" data-target="#exampleModalCenter">Connect</button>
         </div>
       </div>
     </div>
@@ -43,7 +42,7 @@
                   required id="text_id" name="ses_id" placeholder='SessionID' title="5 цифр" value="12345">
               </div>
               <div class="col d-flex justify-content-center">
-                <input type="text" class="btn font-weight-bolder d-flex justify-content-center" placeholder='Username'
+                <input type="text" class="btn font-weight-bolder d-flex justify-content-center" placeholder='Username'  oninput="stst()" name="name_usr"
                   required value="Username">
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
@@ -53,11 +52,11 @@
               </div>
               <div class="col d-flex justify-content-center">
                 <input type="email" class="btn font-weight-bolder d-flex justify-content-center"
-                  pattern="[a-z0-9.%+-]+@[a-z0-9.-]+.[a-z]{2,}$" placeholder='Email' required value="aawd@wad.awd">
+                  pattern="[a-z0-9.%+-]+@[a-z0-9.-]+.[a-z]{2,}$" placeholder='Email' name="Email" required value="aawd@wad.awd">
               </div>
               <div class="col d-flex justify-content-center">
                 <button type="button" class="btn font-weight-bolder" data-dismiss="modal">Close</button>
-                <button class="btn font-weight-bolder" type="submit" onclick="setcookie()"> Connect </button>
+                <button class="btn font-weight-bolder" type="submit" "> Connect </button>
               </div>
             </div>
         </div>
@@ -212,3 +211,14 @@
 </script>
 {% endif %}
 {% endwith %}
+
+  <script type="text/javascript" src="{{ url_for('static', filename='js/antimat.js') }}"></script>
+ <script type="text/javascript">
+function stst(){
+   var message = document.querySelector('input[name="name_usr"]').value;
+   if(window.containsMat(message)){
+      document.querySelector('input[name="name_usr"]').value = "nonono"
+   }
+   }
+
+</script>

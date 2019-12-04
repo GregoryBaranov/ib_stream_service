@@ -1,4 +1,5 @@
 #include "client.h"
+#include <QMaskGenerator>
 
 Client::Client(QObject *parent) : QObject(parent)
 {
@@ -19,8 +20,26 @@ T1 Client::generateSessionNumber(T1 first, T2 end){
     return uid(gen);
 }
 
+template<class T1, class T2>
+bool Client::checkUserInList(const list<T1> &lst, T2 username)
+{
+    for (auto i = lst.cbegin(); i != lst.cend(); i++)
+    {
+        if (username == *i)
+        {
+            return true;
+        }
+        else
+        {
+            continue;
+        }
+    }
+    return false;
+}
+
 void Client::connectSocket(const QString& host, unsigned int port) // Соединяется с сервером
 {
+    QMaskGenerator *gen;
     if (clientSocket != nullptr && clientSocket->isValid())
     {
         return; // Необходимо проверить и закрыть (или вернуть) соединение, если оно открыто
@@ -31,7 +50,7 @@ void Client::connectSocket(const QString& host, unsigned int port) // Соеди
     _host = host;
 
     QString NumSession = QVariant(generateSessionNumber(10000, 99999)).toString();
-    emit newNumberSession(NumSession);// сигнал передачи номера сессии в окно
+    emit newNumberSession(NumSession);
 
     QUrl qUrl;
     qUrl.setPort((int)_port); // выставление порта

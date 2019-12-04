@@ -45,7 +45,8 @@ class MainWindow : public QMainWindow
 
     // тип клика мыши, при перемещении курсора по этому типу будем определять
     // что именно нужно сделать, перенести окно, или изменить его размер с одной из сторон
-    enum MouseType {
+    enum MouseType
+    {
         None = 0,
         Top,
         Bottom,
@@ -55,19 +56,35 @@ class MainWindow : public QMainWindow
     };
 
     // для отслеживания состояния окна чата
-    enum BellStatus{
+    enum BellStatus
+    {
         showChat,
         hideChat
+    };
+
+    enum showMesseg
+    {
+        showMessage,
+        hideMessage
+    };
+
+    enum CheckConnect{
+        SUCCESS_CONNECT,
+        FAILURE_CONNECT,
+        NOT_RECOGNIZED
+    };
+
+    enum CheckDesign{
+        DARK,
+        WHITE
     };
 
 public:
     explicit MainWindow(QWidget *parent = nullptr); // явный конструктор
     ~MainWindow(); // деструктор
 
-    template<class T1, class T2>
-    bool checkUserInList(const list<T1> &lst, T2 username); // проверка есть юзер или нет
     void hide_all(QListWidget *listWidjet); // скрывает все не нужные элименты
-    void popUpТotification(QString msg);
+    void popUpТotification(QString msg = "", QString totification = "");
 
 public slots:
     void setPreviousPosition(QPoint previousPosition); // устанавливаем новую предыдущую позицию
@@ -87,6 +104,7 @@ private:
     void mainApplicationDesigner(); // Дефолтный фид приложения
     void settingDesigner(); // Вид и проверки для hostEdit, spinPort, connect;
     int closeApp();
+    void FailedConnect();
 
     // Переменная, от которой будем отталкиваться при работе с перемещением и изменением размера окна
     MouseType m_leftMouseButtonPressed; // enum значения курсора
@@ -103,9 +121,17 @@ private:
     QStringList userList; // все пользователи
 
     BellStatus statusBell; // enum для проверки статуса окна
+    showMesseg flagMsg;
+    CheckConnect checkConnect;
+    CheckDesign checkDesign;
 
     void cursorTracking(); // отслежживание курсора
     void shadowEffect(); // эффект для растягивания окна приложения
+    void disconnectFromServer();
+
+    template<class T1, class T2>
+    bool checkUserInList(const list<T1> &lst, T2 username); // проверка есть юзер или нет
+
 protected:
     // функции отслеживания мыши
     void mousePressEvent(QMouseEvent *event); // Позиция клика
@@ -115,7 +141,6 @@ protected:
 private slots:
     void onReceiveMessage(QString message); // Слот для получения сообщения
     void onNumberSession(QString session);
-    void onFailedConnect();
     void onConnectBtnClick(); // Слот для кнопки соединения с сервером
     void onDisconnectBtnClick(); // Слот для кнопки отключения от сервера (можно удалить)
     void onSendMessageBtnClick(); // Слот для кнопки отправки сообщения

@@ -42,10 +42,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->btn_close, &QToolButton::clicked,
             this, &MainWindow::close);
 
-    // connect при сигнале failedConnect
-    connect(client, SIGNAL(failedConnect()),
-            this, SLOT(onFailedConnect()));
-
     // connect двойного клика в виджете по значению
     connect(ui->user_blacklist, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
             this, SLOT(slot_UnbrokenUser(QListWidgetItem*)));
@@ -115,23 +111,13 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     ui->StopSession->setDisabled(true);
     // Только для чтения информации
     ui->messageBoard->setReadOnly(true);
+    ui->To_Ban_Button->setDisabled(true);
 
     // дефолтная тема приложения
     on_DarkDesign_clicked();
 
     // дефолтный статус о состоянии окна чата
     statusBell = showChat;
-
-    // Надо будет убрать
-    //----------------------------------------- фэйковое добавление пользователей -------------------------------------------
-    char names[][255] = {"Timur", "Alex", "Vasya", "Marina", "Demid", "Arseniy", "Serega"};
-
-    for (int index=0; index<sizeof(names)/sizeof(names[0]); index++){
-        user_in_list = new QListWidgetItem(QIcon(":/image/student.png"), names[index]);
-        userList.append(names[index]);
-        ui->listViewUser->addItem(user_in_list);
-    }
-    //----------------------------------------- фэйковое добавление пользователей -------------------------------------------
 }
 
 void MainWindow::cursorTracking()
@@ -172,7 +158,8 @@ void MainWindow::setPreviousPosition(QPoint previousPosition)
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     // При клике левой кнопкой мыши
-    if (event->button() == Qt::LeftButton ) {
+    if (event->button() == Qt::LeftButton )
+    {
         // Определяем, в какой области произошёл клик
         m_leftMouseButtonPressed = checkResizableField(event);
         setPreviousPosition(event->pos()); // и устанавливаем позицию клика
@@ -183,7 +170,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
     // При отпускании левой кнопки мыши сбрасываем состояние клика
-    if (event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton)
+    {
         m_leftMouseButtonPressed = None;
     }
     return QWidget::mouseReleaseEvent(event);
@@ -192,21 +180,27 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
     // При перемещении мыши, проверяем статус нажатия левой кнопки мыши
-    switch (m_leftMouseButtonPressed) {
-    case Move: {
+    switch (m_leftMouseButtonPressed)
+    {
+    case Move:
+    {
         // При этом проверяем, не максимизировано ли окно
-        if (isMaximized()) {
+        if (isMaximized())
+        {
             // При перемещении из максимизированного состояния
             // Необходимо вернуть окно в нормальное состояние и установить стили кнопки
-            // А также путём нехитрых вычислений пересчитать позицию окна,
+            // А также пересчитать позицию окна,
             // чтобы оно оказалось под курсором
             this->layout()->setMargin(9);
             auto part = event->screenPos().x() / width();
             this->showNormal();
             auto offsetX = width() * part;
+
             setGeometry(event->screenPos().x() - offsetX, 0, width(), height());
             setPreviousPosition(QPoint(offsetX, event->y()));
-        } else {
+        }
+        else
+        {
             // Если окно не максимизировано, то просто перемещаем его относительно
             // последней запомненной позиции, пока не отпустим кнопку мыши
             auto dx = event->x() - m_previousPosition.x();
@@ -215,32 +209,40 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
         }
         break;
     }
-    case Top: {
+    case Top:
+    {
         // Для изменения размеров также проверяем на максимизацию
         // поскольку мы же не можем изменить размеры у максимизированного окна
-        if (!isMaximized()) {
+        if (!isMaximized())
+        {
             auto dy = event->y() - m_previousPosition.y();
             setGeometry(x(), y() + dy, width(), height() - dy);
         }
         break;
     }
-    case Bottom: {
-        if (!isMaximized()) {
+    case Bottom:
+    {
+        if (!isMaximized())
+        {
             auto dy = event->y() - m_previousPosition.y();
             setGeometry(x(), y(), width(), height() + dy);
             setPreviousPosition(event->pos());
         }
         break;
     }
-    case Left: {
-        if (!isMaximized()) {
+    case Left:
+    {
+        if (!isMaximized())
+        {
             auto dx = event->x() - m_previousPosition.x();
             setGeometry(x() + dx, y(), width() - dx, height());
         }
         break;
     }
-    case Right: {
-        if (!isMaximized()) {
+    case Right:
+    {
+        if (!isMaximized())
+        {
             auto dx = event->x() - m_previousPosition.x();
             setGeometry(x(), y(), width() + dx, height());
             setPreviousPosition(event->pos());
@@ -318,14 +320,12 @@ void MainWindow::btn_max()
 
 void MainWindow::onConnectBtnClick() // Слот для кнопки соединения с сервером
 {
-    qDebug() << "connect";
-    // Логическая блокировка кнопок connect и разблокировка Disconnect
-    ui->connect->setDisabled(true);
-    ui->Disconnect->setDisabled(false);
-
-    ui->messageBoard->append("Connection attempt...");
+    checkConnect = FAILURE_CONNECT;
     unsigned int port = ui->spinPort->value();
+
     client->connectSocket(ui->hostEdit->text(), port);
+
+    qDebug() << "FAILURE_CONNECT1";
 }
 
 void MainWindow::onDisconnectBtnClick() // Слот для кнопки отключения от сервера
@@ -340,6 +340,9 @@ void MainWindow::onDisconnectBtnClick() // Слот для кнопки откл
     ui->Disconnect->setDisabled(true);
 
     client->sendMessage("Disconnect");
+
+    checkConnect = FAILURE_CONNECT;
+    qDebug() << "FAILURE_CONNECT3";
 }
 
 void MainWindow::onSendMessageBtnClick() // Слот для кнопки отправки сообщения
@@ -357,12 +360,57 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
             .arg(QDateTime::currentDateTime().toString("hh:mm:ss")) // отображает время прихода сообщения
             .arg(message); // само сообщение
 
-    popUpТotification(message);
+    flagMsg = showMessage;
 
-    ui->messageBoard->append(fullMessage); // отображение пришедшего сообщения
+    QRegExp re( "[%]{3}([\\S ]+)[$]{3}" );
+
+    int lastPos = 0;
+    while( ( lastPos = re.indexIn( message, lastPos ) ) != -1)
+    {
+        lastPos += re.matchedLength();
+        user_in_list = new QListWidgetItem(QIcon(":/image/student.png"), re.cap( 1 ));
+        userList.append(re.cap( 1 ));
+        ui->listViewUser->addItem(user_in_list);
+        flagMsg = hideMessage;
+        popUpТotification(re.cap( 1 ), "подключился!");
+    }
+
+    if (message == "Pong")
+    {
+        // Логическая блокировка кнопок connect и разблокировка Disconnect
+        ui->connect->setDisabled(true);
+        ui->Disconnect->setDisabled(false);
+
+        popUp = new PopUp();
+        popUp->setPopupText("Успешное соединение!");
+
+        if (checkDesign == DARK)
+        {
+            ui->connect->setStyleSheet("background:#a0a0a0;");
+            ui->Disconnect->setStyleSheet("background:#3d3d3d;");
+        }
+        else
+        {
+            ui->connect->setStyleSheet("background:#808080;");
+            ui->Disconnect->setStyleSheet("background:#fff;");
+        }
+
+        popUp->show();
+
+        flagMsg = hideMessage;
+
+        qDebug() << "SUCCESS_CONNECT";
+        checkConnect = SUCCESS_CONNECT;
+    }
+
+    if(flagMsg == showMessage)
+    {
+        popUpТotification(message, "написал сообщение!");
+        ui->messageBoard->append(fullMessage); // отображение пришедшего сообщения
+    }
 }
 
-void MainWindow::popUpТotification(QString msg)
+void MainWindow::popUpТotification(QString msg, QString totification)
 {
     if(statusBell == hideChat)
     {
@@ -370,7 +418,7 @@ void MainWindow::popUpТotification(QString msg)
 
         if (msg.split(":")[0] != "")
         {
-            popUp->setPopupText(msg.split(":")[0] + " прислал сообщение!");
+            popUp->setPopupText(msg.split(":")[0] + " " + totification);
             popUp->show();
         }
     }
@@ -382,7 +430,7 @@ void MainWindow::on_Settings_clicked() // Слот для отображения
     if(++ShowOrHide % 2) // Если открыт то закрываем, иначе отображаем
     {
         QPropertyAnimation *animation = new QPropertyAnimation(ui->pnlSettings, "maximumWidth"); //wdgSMS is your widget
-        animation->setDuration(150);
+        animation->setDuration(100);
         animation->setStartValue(302);
         animation->setEndValue(0);
         animation->start();
@@ -392,7 +440,7 @@ void MainWindow::on_Settings_clicked() // Слот для отображения
     else
     {
         QPropertyAnimation *animation = new QPropertyAnimation(ui->pnlSettings, "maximumWidth");
-        animation->setDuration(150);
+        animation->setDuration(100);
         animation->setStartValue(0);
         animation->setEndValue(302);
         animation->start();
@@ -401,8 +449,13 @@ void MainWindow::on_Settings_clicked() // Слот для отображения
 
 void MainWindow::on_btn_close_clicked() // Слот выхода из приложения сервера
 {
-    client->sendMessage("Disconnect"); // Сигнал о выходе стримира из приложения
+    disconnectFromServer();
     closeApp(); // Закрытие приложения
+}
+
+void MainWindow::disconnectFromServer()
+{
+    client->sendMessage("Disconnect"); // Сигнал о выходе стримира из приложения
 }
 
 int MainWindow::closeApp() // Закрытие приложения
@@ -412,6 +465,7 @@ int MainWindow::closeApp() // Закрытие приложения
 
 void MainWindow::on_DarkDesign_clicked() // Слот для переключения на темную тему
 {
+    checkDesign = DARK;
     // Логическая блокировка кнопок DarkDesign (семены темы) и разблокировки WhiteDesign
     ui->DarkDesign->setDisabled(true);
     ui->WhiteDesign->setDisabled(false);
@@ -452,6 +506,8 @@ void MainWindow::on_DarkDesign_clicked() // Слот для переключен
 
 void MainWindow::on_WhiteDesign_clicked() // Слот для переключения на светлую тему
 {
+    checkDesign = WHITE;
+
     // Логическая блокировка кнопок WhiteDesign (семены темы) и разблокировки DarkDesign
     ui->DarkDesign->setDisabled(false);
     ui->WhiteDesign->setDisabled(true);
@@ -499,9 +555,8 @@ void MainWindow::on_To_Ban_Button_clicked() // Панелька со списк�
     // Реализовать запрос на сервер для бана пользователя с трансляции
     if(ui->listViewUser->currentItem())
     {
-        QString status = "БАН ПОЛЬЗОВАТЕЛЯ " + ui->listViewUser->currentItem()->text(); // само сообщение
-
-        client->sendMessage(status); // отправка оповещения на сайт
+        QString status = "BAN: " + ui->listViewUser->currentItem()->text(); // само сообщение
+        client->sendMessage(status); // отправка оповещения на сервер
 
         QString username = ui->listViewUser->currentItem()->text();
         user_in_list = new QListWidgetItem(QIcon(":/image/ban.png"), username);
@@ -517,9 +572,10 @@ void MainWindow::on_Mute_Button_clicked() // Сигнал о мьюте поль
 {
     if(ui->listViewUser->currentItem())
     {
-        QString status = "ПОЛЬЗОВАТЕЛЬ " + ui->listViewUser->currentItem()->text() + " ПОЛУЧИЛ MUTE";
-
-        client->sendMessage(status); // отправка оповещения на сайт
+        QString status = "MUTE " + ui->listViewUser->currentItem()->text();
+        QString mute = "%%%MUTE&&" + ui->listViewUser->currentItem()->text() + "$$$";
+        client->sendMessage(status); // отправка оповещения на сервер
+        client->sendMessage(mute); // отправка оповещения на сервер
 
         QString username = ui->listViewUser->currentItem()->text();
         user_in_list = new QListWidgetItem(QIcon(":/image/mute.png"), username);
@@ -548,6 +604,10 @@ void MainWindow::on_ShowBlacklist_clicked() // Открытие/закрытие
 void MainWindow::slot_UnbrokenUser(QListWidgetItem* item) // Метод для разбана пользователя
 {
     QString username = ui->user_blacklist->currentItem()->text();
+
+    QString status = "UNBROKEN: " + ui->listViewUser->currentItem()->text();
+    client->sendMessage(status); // отправка оповещения на сервер
+
     item = new QListWidgetItem(QIcon(":/image/student.png"), username);
     ui->listViewUser->addItem(item);
 
@@ -562,6 +622,11 @@ void MainWindow::slot_UnMuteUser(QListWidgetItem* item) // Метод для р�
 
     if (checkUserInList(mute_user_list, username) == true) // проверка есть ли user в списке замьюченых
     {
+        QString un_mute = "%%%UNMUTE&&" + ui->listViewUser->currentItem()->text() + "$$$";
+        QString status = "UNMUTE " + ui->listViewUser->currentItem()->text();
+        client->sendMessage(status); // отправка оповещения на сервер
+        client->sendMessage(un_mute); // отправка оповещения на сервер
+
         item = new QListWidgetItem(QIcon(":/image/student.png"), username);
         ui->listViewUser->addItem(item);
 
@@ -594,7 +659,7 @@ void MainWindow::hide_all(QListWidget *listWidjet)
         listWidjet->item(row)->setHidden(true);
 }
 
-// метод для проверки на наличие в списке (bool)
+// метод для проверки на наличие в списке
 template<class T1, class T2>
 bool MainWindow::checkUserInList(const list<T1> &lst, T2 username)
 {
@@ -616,6 +681,7 @@ bool MainWindow::checkUserInList(const list<T1> &lst, T2 username)
 void MainWindow::on_ChatBtn_clicked()
 {
     QPropertyAnimation *animation = new QPropertyAnimation(ui->pnlChat, "maximumWidth");
+
     static int ShowOrHide = 0;
 
     if(++ShowOrHide % 2) // Если открыт то закрываем, иначе отображаем
@@ -640,7 +706,6 @@ void MainWindow::on_ChatBtn_clicked()
     }
 }
 
-
 void MainWindow::on_messageBoard_textChanged()
 {
     if(statusBell == hideChat) // Если статус чата hideChat то
@@ -649,6 +714,12 @@ void MainWindow::on_messageBoard_textChanged()
         ui->ChatBtn->setIcon(QIcon(":/image/messageNew.png"));
         ui->ChatBtn->setIconSize(QSize(45,45));
     }
+
+    if(checkConnect == FAILURE_CONNECT){
+        qDebug() << "FAILURE_CONNECT2";
+        FailedConnect();
+    }
+
 }
 
 void MainWindow::on_StartSession_clicked() // запуск стрима
@@ -668,14 +739,28 @@ void MainWindow::on_StopSession_clicked() // остановка стрима
 // отоброжение номера трансляции
 void MainWindow::onNumberSession(QString session)
 {
+    ui->messageBoard->append("Сессия №" + session);
     ui->lable_session_num->setText(session);
 }
 
-// to do
-// Желательно реализовать ping pong проверку
 // При соединении что-то пошло не так
-void MainWindow::onFailedConnect()
+void MainWindow::FailedConnect()
 {
+    popUp = new PopUp();
+    popUp->setPopupText("Соединение разорвано!");
+    popUp->show();
+
+    if (checkDesign == DARK)
+    {
+        ui->connect->setStyleSheet("background:#3d3d3d;;");
+        ui->Disconnect->setStyleSheet("background:#a0a0a0;");
+    }
+    else
+    {
+        ui->connect->setStyleSheet("background:#fff;");
+        ui->Disconnect->setStyleSheet("background:#808080;");
+    }
+
     // Если произошел Faile Connect, то проверяем логику кнопок
     // Логическая блокировка кнопки запуска и остановки стрима
     ui->StartSession->setDisabled(false);

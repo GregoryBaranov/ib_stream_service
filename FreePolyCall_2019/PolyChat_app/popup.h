@@ -17,6 +17,7 @@ class PopUp : public QWidget
     void setPopupOpacity(float opacity);
     float getPopupOpacity() const;
 
+
 public:
     explicit PopUp(QWidget *parent = 0);
 
@@ -40,6 +41,7 @@ private:
     QPropertyAnimation animation;   // Свойство анимации для всплывающего сообщения
     float popupOpacity;     // Свойства полупрозрачности виджета
     QTimer *timer;          // Таймер, по которому виджет будет скрыт
+
 };
 
 #endif // POPUP_H

@@ -18,11 +18,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     client.cpp \
-    popup.cpp
+    popup.cpp \
+    styleapp.cpp
 
 HEADERS  += mainwindow.h \
     client.h \
-    popup.h
+    popup.h \
+    styleapp.h
 
 FORMS    += mainwindow.ui
 

@@ -68,15 +68,11 @@ class MainWindow : public QMainWindow
         hideMessage
     };
 
-    enum CheckConnect{
+    enum CheckConnect
+    {
         SUCCESS_CONNECT,
         FAILURE_CONNECT,
         NOT_RECOGNIZED
-    };
-
-    enum CheckDesign{
-        DARK,
-        WHITE
     };
 
 public:
@@ -105,6 +101,7 @@ private:
     void settingDesigner(); // Вид и проверки для hostEdit, spinPort, connect;
     int closeApp();
     void FailedConnect();
+    void disableBtnStyle(QPushButton *, QPushButton *);
 
     // Переменная, от которой будем отталкиваться при работе с перемещением и изменением размера окна
     MouseType m_leftMouseButtonPressed; // enum значения курсора
@@ -123,7 +120,6 @@ private:
     BellStatus statusBell; // enum для проверки статуса окна
     showMesseg flagMsg;
     CheckConnect checkConnect;
-    CheckDesign checkDesign;
 
     void cursorTracking(); // отслежживание курсора
     void shadowEffect(); // эффект для растягивания окна приложения
@@ -147,7 +143,6 @@ private slots:
     void on_Settings_clicked(); // Слот для отображения/скрытия меню настроек
     void on_btn_close_clicked(); // Слот для отключения от сервера
     void on_DarkDesign_clicked(); // Слот для переключения на темную тему
-    void on_WhiteDesign_clicked(); // Слот для переключения на светлую тему
     void on_BtnUserControl_clicked(); // Слот отображения списка пользоватеей
     void on_To_Ban_Button_clicked(); // Слот для бана пользователей
     void on_Mute_Button_clicked(); // Слот для мьюта пользователей
@@ -158,8 +153,6 @@ private slots:
     void on_lineSearchBanUserList_textChanged(const QString &arg1); // при вызове определенного сигнала делаем поиск
     void on_ChatBtn_clicked(); // Скрытие чата
     void on_messageBoard_textChanged();// при вызове определенного сигнала что-то делаем.....
-    void on_StartSession_clicked();
-    void on_StopSession_clicked();
 };
 
 #endif // MAINWINDOW_H

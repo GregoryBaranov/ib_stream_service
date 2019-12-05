@@ -56,7 +56,7 @@ void Client::connectSocket(const QString& host, unsigned int port) // Соеди
     qUrl.setPort((int)_port); // выставление порта
     qUrl.setHost(_host); // выставление адреса
     qUrl.setScheme("ws"); // выставление адресации
-    qUrl.setPath("/"+NumSession); // выставление номера трансляции + NumSession
+    qUrl.setPath("/" + NumSession); // выставление номера трансляции + NumSession
 
     clientSocket->open(qUrl); // открытие соединения с сервером
 }

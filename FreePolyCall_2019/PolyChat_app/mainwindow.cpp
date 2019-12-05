@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "styleapp.h"
 #include <QGraphicsDropShadowEffect>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -23,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(onNumberSession(QString)));
 
     // connect для кнопки подключиться
-    connect(ui->connect, &QToolButton::clicked,
+    connect(ui->Connect, &QToolButton::clicked,
             this, &MainWindow::onConnectBtnClick);
 
     // connect для кнопки отключится
@@ -106,12 +107,12 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
 
     ui->label->setDisabled(true);
 
-    // логика для кнопок
-    ui->StartSession->setDisabled(false);
-    ui->StopSession->setDisabled(true);
+    ui->Connect->setDisabled(false);
+    ui->Disconnect->setDisabled(true);
+
     // Только для чтения информации
     ui->messageBoard->setReadOnly(true);
-    ui->To_Ban_Button->setDisabled(true);
+    ui->ShowBlacklist->hide();
 
     // дефолтная тема приложения
     on_DarkDesign_clicked();
@@ -330,14 +331,11 @@ void MainWindow::onConnectBtnClick() // Слот для кнопки соеди�
 
 void MainWindow::onDisconnectBtnClick() // Слот для кнопки отключения от сервера
 {
-    // Если произошел disconnect, то проверяем логику кнопок
-    // Логическая блокировка кнопки запуска и остановки стрима
-    ui->StartSession->setDisabled(false);
-    ui->StopSession->setDisabled(true);
-
     // Логическая блокировка кнопок Disconnect и разблокировка connect
-    ui->connect->setDisabled(false);
+    ui->Connect->setDisabled(false);
     ui->Disconnect->setDisabled(true);
+
+    disableBtnStyle(ui->Connect, ui->Disconnect);
 
     client->sendMessage("Disconnect");
 
@@ -378,22 +376,14 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
     if (message == "Pong")
     {
         // Логическая блокировка кнопок connect и разблокировка Disconnect
-        ui->connect->setDisabled(true);
+        ui->Connect->setDisabled(true);
         ui->Disconnect->setDisabled(false);
+
+        disableBtnStyle(ui->Disconnect, ui->Connect);
 
         popUp = new PopUp();
         popUp->setPopupText("Успешное соединение!");
 
-        if (checkDesign == DARK)
-        {
-            ui->connect->setStyleSheet("background:#a0a0a0;");
-            ui->Disconnect->setStyleSheet("background:#3d3d3d;");
-        }
-        else
-        {
-            ui->connect->setStyleSheet("background:#808080;");
-            ui->Disconnect->setStyleSheet("background:#fff;");
-        }
 
         popUp->show();
 
@@ -463,71 +453,37 @@ int MainWindow::closeApp() // Закрытие приложения
     exit(0);
 }
 
-void MainWindow::on_DarkDesign_clicked() // Слот для переключения на темную тему
-{
-    checkDesign = DARK;
-    // Логическая блокировка кнопок DarkDesign (семены темы) и разблокировки WhiteDesign
-    ui->DarkDesign->setDisabled(true);
-    ui->WhiteDesign->setDisabled(false);
-
+void MainWindow::on_DarkDesign_clicked() // Метод для переключения на темную тему
+{ 
     // Выставление стиля для темы "Dark"
     // Выставление стиля для дефолтной темы "Dark"
-    ui->hostEdit->setStyleSheet("background:#3d3d3d;");
-    ui->spinPort->setStyleSheet("background:#3d3d3d;");
-    ui->connect->setStyleSheet("background:#3d3d3d;");
-    ui->ChatBtn->setStyleSheet("background:#3d3d3d;");
-    ui->Settings->setStyleSheet("background:#3d3d3d; color:#fff;");
-    ui->btn_close->setStyleSheet("background:#3d3d3d; background-image: url(:/image/close-gray.png);");
-    ui->send->setStyleSheet("font: 12pt Microsoft YaHei UI; background:#3d3d3d; color: #fff; border: 2px solid #000;");
-    ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(:/image/window-maximize-gray.png);");
-    ui->btn_minimize->setStyleSheet("background:#3d3d3d; background-image: url(:/image/window-minimize-gray.png);");
-    ui->Disconnect->setStyleSheet("background:#3d3d3d;");
-    ui->DarkDesign->setStyleSheet("background:#3d3d3d;");
-    ui->WhiteDesign->setStyleSheet("background:#3d3d3d;");
-    ui->messageEdt->setStyleSheet("background:#3d3d3d; color: #fff; border: 2px solid #000;");
-    ui->messageBoard->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
-    ui->titleBar->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
-    ui->pnlSettings->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
-    ui->pnlStream->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
-    ui->pnlChat->setStyleSheet("background:rgba(62, 62, 62, 0.5); color: #fff; border: 2px solid #000;");
-    ui->messageEdt->setPlaceholderText("Message...");
-    ui->StartSession->setStyleSheet("background:#3d3d3d; color:#fff;");
-    ui->StopSession->setStyleSheet("background:#3d3d3d; color:#fff;");
-    ui->verticalSp->setStyleSheet("background: transparent; border-color: transparent;");
-    ui->label->setText("<img src=\":/image/top_logo.png\"  />");
-    ui->lable_session_num->setText("*****");
+    ui->centralWidget->setStyleSheet(StyleApp::getMainDarkBackground());
 
-    ui->ChatBtn->setIcon(QIcon(":/image/messagedef.png"));
+    ui->hostEdit->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->spinPort->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->Connect->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->ChatBtn->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->Settings->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->Disconnect->setStyleSheet(StyleApp::getDarkBtnDisable());
+    ui->messageEdt->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->StartSession->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->StopSession->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->verticalSp->setStyleSheet(StyleApp::getInvisibleStyle());
+
+    ui->btn_maximize->setStyleSheet(StyleApp::getDarkBtnMaximize());
+    ui->btn_minimize->setStyleSheet(StyleApp::getDarkBtnMinimize());
+    ui->btn_close->setStyleSheet(StyleApp::getDarkBtnClose());
+
+    ui->label->setText(StyleApp::getLogoPolytech());
+
+    ui->ChatBtn->setIcon(QIcon(StyleApp::getBtnShowChatIcon()));
     ui->ChatBtn->setIconSize(QSize(45,45));
 
-    ui->Settings->setIcon(QIcon(":/image/settings-cogwheel-button.png"));
+    ui->Settings->setIcon(QIcon(StyleApp::getBtnShowSettingIcon()));
     ui->Settings->setIconSize(QSize(35,35));
-}
 
-void MainWindow::on_WhiteDesign_clicked() // Слот для переключения на светлую тему
-{
-    checkDesign = WHITE;
-
-    // Логическая блокировка кнопок WhiteDesign (семены темы) и разблокировки DarkDesign
-    ui->DarkDesign->setDisabled(false);
-    ui->WhiteDesign->setDisabled(true);
-
-    // Выставление стиля для темы "White"
-    ui->send->setStyleSheet("background:#fff; color:#000;");
-    ui->StartSession->setStyleSheet("background:#fff; color:#000;");
-    ui->StopSession->setStyleSheet("background:#fff; color:#000;");
-    ui->Disconnect->setStyleSheet("background:#fff;");
-    ui->DarkDesign->setStyleSheet("background:#fff;");
-    ui->WhiteDesign->setStyleSheet("background:#fff;");
-    ui->connect->setStyleSheet("background:#fff;");
-    ui->messageEdt->setStyleSheet("background:#fff; color:#000;");
-    ui->hostEdit->setStyleSheet("background:#fff; border: 2px solid #000;");
-    ui->spinPort->setStyleSheet("background:#fff; border: 2px solid #000;");
-    ui->messageBoard->setStyleSheet("background:#fff; color:#000; border: 2px solid #000;");
-    ui->titleBar->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
-    ui->pnlSettings->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
-    ui->pnlStream->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
-    ui->pnlChat->setStyleSheet("background:rgba(255, 255, 255); color: #000; border: 2px solid #000;");
+    ui->messageEdt->setPlaceholderText("Message...");
+    ui->lable_session_num->setText("#STREAM");
 }
 
 void MainWindow::on_BtnUserControl_clicked() // Открытие/закрытие панельки со списком юзеров
@@ -537,7 +493,6 @@ void MainWindow::on_BtnUserControl_clicked() // Открытие/закрыти�
         ui->To_Ban_Button->hide();
         ui->Mute_Button->hide();
         ui->verticalSp->show();
-
     }
     else
     {
@@ -559,7 +514,7 @@ void MainWindow::on_To_Ban_Button_clicked() // Панелька со списк�
         client->sendMessage(status); // отправка оповещения на сервер
 
         QString username = ui->listViewUser->currentItem()->text();
-        user_in_list = new QListWidgetItem(QIcon(":/image/ban.png"), username);
+        user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoBan()), username);
         ui->user_blacklist->addItem(user_in_list);
 
         bun_user_list.push_back(username);
@@ -578,7 +533,7 @@ void MainWindow::on_Mute_Button_clicked() // Сигнал о мьюте поль
         client->sendMessage(mute); // отправка оповещения на сервер
 
         QString username = ui->listViewUser->currentItem()->text();
-        user_in_list = new QListWidgetItem(QIcon(":/image/mute.png"), username);
+        user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoMute()), username);
         ui->listViewUser->addItem(user_in_list);
 
         mute_user_list.push_back(username);
@@ -608,7 +563,7 @@ void MainWindow::slot_UnbrokenUser(QListWidgetItem* item) // Метод для �
     QString status = "UNBROKEN: " + ui->listViewUser->currentItem()->text();
     client->sendMessage(status); // отправка оповещения на сервер
 
-    item = new QListWidgetItem(QIcon(":/image/student.png"), username);
+    item = new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), username);
     ui->listViewUser->addItem(item);
 
     bun_user_list.remove(username);// Удаляем user-a из списка ban_user_list
@@ -627,7 +582,7 @@ void MainWindow::slot_UnMuteUser(QListWidgetItem* item) // Метод для р�
         client->sendMessage(status); // отправка оповещения на сервер
         client->sendMessage(un_mute); // отправка оповещения на сервер
 
-        item = new QListWidgetItem(QIcon(":/image/student.png"), username);
+        item = new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), username);
         ui->listViewUser->addItem(item);
 
         mute_user_list.remove(username); // Удаляем user-a из списка mute_user_list
@@ -702,6 +657,7 @@ void MainWindow::on_ChatBtn_clicked()
 
         ui->ChatBtn->setIcon(QIcon(":/image/messagedef.png"));
         ui->ChatBtn->setIconSize(QSize(45,45));
+
         statusBell = showChat; // Статус для оповещения
     }
 }
@@ -711,7 +667,7 @@ void MainWindow::on_messageBoard_textChanged()
     if(statusBell == hideChat) // Если статус чата hideChat то
     {
         // делаем оповещение о наличии нового сообщения
-        ui->ChatBtn->setIcon(QIcon(":/image/messageNew.png"));
+        ui->ChatBtn->setIcon(QIcon(StyleApp::getLogoNewMessage()));
         ui->ChatBtn->setIconSize(QSize(45,45));
     }
 
@@ -719,28 +675,19 @@ void MainWindow::on_messageBoard_textChanged()
         qDebug() << "FAILURE_CONNECT2";
         FailedConnect();
     }
-
-}
-
-void MainWindow::on_StartSession_clicked() // запуск стрима
-{
-    ui->StartSession->setDisabled(true);
-    ui->StopSession->setDisabled(false);
-}
-
-void MainWindow::on_StopSession_clicked() // остановка стрима
-{
-    ui->StartSession->setDisabled(false);
-    ui->StopSession->setDisabled(true);
-
-    ui->lable_session_num->setText("");
 }
 
 // отоброжение номера трансляции
 void MainWindow::onNumberSession(QString session)
 {
-    ui->messageBoard->append("Сессия №" + session);
-    ui->lable_session_num->setText(session);
+    if (checkConnect != FAILURE_CONNECT){
+        ui->messageBoard->append("Сессия №" + session);
+        ui->lable_session_num->setText(session);
+    }
+    else
+    {
+        ui->lable_session_num->setText("#STREAM");
+    }
 }
 
 // При соединении что-то пошло не так
@@ -750,24 +697,18 @@ void MainWindow::FailedConnect()
     popUp->setPopupText("Соединение разорвано!");
     popUp->show();
 
-    if (checkDesign == DARK)
-    {
-        ui->connect->setStyleSheet("background:#3d3d3d;;");
-        ui->Disconnect->setStyleSheet("background:#a0a0a0;");
-    }
-    else
-    {
-        ui->connect->setStyleSheet("background:#fff;");
-        ui->Disconnect->setStyleSheet("background:#808080;");
-    }
-
-    // Если произошел Faile Connect, то проверяем логику кнопок
-    // Логическая блокировка кнопки запуска и остановки стрима
-    ui->StartSession->setDisabled(false);
-    ui->StopSession->setDisabled(true);
+    disableBtnStyle(ui->Connect, ui->Disconnect);
 
     // Логическая блокировка кнопок Disconnect и разблокировка connect
-    ui->connect->setDisabled(false);
+    ui->Connect->setDisabled(false);
     ui->Disconnect->setDisabled(true);
+
+    ui->lable_session_num->setText("#STREAM");
+}
+
+void MainWindow::disableBtnStyle(QPushButton *btn, QPushButton *disableBtn)
+{
+    btn->setStyleSheet(StyleApp::getDarkBtnStyle());
+    disableBtn->setStyleSheet(StyleApp::getDarkBtnDisable());
 }
 

@@ -15,8 +15,16 @@ QString StyleApp::getDarkBtnStyle()
 
 QString StyleApp::getDarkBtnMaximize()
 {
-    return "background:#3d3d3d; "
-           "background-image: url(:/image/window-maximize-gray.png);";
+    return "background:#3d3d3d;"
+           "background-image: url(:/image/window-maximize-gray.png);"
+           "background-repeat: no-repeat; margin: 0px;";
+}
+
+QString StyleApp::getDarlBtnRestore()
+{
+    return "background:#3d3d3d;"
+           "background-image: url(:/image/window-restore-gray.png); "
+           "background-repeat: no-repeat; margin: 0px;";
 }
 
 QString StyleApp::getDarkBtnMinimize()

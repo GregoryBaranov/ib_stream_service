@@ -115,7 +115,9 @@ private:
 
     list<QString> mute_user_list; // список немых
     list<QString> bun_user_list; // cписок забаненных
-    QStringList userList; // все пользователи
+    list<QString> userList; // все пользователи
+
+    QString num_session;
 
     BellStatus statusBell; // enum для проверки статуса окна
     showMesseg flagMsg;

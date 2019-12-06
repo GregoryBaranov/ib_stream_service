@@ -10,6 +10,7 @@ public:
     static QString getDarkBtnStyle();
     static QString getDarkBtnMaximize();
     static QString getDarkBtnMinimize();
+    static QString getDarlBtnRestore();
     static QString getDarkBtnClose();
     static QString getDarkBtnDisable();
 

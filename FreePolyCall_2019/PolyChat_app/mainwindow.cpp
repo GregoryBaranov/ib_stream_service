@@ -112,7 +112,10 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
 
     // Только для чтения информации
     ui->messageBoard->setReadOnly(true);
+
+    // Скрыл блэк лист
     ui->ShowBlacklist->hide();
+    ui->To_Ban_Button->hide();
 
     // дефолтная тема приложения
     on_DarkDesign_clicked();
@@ -306,14 +309,12 @@ void MainWindow::btn_max()
         // Если окно находится в максимально развернутом состоянии, то кнопка находится в режиме свертывания
         if (this->isMaximized())
         {
-            ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(:/image/window-maximize-gray.png);"
-                                            "background-repeat: no-repeat; margin: 0px;");
+            ui->btn_maximize->setStyleSheet(StyleApp::getDarkBtnMaximize());
             this->showNormal();
         }
         else
         {
-            ui->btn_maximize->setStyleSheet("background:#3d3d3d; background-image: url(:/image/window-restore-gray.png); "
-                                            "background-repeat: no-repeat; margin: 0px;");
+            ui->btn_maximize->setStyleSheet(StyleApp::getDarlBtnRestore());
             this->showMaximized();
         }
     });
@@ -323,6 +324,8 @@ void MainWindow::onConnectBtnClick() // Слот для кнопки соеди�
 {
     checkConnect = FAILURE_CONNECT;
     unsigned int port = ui->spinPort->value();
+
+    ui->messageBoard->append("Connection attempt...");
 
     client->connectSocket(ui->hostEdit->text(), port);
 
@@ -341,6 +344,10 @@ void MainWindow::onDisconnectBtnClick() // Слот для кнопки откл
 
     checkConnect = FAILURE_CONNECT;
     qDebug() << "FAILURE_CONNECT3";
+
+    ui->listViewUser->clear();
+    userList.clear();
+    qDebug() << userList;
 }
 
 void MainWindow::onSendMessageBtnClick() // Слот для кнопки отправки сообщения
@@ -366,8 +373,8 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
     while( ( lastPos = re.indexIn( message, lastPos ) ) != -1)
     {
         lastPos += re.matchedLength();
-        user_in_list = new QListWidgetItem(QIcon(":/image/student.png"), re.cap( 1 ));
-        userList.append(re.cap( 1 ));
+        user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), re.cap( 1 ));
+        userList.push_back(re.cap( 1 ));
         ui->listViewUser->addItem(user_in_list);
         flagMsg = hideMessage;
         popUpТotification(re.cap( 1 ), "подключился!");
@@ -375,6 +382,7 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
     if (message == "Pong")
     {
+        checkConnect = SUCCESS_CONNECT;
         // Логическая блокировка кнопок connect и разблокировка Disconnect
         ui->Connect->setDisabled(true);
         ui->Disconnect->setDisabled(false);
@@ -384,13 +392,14 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
         popUp = new PopUp();
         popUp->setPopupText("Успешное соединение!");
 
+        ui->messageBoard->append("Сессия №" + num_session);
+        ui->lable_session_num->setText(num_session);
 
         popUp->show();
 
         flagMsg = hideMessage;
 
         qDebug() << "SUCCESS_CONNECT";
-        checkConnect = SUCCESS_CONNECT;
     }
 
     if(flagMsg == showMessage)
@@ -424,8 +433,6 @@ void MainWindow::on_Settings_clicked() // Слот для отображения
         animation->setStartValue(302);
         animation->setEndValue(0);
         animation->start();
-
-
     }
     else
     {
@@ -490,14 +497,14 @@ void MainWindow::on_BtnUserControl_clicked() // Открытие/закрыти�
 {
     if(ui->GroupUserListWidget->isVisible()){
         ui->GroupUserListWidget->hide();
-        ui->To_Ban_Button->hide();
+//        ui->To_Ban_Button->hide();
         ui->Mute_Button->hide();
         ui->verticalSp->show();
     }
     else
     {
         ui->GroupUserListWidget->show();
-        ui->To_Ban_Button->show();
+//        ui->To_Ban_Button->show();
         ui->Mute_Button->show();
         ui->verticalSp->hide();
     }
@@ -655,7 +662,7 @@ void MainWindow::on_ChatBtn_clicked()
         animation->setEndValue(500);
         animation->start();
 
-        ui->ChatBtn->setIcon(QIcon(":/image/messagedef.png"));
+        ui->ChatBtn->setIcon(QIcon(StyleApp::getLogoDefMessage()));
         ui->ChatBtn->setIconSize(QSize(45,45));
 
         statusBell = showChat; // Статус для оповещения
@@ -678,16 +685,9 @@ void MainWindow::on_messageBoard_textChanged()
 }
 
 // отоброжение номера трансляции
-void MainWindow::onNumberSession(QString session)
+void MainWindow::onNumberSession(QString num_session)
 {
-    if (checkConnect != FAILURE_CONNECT){
-        ui->messageBoard->append("Сессия №" + session);
-        ui->lable_session_num->setText(session);
-    }
-    else
-    {
-        ui->lable_session_num->setText("#STREAM");
-    }
+    this->num_session = num_session;
 }
 
 // При соединении что-то пошло не так

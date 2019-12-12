@@ -24,6 +24,8 @@ QVariant ListMessageModel::data(const QModelIndex &index, int role) const
         return listDescription.at(index.row());
     case Qt::TextAlignmentRole:
         return Qt::AlignTop;
+    case Qt::BackgroundRole:
+        return QBrush(QColor(51,50,51));
     case Qt::DecorationRole:
         if (listName.at(index.row()) != "Streamer")
         {
@@ -92,5 +94,5 @@ Qt::ItemFlags ListMessageModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return  Qt::NoItemFlags;
 
-    return  Qt::ItemIsEnabled | Qt::ItemIsSelectable ;
+    return  Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }

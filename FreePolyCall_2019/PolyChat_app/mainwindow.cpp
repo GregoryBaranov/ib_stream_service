@@ -112,6 +112,7 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     // Только для чтения информации
     ui->messageBoard->setReadOnly(true);
     ui->MessageBoardList->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->MessageBoardList->setStyleSheet(StyleApp::getDarkMessageBoardItem());
 
     // Скрыл блэк лист
     ui->ShowBlacklist->hide();
@@ -369,8 +370,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
         {
-            qDebug()<< QObject::tr("____________________");
-            qDebug()<< QObject::tr("press: Ctrl + Enter");
             if(event->isAutoRepeat()) return;
             onSendMessageBtnClick();
         }
@@ -383,7 +382,6 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
     {
         if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
         {
-            qDebug()<< QObject::tr("+: Ctrl + Enter");
             if(event->isAutoRepeat()) return;
         }
     }
@@ -391,11 +389,6 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 
 void MainWindow::onReceiveMessage(QString message) // Слот для получения сообщения
 {
-//    QString fullMessage = QString("[%1] %2")
-//            .arg(QDateTime::currentDateTime().toString("hh:mm:ss")) // отображает время прихода сообщения
-//            .arg(message); // само сообщение
-
-
     flagMsg = showMessage;
 
     QRegExp re( "[%]{3}([\\S ]+)[$]{3}" );
@@ -442,9 +435,7 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
     if(flagMsg == showMessage)
     {
-        qDebug() << getMsgBoardWidth();
-        ui->messageBoard->append(message);
-
+        // Создаем модель и присваеваем delegate для QListView
         ListMessageModel * modelMsg = new ListMessageModel(this);
         ui->MessageBoardList->setModel(modelMsg);
         ui->MessageBoardList->setWordWrap(true);
@@ -452,23 +443,26 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
         QRegExp re( "([A-zА-я0-9]+)([:]{1})(([\\S+)([\n ]{0,}))" );
 
+        // Парсинг сообщения для получения имени и основного текста
         int lastPos = 0;
         QString name, msg;
         while( ( lastPos = re.indexIn( message, lastPos ) ) != -1)
         {
             lastPos += re.matchedLength();
-
             listCounterName.push_back(re.cap(1));
-            listCounterMsg.push_back(re.cap(3));
+            ui->messageBoard->append(re.cap(1)+" написал сообщение!"); // Ведём логи....
+            listCounterMsg.push_back(re.cap(3) + "\n");
         }
 
+        // добавление сообщения в QlistView
         for (int index = 0; index < listCounterMsg.length(); index++)
         {
-            modelMsg->list.push_front("1");
-            modelMsg->listName << listCounterName[index];
-            modelMsg->listDescription<< listCounterMsg[index];
+            modelMsg->list.push_front("1"); // Щетчик
+            modelMsg->listName << listCounterName[index]; // Добаляем name
+            modelMsg->listDescription<< listCounterMsg[index]; // Добаляем message
         }
 
+        ui->MessageBoardList->scrollToBottom(); // при новом сообщениии прокрутка вниз
     }
 }
 
@@ -492,6 +486,8 @@ void MainWindow::popUpТotification(QString msg, QString totification)
         }
     }
 }
+
+
 
 void MainWindow::on_Settings_clicked() // Слот для отображения/скрытия меню настроек
 {
@@ -839,6 +835,8 @@ void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &po
         QAction * Remove = new QAction(trUtf8("Удалить"), this);
         /* Подключаем СЛОТы обработчики для действий контекстного меню */
 
+        Mute->setIcon(QIcon(StyleApp::getLogoMute()));
+        Bun->setIcon(QIcon(StyleApp::getLogoBan()));
 
         connect(Mute, SIGNAL(triggered()), this, SLOT(slot_muteUser()));     // Обработчик вызова диалога редактирования
         connect(Remove, SIGNAL(triggered()), this, SLOT(slot_slotRemoveRecord())); // Обработчик удаления записи

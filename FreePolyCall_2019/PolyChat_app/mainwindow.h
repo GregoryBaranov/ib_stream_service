@@ -31,6 +31,8 @@
 #include "listmessagemodel.h"
 #include <QKeyEvent>
 #include <QMenuBar>
+#include <QAbstractScrollArea>
+#include <QScrollBar>
 
 class MessageViewDelegate;
 

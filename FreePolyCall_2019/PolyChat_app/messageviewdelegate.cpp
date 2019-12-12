@@ -45,16 +45,26 @@ void MessageViewDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpti
 void MessageViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     painter->save();
-    painter->setBackground(QBrush(QColor(51,50,51)));
+    painter->setBrush(QBrush(QColor(51, 50, 51)));
+    painter->drawRect(option.rect);
     painter->restore();
 
+    // рисуем основные объекты блока (icon, name, description...)
     painter->save();
     paintObject(painter, option, index);
     painter->restore();
 
+    // рамка
     painter->save();
     painter->drawLine(option.rect.bottomLeft(), option.rect.bottomRight());
+    painter->drawLine(option.rect.topLeft(), option.rect.topRight());
+    QLineF lineRight(option.rect.left(), option.rect.bottom(), option.rect.left(), option.rect.top());
+    painter->drawLine(lineRight);
+    QLineF lineLeft(option.rect.right(), option.rect.bottom(), option.rect.right(), option.rect.top());
+    painter->drawLine(lineLeft);
     painter->restore();
+
+    painter->translate(0, 4);
 }
 
 void MessageViewDelegate::paintObject(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
@@ -81,6 +91,7 @@ void MessageViewDelegate::paintObject(QPainter * painter, const QStyleOptionView
     rect.setRight(rect.right());
 
     p.drawText(rect, Qt::TextWordWrap, description);
+
 }
 
 void MessageViewDelegate::paintSetIcon( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
@@ -104,7 +115,7 @@ QSize MessageViewDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
     QString Text = model->data(index, ListMessageModel::DescriptionRole ).toString();
     QRect neededsize = fm.boundingRect( option.rect, Qt::TextWordWrap, Text);
 
-    return QSize(option.rect.width(), neededsize.height()+50);
+    return QSize(option.rect.width(), neededsize.height()+37);
 }
 
 

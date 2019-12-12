@@ -3,7 +3,8 @@
 QString StyleApp::getMainDarkBackground()
 {
     return "background:rgba(62, 62, 62, 0.5);"
-           "color: #fff; border: 2px solid #000;"
+           "color: #fff; "
+           "border: 2px solid #000;"
            "padding: 10px;";
 }
 
@@ -80,7 +81,28 @@ QString StyleApp::getDarkContextMenu()
     return "QMenu {"
            "background:#3d3d3d;"
            "color: #fff;"
+           "border: 2px solid #5B5B5B;"
            "}";
+}
+
+QString StyleApp::getDarkMessageBoardItem()
+{
+    return  "QListView::item {"
+            "background:#3d3d3d;"
+            "color: #fff;"
+            "border: 2px solid #5B5B5B;"
+            "border-radius: 10px;"
+            "}"
+            "QListView::item::hover  {"
+            "background:#5B5B5B;"
+            "color: #fff;"
+            "border: 2px solid #3d3d3d;"
+            "border-radius: 10px;"
+            "}"
+            "QListView::item:selected {"
+            "border: 1px solid #6a6ea9;"
+            "border-radius: 10px;"
+            "}";
 }
 
 QString StyleApp::getInvisibleStyle()

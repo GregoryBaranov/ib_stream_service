@@ -16,13 +16,17 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+    listmessagemodel.cpp \
         mainwindow.cpp \
     client.cpp \
+    messageviewdelegate.cpp \
     popup.cpp \
     styleapp.cpp
 
 HEADERS  += mainwindow.h \
     client.h \
+    listmessagemodel.h \
+    messageviewdelegate.h \
     popup.h \
     styleapp.h
 

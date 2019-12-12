@@ -13,6 +13,7 @@ public:
     static QString getDarlBtnRestore();
     static QString getDarkBtnClose();
     static QString getDarkBtnDisable();
+    static QString getDarkContextMenu();
 
     //******************************************
 

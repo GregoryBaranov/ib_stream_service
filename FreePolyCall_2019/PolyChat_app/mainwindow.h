@@ -27,6 +27,12 @@
 #include <QThread>
 #include <random>
 #include <ctime>
+#include "messageviewdelegate.h"
+#include "listmessagemodel.h"
+#include <QKeyEvent>
+#include <QMenuBar>
+
+class MessageViewDelegate;
 
 using namespace std;
 
@@ -82,6 +88,10 @@ public:
     void hide_all(QListWidget *listWidjet); // скрывает все не нужные элименты
     void popUpТotification(QString msg = "", QString totification = "");
 
+    QImage defautIcon() const;
+    void setDefaultIcon(const QImage & img);
+    int getMsgBoardWidth();
+
 public slots:
     void setPreviousPosition(QPoint previousPosition); // устанавливаем новую предыдущую позицию
 
@@ -92,9 +102,14 @@ signals:
 private:
     Ui::MainWindow *ui;
 
+    MessageViewDelegate * delegate;
+
+
     Client* client;
 
     PopUp *popUp;
+
+    int numberListMsg;
 
     void btn_max();  // свёртывание и развертывание программы в маленький и большой режимы
     void mainApplicationDesigner(); // Дефолтный фид приложения
@@ -116,12 +131,18 @@ private:
     list<QString> mute_user_list; // список немых
     list<QString> bun_user_list; // cписок забаненных
     list<QString> userList; // все пользователи
+//    list<QString> messageList;
 
     QString num_session;
 
     BellStatus statusBell; // enum для проверки статуса окна
     showMesseg flagMsg;
     CheckConnect checkConnect;
+
+    QStringList listCounterMsg;
+    QStringList listCounterName;
+
+    int msgBoardWidth;
 
     void cursorTracking(); // отслежживание курсора
     void shadowEffect(); // эффект для растягивания окна приложения
@@ -135,6 +156,9 @@ protected:
     void mousePressEvent(QMouseEvent *event); // Позиция клика
     void mouseReleaseEvent(QMouseEvent *event); // Когда кнопка мыши отжата вызываем ->
     void mouseMoveEvent(QMouseEvent *event); // Изменение размера (тут отслеживают клик и конечное состояние окна)
+
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 
 private slots:
     void onReceiveMessage(QString message); // Слот для получения сообщения
@@ -155,6 +179,13 @@ private slots:
     void on_lineSearchBanUserList_textChanged(const QString &arg1); // при вызове определенного сигнала делаем поиск
     void on_ChatBtn_clicked(); // Скрытие чата
     void on_messageBoard_textChanged();// при вызове определенного сигнала что-то делаем.....
+
+    void slot_muteUser();
+    void slot_slotRemoveRecord();
+
+    void on_MessageBoardList_doubleClicked(const QModelIndex &index);
+    void on_MessageBoardList_clicked(const QModelIndex &index);
+    void on_MessageBoardList_customContextMenuRequested(const QPoint &pos);
 };
 
 #endif // MAINWINDOW_H

@@ -39,7 +39,6 @@ bool Client::checkUserInList(const list<T1> &lst, T2 username)
 
 void Client::connectSocket(const QString& host, unsigned int port) // Соединяется с сервером
 {
-    QMaskGenerator *gen;
     if (clientSocket != nullptr && clientSocket->isValid())
     {
         return; // Необходимо проверить и закрыть (или вернуть) соединение, если оно открыто

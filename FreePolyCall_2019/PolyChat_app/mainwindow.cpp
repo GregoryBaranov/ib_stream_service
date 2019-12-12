@@ -85,7 +85,8 @@ void MainWindow::settingDesigner() // Вид и проверки для hostEdit
     /* Устанавливаем Валидатор на QLineEdit */
     ui->hostEdit->setValidator(ipValidator);
     ui->hostEdit->setPlaceholderText("127.0.0.1");
-    ui->hostEdit->setText("31.10.65.179");
+//    ui->hostEdit->setText("31.10.65.179");
+    ui->hostEdit->setText("127.0.0.1");
 
     ui->spinPort->setMaximum(999999999);
     ui->spinPort->setValue(5000);
@@ -103,8 +104,6 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     shadowEffect(); // эффект тени для растягивания окна приложения
 
     // позволяет нажать кнопку send с помощью Enter
-    ui->send->setShortcut(Qt::Key_Return);
-
     ui->label->setDisabled(true);
 
     ui->Connect->setDisabled(false);
@@ -112,6 +111,7 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
 
     // Только для чтения информации
     ui->messageBoard->setReadOnly(true);
+    ui->MessageBoardList->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // Скрыл блэк лист
     ui->ShowBlacklist->hide();
@@ -352,18 +352,49 @@ void MainWindow::onDisconnectBtnClick() // Слот для кнопки откл
 
 void MainWindow::onSendMessageBtnClick() // Слот для кнопки отправки сообщения
 {
-    if(ui->messageEdt->text() != "") // Проверка на пустое сообщение
+    QString test = ui->textEdit->toPlainText();
+
+    // to do
+    // Сделать регулярку для проверки на множество пробелов
+    if(ui->textEdit->toPlainText() != "") // Проверка на пустое сообщение
     {
-        client->sendMessage(ui->messageEdt->text()); // отправка сообщения
-        ui->messageEdt->clear(); // очищение отправленного сообщения
+        client->sendMessage(ui->textEdit->toPlainText()); // отправка сообщения
+        ui->textEdit->clear(); // очищение отправленного сообщения
+    }
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if(event->modifiers() == Qt::ControlModifier)
+    {
+        if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
+        {
+            qDebug()<< QObject::tr("____________________");
+            qDebug()<< QObject::tr("press: Ctrl + Enter");
+            if(event->isAutoRepeat()) return;
+            onSendMessageBtnClick();
+        }
+    }
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    if(event->modifiers() == Qt::ControlModifier)
+    {
+        if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
+        {
+            qDebug()<< QObject::tr("+: Ctrl + Enter");
+            if(event->isAutoRepeat()) return;
+        }
     }
 }
 
 void MainWindow::onReceiveMessage(QString message) // Слот для получения сообщения
 {
-    QString fullMessage = QString("[%1] %2")
-            .arg(QDateTime::currentDateTime().toString("hh:mm:ss")) // отображает время прихода сообщения
-            .arg(message); // само сообщение
+//    QString fullMessage = QString("[%1] %2")
+//            .arg(QDateTime::currentDateTime().toString("hh:mm:ss")) // отображает время прихода сообщения
+//            .arg(message); // само сообщение
+
 
     flagMsg = showMessage;
 
@@ -374,7 +405,7 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
     {
         lastPos += re.matchedLength();
         user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), re.cap( 1 ));
-        userList.push_back(re.cap( 1 ));
+        userList.push_front(re.cap( 1 ));
         ui->listViewUser->addItem(user_in_list);
         flagMsg = hideMessage;
         popUpТotification(re.cap( 1 ), "подключился!");
@@ -402,12 +433,51 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
         qDebug() << "SUCCESS_CONNECT";
     }
 
+    if (message == "Streamer: Disconnect")
+    {
+        flagMsg = hideMessage;
+        ui->messageBoard->append("Disconected...");
+    }
+
+
     if(flagMsg == showMessage)
     {
-        popUpТotification(message, "написал сообщение!");
-        ui->messageBoard->append(fullMessage); // отображение пришедшего сообщения
+        qDebug() << getMsgBoardWidth();
+        ui->messageBoard->append(message);
+
+        ListMessageModel * modelMsg = new ListMessageModel(this);
+        ui->MessageBoardList->setModel(modelMsg);
+        ui->MessageBoardList->setWordWrap(true);
+        ui->MessageBoardList->setItemDelegate(new MessageViewDelegate(this));
+
+        QRegExp re( "([A-zА-я0-9]+)([:]{1})(([\\S+)([\n ]{0,}))" );
+
+        int lastPos = 0;
+        QString name, msg;
+        while( ( lastPos = re.indexIn( message, lastPos ) ) != -1)
+        {
+            lastPos += re.matchedLength();
+
+            listCounterName.push_back(re.cap(1));
+            listCounterMsg.push_back(re.cap(3));
+        }
+
+        for (int index = 0; index < listCounterMsg.length(); index++)
+        {
+            modelMsg->list.push_front("1");
+            modelMsg->listName << listCounterName[index];
+            modelMsg->listDescription<< listCounterMsg[index];
+        }
+
     }
 }
+
+int MainWindow::getMsgBoardWidth()
+{
+    msgBoardWidth = ui->MessageBoardList->width();
+    return  msgBoardWidth;
+}
+
 
 void MainWindow::popUpТotification(QString msg, QString totification)
 {
@@ -472,10 +542,10 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->ChatBtn->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->Settings->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->Disconnect->setStyleSheet(StyleApp::getDarkBtnDisable());
-    ui->messageEdt->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->StartSession->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->StopSession->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->verticalSp->setStyleSheet(StyleApp::getInvisibleStyle());
+    ui->send->setStyleSheet(StyleApp::getDarkBtnStyle());
 
     ui->btn_maximize->setStyleSheet(StyleApp::getDarkBtnMaximize());
     ui->btn_minimize->setStyleSheet(StyleApp::getDarkBtnMinimize());
@@ -489,7 +559,7 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->Settings->setIcon(QIcon(StyleApp::getBtnShowSettingIcon()));
     ui->Settings->setIconSize(QSize(35,35));
 
-    ui->messageEdt->setPlaceholderText("Message...");
+    ui->textEdit->setPlaceholderText("Message...");
     ui->lable_session_num->setText("#STREAM");
 }
 
@@ -712,3 +782,75 @@ void MainWindow::disableBtnStyle(QPushButton *btn, QPushButton *disableBtn)
     disableBtn->setStyleSheet(StyleApp::getDarkBtnDisable());
 }
 
+
+
+void MainWindow::on_MessageBoardList_doubleClicked(const QModelIndex &index)
+{
+    QString str = index.data().toString();
+    qDebug() << str;
+}
+
+void MainWindow::on_MessageBoardList_clicked(const QModelIndex &index)
+{
+//    QString str = index.data().toString();
+//    qDebug() << str;
+}
+
+void MainWindow::slot_muteUser()
+{
+
+//    int row = ui->MessageBoardList->selectionModel()->currentIndex().row();
+
+    if (!listCounterName.isEmpty())
+    {
+        QModelIndex index = ui->MessageBoardList->currentIndex();
+        QString username = index.data(Qt::DisplayRole).toString();
+        if (username != "Streamer")
+        {
+            if (checkUserInList(mute_user_list, username) == false)
+            {
+                QString status = "MUTE " + username;
+                QString mute = "%%%MUTE&&" + username + "$$$";
+                client->sendMessage(status); // отправка оповещения на сервер
+                client->sendMessage(mute); // отправка оповещения на сервер
+                mute_user_list.push_back(username);
+            }
+            else
+            {
+                QString status = "UNMUTE " + username;
+                QString un_mute = "%%%UNMUTE&&" + username + "$$$";
+                client->sendMessage(status); // отправка оповещения на сервер
+                client->sendMessage(un_mute); // отправка оповещения на сервер
+
+                mute_user_list.remove(username); // Удаляем user-a из списка mute_user_list
+            }
+        }
+    }
+}
+
+void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &pos)
+{
+    /* Создаем объект контекстного меню */
+        QMenu * menu = new QMenu();
+        /* Создаём действия для контекстного меню */
+        menu->setStyleSheet(StyleApp::getDarkContextMenu());
+        QAction * Mute = new QAction(trUtf8("Mute/Unmute"), this);
+        QAction * Bun = new QAction(trUtf8("Bun/Allow"), this);
+        QAction * Remove = new QAction(trUtf8("Удалить"), this);
+        /* Подключаем СЛОТы обработчики для действий контекстного меню */
+
+
+        connect(Mute, SIGNAL(triggered()), this, SLOT(slot_muteUser()));     // Обработчик вызова диалога редактирования
+        connect(Remove, SIGNAL(triggered()), this, SLOT(slot_slotRemoveRecord())); // Обработчик удаления записи
+        /* Устанавливаем действия в меню */
+        menu->addAction(Mute);
+        menu->addAction(Bun);
+//        menu->addAction(Remove);
+        /* Вызываем контекстное меню */
+        menu->popup(ui->MessageBoardList->viewport()->mapToGlobal(pos));
+}
+
+void MainWindow::slot_slotRemoveRecord()
+{
+
+}

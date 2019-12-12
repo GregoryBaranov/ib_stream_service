@@ -36,5 +36,9 @@
         <file>image/messagedef.png</file>
         <file>image/messageNew.png</file>
         <file>image/settings-cogwheel-button.png</file>
+        <file>image/std.png</file>
+        <file>image/cron.png</file>
+        <file>image/lerner.png</file>
+        <file>image/techer.png</file>
     </qresource>
 </RCC>

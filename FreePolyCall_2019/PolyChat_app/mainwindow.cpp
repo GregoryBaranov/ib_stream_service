@@ -113,6 +113,7 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     ui->messageBoard->setReadOnly(true);
     ui->MessageBoardList->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->MessageBoardList->setStyleSheet(StyleApp::getDarkMessageBoardItem());
+    ui->MessageBoardList->verticalScrollBar()->setStyleSheet(StyleApp::getInvisibleStyle());
 
     // Скрыл блэк лист
     ui->ShowBlacklist->hide();
@@ -451,7 +452,7 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
             lastPos += re.matchedLength();
             listCounterName.push_back(re.cap(1));
             ui->messageBoard->append(re.cap(1)+" написал сообщение!"); // Ведём логи....
-            listCounterMsg.push_back(re.cap(3) + "\n");
+            listCounterMsg.push_back(re.cap(3) + " \n");
         }
 
         // добавление сообщения в QlistView
@@ -463,6 +464,7 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
         }
 
         ui->MessageBoardList->scrollToBottom(); // при новом сообщениии прокрутка вниз
+
     }
 }
 
@@ -471,7 +473,6 @@ int MainWindow::getMsgBoardWidth()
     msgBoardWidth = ui->MessageBoardList->width();
     return  msgBoardWidth;
 }
-
 
 void MainWindow::popUpТotification(QString msg, QString totification)
 {
@@ -797,7 +798,7 @@ void MainWindow::slot_muteUser()
 
 //    int row = ui->MessageBoardList->selectionModel()->currentIndex().row();
 
-    if (!listCounterName.isEmpty())
+    if (!listCounterName.isEmpty() && !userList.empty())
     {
         QModelIndex index = ui->MessageBoardList->currentIndex();
         QString username = index.data(Qt::DisplayRole).toString();
@@ -824,31 +825,80 @@ void MainWindow::slot_muteUser()
     }
 }
 
+template<class T1, class T2>
+QString MainWindow::muteOrUnMute(const list<T1> &lst, T2 msg, T2 lastName)
+{
+    for (auto i = lst.cbegin(); i != lst.cend(); i++)
+    {
+        if(lastName != *i)
+        {
+            msg += *i + "&&";
+            qDebug() << *i;
+        }
+        else
+        {
+            msg += *i + "$$$";
+        }
+    }
+    return msg;
+}
+
+void MainWindow::slot_muteAllUser()
+{
+    if (!listCounterName.isEmpty() && !userList.empty())
+    {
+        QString muteAll = "%%%MUTE&&";
+        QString lastUser = userList.back();
+        muteAll = muteOrUnMute(userList, muteAll, lastUser);
+        qDebug() << muteAll;
+        qDebug() << muteAll;
+        client->sendMessage(muteAll);
+    }
+}
+
+void MainWindow::slot_unMuteAllUser()
+{
+    if (!listCounterName.isEmpty() && !userList.empty())
+    {
+        QString UnMuteAll = "%%%UNMUTE&&";
+        QString lastUser = userList.back();
+        qDebug() << UnMuteAll;
+        UnMuteAll = muteOrUnMute(userList, UnMuteAll, lastUser);
+        qDebug() << UnMuteAll;
+        client->sendMessage(UnMuteAll);
+    }
+}
+
 void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &pos)
 {
     /* Создаем объект контекстного меню */
         QMenu * menu = new QMenu();
         /* Создаём действия для контекстного меню */
         menu->setStyleSheet(StyleApp::getDarkContextMenu());
-        QAction * Mute = new QAction(trUtf8("Mute/Unmute"), this);
-        QAction * Bun = new QAction(trUtf8("Bun/Allow"), this);
-        QAction * Remove = new QAction(trUtf8("Удалить"), this);
+
+        QAction * Mute = new QAction(trUtf8("Mute / Unmute"), this);
+        QAction * MuteAll = new QAction(trUtf8("Mute All"), this);
+        QAction * UnMuteAll = new QAction(trUtf8("Unmute All"), this);
+        QAction * Bun = new QAction(trUtf8("Bun / Allow"), this);
         /* Подключаем СЛОТы обработчики для действий контекстного меню */
 
         Mute->setIcon(QIcon(StyleApp::getLogoMute()));
+        MuteAll->setIcon(QIcon(":/image/muteAll.png"));
+        UnMuteAll->setIcon(QIcon(":/image/unMuteAll.png"));
         Bun->setIcon(QIcon(StyleApp::getLogoBan()));
 
+
+
         connect(Mute, SIGNAL(triggered()), this, SLOT(slot_muteUser()));     // Обработчик вызова диалога редактирования
-        connect(Remove, SIGNAL(triggered()), this, SLOT(slot_slotRemoveRecord())); // Обработчик удаления записи
+        connect(MuteAll, SIGNAL(triggered()), this, SLOT(slot_muteAllUser()));     // Обработчик вызова диалога редактирования
+        connect(UnMuteAll, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));
         /* Устанавливаем действия в меню */
         menu->addAction(Mute);
         menu->addAction(Bun);
-//        menu->addAction(Remove);
+        menu->addAction(MuteAll);
+        menu->addAction(UnMuteAll);
+
         /* Вызываем контекстное меню */
         menu->popup(ui->MessageBoardList->viewport()->mapToGlobal(pos));
 }
 
-void MainWindow::slot_slotRemoveRecord()
-{
-
-}

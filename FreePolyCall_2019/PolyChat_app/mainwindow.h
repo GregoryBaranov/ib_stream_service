@@ -153,6 +153,9 @@ private:
     template<class T1, class T2>
     bool checkUserInList(const list<T1> &lst, T2 username); // проверка есть юзер или нет
 
+    template<class T1, class T2>
+    QString muteOrUnMute(const list<T1> &lst, T2 msg, T2 lastName);
+
 protected:
     // функции отслеживания мыши
     void mousePressEvent(QMouseEvent *event); // Позиция клика
@@ -183,7 +186,8 @@ private slots:
     void on_messageBoard_textChanged();// при вызове определенного сигнала что-то делаем.....
 
     void slot_muteUser();
-    void slot_slotRemoveRecord();
+    void slot_muteAllUser();
+    void slot_unMuteAllUser();
 
     void on_MessageBoardList_doubleClicked(const QModelIndex &index);
     void on_MessageBoardList_clicked(const QModelIndex &index);

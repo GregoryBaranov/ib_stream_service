@@ -2,6 +2,9 @@
 #define CLIENT_H
 
 #include <QObject>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 #include <QtWebSockets/QWebSocket>
 #include <ctime>
 #include <random>
@@ -23,6 +26,7 @@ public:
     void sendMessage(const QString& message); // функция отправки сообщения
 
 private:
+    QNetworkAccessManager *manager;
     unsigned int _port;
     QString _host;
     QWebSocket *clientSocket;
@@ -38,9 +42,13 @@ signals:
     void receiveMessage(QString message); // сигнал для получения сообщения
     void newNumberSession(QString num_session);
     void checkConnection();
+    void onReady(QString);
 
 private slots:
     void onReceiveMessage(QString message); // слот для приема сообщений
+    void chatData();
+    void onResult(QNetworkReply *reply);
+    void reciveBuf(QString);
 };
 
 #endif // CLIENT_H

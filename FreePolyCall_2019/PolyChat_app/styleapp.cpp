@@ -82,6 +82,7 @@ QString StyleApp::getDarkContextMenu()
            "background:#3d3d3d;"
            "color: #fff;"
            "border: 2px solid #5B5B5B;"
+           "font-size: 18px;"
            "}";
 }
 

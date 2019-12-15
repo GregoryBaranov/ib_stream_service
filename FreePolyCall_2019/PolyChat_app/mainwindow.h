@@ -98,6 +98,7 @@ public:
     QString getHost();
     unsigned int getPort();
 
+    CheckConnect checkConnect;
 public slots:
     void setPreviousPosition(QPoint previousPosition); // устанавливаем новую предыдущую позицию
 
@@ -142,7 +143,6 @@ private:
 
     BellStatus statusBell; // enum для проверки статуса окна
     showMesseg flagMsg;
-    CheckConnect checkConnect;
 
     QStringList listCounterMsg;
     QStringList listCounterName;

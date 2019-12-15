@@ -345,6 +345,7 @@ void MainWindow::onDisconnectBtnClick() // Слот для кнопки откл
     disableBtnStyle(ui->Connect, ui->Disconnect);
 
     client->sendMessage("Disconnect");
+    client->clientDisconnect();
 
     checkConnect = FAILURE_CONNECT;
 

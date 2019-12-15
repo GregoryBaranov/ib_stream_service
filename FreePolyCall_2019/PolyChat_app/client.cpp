@@ -4,8 +4,9 @@
 
 Client::Client(QObject *parent) : QObject(parent)
 {
-    clientSocket = new QWebSocket();
+    checkConnect = FAILURE_CONNECT;
 
+    clientSocket = new QWebSocket();
     connect(clientSocket, SIGNAL(textMessageReceived(QString)), this, SLOT(onReceiveMessage(QString)));
 
     manager = new QNetworkAccessManager();
@@ -28,18 +29,21 @@ void Client::chatData()
 
 void Client::onResult(QNetworkReply *reply)
 {
-
     if(reply->error())
     {
-        MainWindow * wind = new MainWindow;
-        wind->FailedConnect("Error: " + reply->errorString());
-        qDebug() << "ERROR";
-        qDebug() << reply->errorString();
+        if (checkConnect == FAILURE_CONNECT || checkConnect == NOT_RECOGNIZED)
+        {
+            MainWindow * wind = new MainWindow;
+            wind->FailedConnect("Host: " + _host + " Error: " + reply->errorString());
+            qDebug() << "ERROR";
+            qDebug() << reply->errorString();
+
+            checkConnect = FAILURE_CONNECT;
+        }
     }
     else
     {
         QString buf = reply->readAll();
-
         qDebug() << buf;
         emit onReady(buf);
     }
@@ -64,17 +68,22 @@ void Client::reciveBuf(QString buf)
     emit newNumberSession(NumSession);
 
     clientSocket->open(qUrl); // открытие соединения с сервером
+
+    checkConnect = SUCCESS_CONNECT;
 }
 
-
+void Client::clientDisconnect()
+{
+    checkConnect = FAILURE_CONNECT;
+}
 
 void Client::connectSocket(const QString& host, unsigned int port) // Соединяется с сервером
 {
+    checkConnect = NOT_RECOGNIZED;
 
     _port = port;
     _host = host;
     Client::chatData();
-
 }
 
 void Client::sendMessage(const QString& message) // Отправляет текстовое сообщение

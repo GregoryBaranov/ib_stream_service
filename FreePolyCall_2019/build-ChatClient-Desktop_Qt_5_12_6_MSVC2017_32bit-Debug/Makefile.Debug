@@ -2006,6 +2006,7 @@ debug\mainwindow.obj: ..\PolyChat_app\mainwindow.cpp ..\PolyChat_app\mainwindow.
 		C:\Qt\5.12.6\msvc2017\include\QtGui\qguiapplication.h \
 		C:\Qt\5.12.6\msvc2017\include\QtGui\qinputmethod.h \
 		C:\Qt\5.12.6\msvc2017\include\QtWidgets\QListView \
+		C:\Qt\5.12.6\msvc2017\include\QtWidgets\QSpacerItem \
 		C:\Qt\5.12.6\msvc2017\include\QtWidgets\QSpinBox \
 		C:\Qt\5.12.6\msvc2017\include\QtWidgets\qspinbox.h
 

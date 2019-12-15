@@ -65,7 +65,7 @@ void PopUp::paintEvent(QPaintEvent *event)
 void PopUp::setPopupText(const QString &text)
 {
     label.setText(text);    // Устанавливаем текст в Label
-    adjustSize();           // С пересчётом размеров уведомления
+    adjustSize();           // размеров уведомления
 }
 
 void PopUp::show()
@@ -81,16 +81,16 @@ void PopUp::show()
                 width(),
                 height());
 
-    QWidget::show();                // Отображаем виджет, который полностью прозрачен
 
+    QWidget::show();                // Отображаем виджет, который полностью прозрачен
     animation.start();              // И запускаем анимацию
-    timer->start(3000);             // А также стартуем таймер, который запустит скрытие уведомления через 3 секунды
+    timer->start(1500);             // А также стартуем таймер, который запустит скрытие уведомления через 3 секунды
 }
 
 void PopUp::hideAnimation()
 {
     timer->stop();                  // Останавливаем таймер
-    animation.setDuration(1000);    // Настраиваем длительность анимации
+    animation.setDuration(500);    // Настраиваем длительность анимации
     animation.setStartValue(1.0);   // Стартовое значение будет 1 (полностью непрозрачный виджет)
     animation.setEndValue(0.0);     // Конечное - полностью прозрачный виджет
     animation.start();              // И запускаем анимацию

@@ -6,6 +6,11 @@
 #include <QGridLayout>
 #include <QPropertyAnimation>
 #include <QTimer>
+#include <list>
+#include <QDebug>
+#include <string>
+
+using namespace std;
 
 class PopUp : public QWidget
 {
@@ -19,7 +24,7 @@ class PopUp : public QWidget
 
 
 public:
-    explicit PopUp(QWidget *parent = 0);
+    explicit PopUp(QWidget *parent = nullptr);
 
 protected:
     void paintEvent(QPaintEvent *event);    // Фон будет отрисовываться через метод перерисовки
@@ -41,7 +46,6 @@ private:
     QPropertyAnimation animation;   // Свойство анимации для всплывающего сообщения
     float popupOpacity;     // Свойства полупрозрачности виджета
     QTimer *timer;          // Таймер, по которому виджет будет скрыт
-
 };
 
 #endif // POPUP_H

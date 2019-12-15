@@ -93,6 +93,10 @@ public:
     QImage defautIcon() const;
     void setDefaultIcon(const QImage & img);
     int getMsgBoardWidth();
+    void FailedConnect(QString Error);
+
+    QString getHost();
+    unsigned int getPort();
 
 public slots:
     void setPreviousPosition(QPoint previousPosition); // устанавливаем новую предыдущую позицию
@@ -117,7 +121,6 @@ private:
     void mainApplicationDesigner(); // Дефолтный фид приложения
     void settingDesigner(); // Вид и проверки для hostEdit, spinPort, connect;
     int closeApp();
-    void FailedConnect();
     void disableBtnStyle(QPushButton *, QPushButton *);
 
     // Переменная, от которой будем отталкиваться при работе с перемещением и изменением размера окна
@@ -177,13 +180,9 @@ private slots:
     void on_BtnUserControl_clicked(); // Слот отображения списка пользоватеей
     void on_To_Ban_Button_clicked(); // Слот для бана пользователей
     void on_Mute_Button_clicked(); // Слот для мьюта пользователей
-    void on_ShowBlacklist_clicked();// Слот для отображения черного списка (забаненых)
-    void slot_UnbrokenUser(QListWidgetItem*); // Слот разбана
     void slot_UnMuteUser(QListWidgetItem*); // Слот размьюта
     void on_lineSearchUserList_textChanged(const QString &arg1); // при вызове определенного сигнала делаем поиск
-    void on_lineSearchBanUserList_textChanged(const QString &arg1); // при вызове определенного сигнала делаем поиск
     void on_ChatBtn_clicked(); // Скрытие чата
-    void on_messageBoard_textChanged();// при вызове определенного сигнала что-то делаем.....
 
     void slot_muteUser();
     void slot_muteAllUser();
@@ -192,6 +191,8 @@ private slots:
     void on_MessageBoardList_doubleClicked(const QModelIndex &index);
     void on_MessageBoardList_clicked(const QModelIndex &index);
     void on_MessageBoardList_customContextMenuRequested(const QPoint &pos);
+
+    void on_btnShowLogs_clicked();
 };
 
 #endif // MAINWINDOW_H

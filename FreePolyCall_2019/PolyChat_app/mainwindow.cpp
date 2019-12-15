@@ -44,10 +44,6 @@ MainWindow::MainWindow(QWidget *parent) :
             this, &MainWindow::close);
 
     // connect двойного клика в виджете по значению
-    connect(ui->user_blacklist, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-            this, SLOT(slot_UnbrokenUser(QListWidgetItem*)));
-
-    // connect двойного клика в виджете по значению
     connect(ui->listViewUser, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
             this, SLOT(slot_UnMuteUser(QListWidgetItem*)));
 }
@@ -62,10 +58,9 @@ MainWindow::~MainWindow()
 void MainWindow::settingDesigner() // Вид и проверки для hostEdit, spinPort, connect;
 {
     ui->GroupUserListWidget->hide();
-    ui->verticalSp->show();
-    ui->To_Ban_Button->hide();
     ui->Mute_Button->hide();
-    ui->GroupBanWidget->hide();
+    ui->pnlLogs->hide();
+    ui->TitleEdit->setPlaceholderText("Title");
 
     /* Создаем строку для регулярного выражения */
     QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
@@ -86,7 +81,7 @@ void MainWindow::settingDesigner() // Вид и проверки для hostEdit
     ui->hostEdit->setValidator(ipValidator);
     ui->hostEdit->setPlaceholderText("127.0.0.1");
 //    ui->hostEdit->setText("31.10.65.179");
-    ui->hostEdit->setText("127.0.0.1");
+//    ui->hostEdit->setText("127.0.0.1");
 
     ui->spinPort->setMaximum(999999999);
     ui->spinPort->setValue(5000);
@@ -110,14 +105,10 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     ui->Disconnect->setDisabled(true);
 
     // Только для чтения информации
-    ui->messageBoard->setReadOnly(true);
+    ui->logBoard->setReadOnly(true);
     ui->MessageBoardList->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->MessageBoardList->setStyleSheet(StyleApp::getDarkMessageBoardItem());
     ui->MessageBoardList->verticalScrollBar()->setStyleSheet(StyleApp::getInvisibleStyle());
-
-    // Скрыл блэк лист
-    ui->ShowBlacklist->hide();
-    ui->To_Ban_Button->hide();
 
     // дефолтная тема приложения
     on_DarkDesign_clicked();
@@ -325,13 +316,18 @@ void MainWindow::btn_max()
 void MainWindow::onConnectBtnClick() // Слот для кнопки соединения с сервером
 {
     checkConnect = FAILURE_CONNECT;
-    unsigned int port = ui->spinPort->value();
 
-    ui->messageBoard->append("Connection attempt...");
-
-    client->connectSocket(ui->hostEdit->text(), port);
-
-    qDebug() << "FAILURE_CONNECT1";
+    ui->logBoard->append("Connection attempt...");
+    if (ui->TitleEdit->text() != "")
+    {
+        client->connectSocket(getHost(), getPort());
+    }
+    else
+    {
+        popUp = new PopUp();
+        popUp->setPopupText("Введите название стрима!");
+        popUp->show();
+    }
 }
 
 void MainWindow::onDisconnectBtnClick() // Слот для кнопки отключения от сервера
@@ -345,11 +341,11 @@ void MainWindow::onDisconnectBtnClick() // Слот для кнопки откл
     client->sendMessage("Disconnect");
 
     checkConnect = FAILURE_CONNECT;
-    qDebug() << "FAILURE_CONNECT3";
 
     ui->listViewUser->clear();
     userList.clear();
     qDebug() << userList;
+    FailedConnect("Disconnected");
 }
 
 void MainWindow::onSendMessageBtnClick() // Слот для кнопки отправки сообщения
@@ -417,20 +413,20 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
         popUp = new PopUp();
         popUp->setPopupText("Успешное соединение!");
 
-        ui->messageBoard->append("Сессия №" + num_session);
+        ui->logBoard->append("Сессия №" + num_session);
         ui->lable_session_num->setText(num_session);
 
         popUp->show();
 
-        flagMsg = hideMessage;
+        client->sendMessage("%%%NAME&&" + ui->TitleEdit->text() + "$$$");
 
-        qDebug() << "SUCCESS_CONNECT";
+        flagMsg = hideMessage;
     }
 
     if (message == "Streamer: Disconnect")
     {
         flagMsg = hideMessage;
-        ui->messageBoard->append("Disconected...");
+        ui->logBoard->append("Disconected...");
     }
 
 
@@ -446,12 +442,12 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
         // Парсинг сообщения для получения имени и основного текста
         int lastPos = 0;
-        QString name, msg;
         while( ( lastPos = re.indexIn( message, lastPos ) ) != -1)
         {
             lastPos += re.matchedLength();
             listCounterName.push_back(re.cap(1));
-            ui->messageBoard->append(re.cap(1)+" написал сообщение!"); // Ведём логи....
+            ui->logBoard->append(re.cap(1)+" написал сообщение!"); // Ведём логи....
+            popUpТotification(re.cap(1), " написал сообщение!");
             listCounterMsg.push_back(re.cap(3) + " \n");
         }
 
@@ -465,6 +461,12 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
         ui->MessageBoardList->scrollToBottom(); // при новом сообщениии прокрутка вниз
 
+        if(statusBell == hideChat) // Если статус чата hideChat то
+        {
+            // делаем оповещение о наличии нового сообщения
+            ui->ChatBtn->setIcon(QIcon(StyleApp::getLogoNewMessage()));
+            ui->ChatBtn->setIconSize(QSize(45,45));
+        }
     }
 }
 
@@ -487,8 +489,6 @@ void MainWindow::popUpТotification(QString msg, QString totification)
         }
     }
 }
-
-
 
 void MainWindow::on_Settings_clicked() // Слот для отображения/скрытия меню настроек
 {
@@ -541,7 +541,6 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->Disconnect->setStyleSheet(StyleApp::getDarkBtnDisable());
     ui->StartSession->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->StopSession->setStyleSheet(StyleApp::getDarkBtnStyle());
-    ui->verticalSp->setStyleSheet(StyleApp::getInvisibleStyle());
     ui->send->setStyleSheet(StyleApp::getDarkBtnStyle());
 
     ui->btn_maximize->setStyleSheet(StyleApp::getDarkBtnMaximize());
@@ -566,35 +565,31 @@ void MainWindow::on_BtnUserControl_clicked() // Открытие/закрыти�
         ui->GroupUserListWidget->hide();
 //        ui->To_Ban_Button->hide();
         ui->Mute_Button->hide();
-        ui->verticalSp->show();
     }
     else
     {
         ui->GroupUserListWidget->show();
 //        ui->To_Ban_Button->show();
         ui->Mute_Button->show();
-        ui->verticalSp->hide();
     }
 
 }
 
 void MainWindow::on_To_Ban_Button_clicked() // Панелька со списком юзеров со статусом бан
 {
-    // to do
-    // Реализовать запрос на сервер для бана пользователя с трансляции
-    if(ui->listViewUser->currentItem())
-    {
-        QString status = "BAN: " + ui->listViewUser->currentItem()->text(); // само сообщение
-        client->sendMessage(status); // отправка оповещения на сервер
+//    if(ui->listViewUser->currentItem())
+//    {
+//        QString status = "BAN " + ui->listViewUser->currentItem()->text(); // само сообщение
+//        client->sendMessage(status); // отправка оповещения на сервер
 
-        QString username = ui->listViewUser->currentItem()->text();
-        user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoBan()), username);
-        ui->user_blacklist->addItem(user_in_list);
+//        QString username = ui->listViewUser->currentItem()->text();
+//        user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoBan()), username);
+//        ui->listViewUser->addItem(user_in_list);
 
-        bun_user_list.push_back(username);
+//        bun_user_list.push_back(username);
 
-        delete ui->listViewUser->currentItem();
-    }
+//        delete ui->listViewUser->currentItem();
+//    }
 }
 
 void MainWindow::on_Mute_Button_clicked() // Сигнал о мьюте пользователя
@@ -616,35 +611,6 @@ void MainWindow::on_Mute_Button_clicked() // Сигнал о мьюте поль
     }
 }
 
-void MainWindow::on_ShowBlacklist_clicked() // Открытие/закрытие панельки с забаненными пользователями
-{
-    if(ui->GroupBanWidget->isVisible())
-    {
-        ui->GroupBanWidget->hide();
-        ui->verticalSp->show();
-    }
-    else
-    {
-        ui->GroupBanWidget->show();
-        ui->verticalSp->hide();
-    }
-}
-
-void MainWindow::slot_UnbrokenUser(QListWidgetItem* item) // Метод для разбана пользователя
-{
-    QString username = ui->user_blacklist->currentItem()->text();
-
-    QString status = "UNBROKEN: " + ui->listViewUser->currentItem()->text();
-    client->sendMessage(status); // отправка оповещения на сервер
-
-    item = new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), username);
-    ui->listViewUser->addItem(item);
-
-    bun_user_list.remove(username);// Удаляем user-a из списка ban_user_list
-
-    delete ui->user_blacklist->currentItem();
-}
-
 void MainWindow::slot_UnMuteUser(QListWidgetItem* item) // Метод для размьюта пользователя
 {
     QString username = ui->listViewUser->currentItem()->text();
@@ -663,20 +629,26 @@ void MainWindow::slot_UnMuteUser(QListWidgetItem* item) // Метод для р�
 
         delete ui->listViewUser->currentItem();
     }
+    if (checkUserInList(bun_user_list, username) == true)
+    {
+        QString un_mute = "%%%UNBROKEN&&" + ui->listViewUser->currentItem()->text() + "$$$";
+        QString status = "UNBROKEN: " + ui->listViewUser->currentItem()->text();
+        client->sendMessage(status); // отправка оповещения на сервер
+        client->sendMessage(un_mute); // отправка оповещения на сервер
+
+        item = new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), username);
+        ui->listViewUser->addItem(item);
+
+        bun_user_list.remove(username); // Удаляем user-a из списка ban_user_list
+
+        delete ui->listViewUser->currentItem();
+    }
 }
 
 void MainWindow::on_lineSearchUserList_textChanged(const QString &arg1) // поиск в списке пользователей
 {
     hide_all(ui->listViewUser);
     QList<QListWidgetItem*> matches ( ui->listViewUser->findItems(arg1, Qt::MatchFlag::MatchContains) );
-    for(QListWidgetItem* item : matches)
-        item->setHidden(false);
-}
-
-void MainWindow::on_lineSearchBanUserList_textChanged(const QString &arg1) // поиск в списке забаненных
-{
-    hide_all(ui->user_blacklist);
-    QList<QListWidgetItem*> matches ( ui->user_blacklist->findItems(arg1, Qt::MatchFlag::MatchContains) );
     for(QListWidgetItem* item : matches)
         item->setHidden(false);
 }
@@ -736,41 +708,10 @@ void MainWindow::on_ChatBtn_clicked()
     }
 }
 
-void MainWindow::on_messageBoard_textChanged()
-{
-    if(statusBell == hideChat) // Если статус чата hideChat то
-    {
-        // делаем оповещение о наличии нового сообщения
-        ui->ChatBtn->setIcon(QIcon(StyleApp::getLogoNewMessage()));
-        ui->ChatBtn->setIconSize(QSize(45,45));
-    }
-
-    if(checkConnect == FAILURE_CONNECT){
-        qDebug() << "FAILURE_CONNECT2";
-        FailedConnect();
-    }
-}
-
 // отоброжение номера трансляции
 void MainWindow::onNumberSession(QString num_session)
 {
     this->num_session = num_session;
-}
-
-// При соединении что-то пошло не так
-void MainWindow::FailedConnect()
-{
-    popUp = new PopUp();
-    popUp->setPopupText("Соединение разорвано!");
-    popUp->show();
-
-    disableBtnStyle(ui->Connect, ui->Disconnect);
-
-    // Логическая блокировка кнопок Disconnect и разблокировка connect
-    ui->Connect->setDisabled(false);
-    ui->Disconnect->setDisabled(true);
-
-    ui->lable_session_num->setText("#STREAM");
 }
 
 void MainWindow::disableBtnStyle(QPushButton *btn, QPushButton *disableBtn)
@@ -902,3 +843,42 @@ void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &po
         menu->popup(ui->MessageBoardList->viewport()->mapToGlobal(pos));
 }
 
+// При соединении что-то пошло не так
+void MainWindow::FailedConnect(QString Error)
+{
+    popUp = new PopUp();
+    popUp->setPopupText(Error);
+    popUp->show();
+
+    disableBtnStyle(ui->Connect, ui->Disconnect);
+
+    // Логическая блокировка кнопок Disconnect и разблокировка connect
+    ui->Connect->setDisabled(false);
+    ui->Disconnect->setDisabled(true);
+
+    ui->lable_session_num->setText("#STREAM");
+}
+
+QString MainWindow::getHost()
+{
+    return ui->hostEdit->text();
+}
+
+unsigned int MainWindow::getPort()
+{
+    unsigned int port = ui->spinPort->value();
+    return port;
+}
+
+
+void MainWindow::on_btnShowLogs_clicked()
+{
+    if(ui->pnlLogs->isVisible())
+    {
+        ui->pnlLogs->hide();
+    }
+    else
+    {
+        ui->pnlLogs->show();
+    }
+}

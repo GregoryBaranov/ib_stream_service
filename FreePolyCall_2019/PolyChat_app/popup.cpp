@@ -56,7 +56,7 @@ void PopUp::paintEvent(QPaintEvent *event)
 
     // Кисть настраиваем на чёрный цвет в режиме полупрозрачности 180 из 255
     painter.setBrush(QBrush(QColor(62, 62, 62)));
-    painter.setPen(Qt::NoPen); // Край уведомления не будет выделен
+//    painter.setPen(Qt::NoPen); // Край уведомления не будет выделен
 
     // Отрисовываем фон с закруглением краёв в 10px
     painter.drawRoundedRect(roundedRect, 5, 5);

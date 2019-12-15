@@ -32,7 +32,7 @@ void Client::onResult(QNetworkReply *reply)
     if(reply->error())
     {
         MainWindow * wind = new MainWindow;
-        wind->FailedConnect("Host: " + _host + " Error: " + reply->errorString());
+        wind->FailedConnect("Error: " + reply->errorString());
         qDebug() << "ERROR";
         qDebug() << reply->errorString();
     }

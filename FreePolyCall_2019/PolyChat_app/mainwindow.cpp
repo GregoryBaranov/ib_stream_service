@@ -60,6 +60,7 @@ void MainWindow::settingDesigner() // Вид и проверки для hostEdit
     ui->GroupUserListWidget->hide();
     ui->Mute_Button->hide();
     ui->pnlLogs->hide();
+    ui->lable_session_num->setReadOnly(true);
     ui->TitleEdit->setPlaceholderText("Title");
 
     /* Создаем строку для регулярного выражения */
@@ -827,15 +828,13 @@ void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &po
         QAction * Mute = new QAction(trUtf8("Mute / Unmute"), this);
         QAction * MuteAll = new QAction(trUtf8("Mute All"), this);
         QAction * UnMuteAll = new QAction(trUtf8("Unmute All"), this);
-        QAction * Bun = new QAction(trUtf8("Bun / Allow"), this);
+        QAction * Bun = new QAction(trUtf8("Bun / Unban"), this);
         /* Подключаем СЛОТы обработчики для действий контекстного меню */
 
-        Mute->setIcon(QIcon(StyleApp::getLogoMute()));
-        MuteAll->setIcon(QIcon(":/image/muteAll.png"));
-        UnMuteAll->setIcon(QIcon(":/image/unMuteAll.png"));
-        Bun->setIcon(QIcon(StyleApp::getLogoBan()));
-
-
+//        Mute->setIcon(QIcon(StyleApp::getLogoMute()));
+//        MuteAll->setIcon(QIcon(":/image/muteAll.png"));
+//        UnMuteAll->setIcon(QIcon(":/image/unMuteAll.png"));
+//        Bun->setIcon(QIcon(StyleApp::getLogoBan()));
 
         connect(Mute, SIGNAL(triggered()), this, SLOT(slot_muteUser()));     // Обработчик вызова диалога редактирования
         connect(MuteAll, SIGNAL(triggered()), this, SLOT(slot_muteAllUser()));     // Обработчик вызова диалога редактирования
@@ -888,4 +887,12 @@ void MainWindow::on_btnShowLogs_clicked()
     {
         ui->pnlLogs->show();
     }
+}
+
+void MainWindow::slot_CopySessionNum()
+{
+    QApplication::clipboard()->setText(ui->lable_session_num->text());
+    popUp = new PopUp();
+    popUp->setPopupText("Номер сессии скопирован...");
+    popUp->show();
 }

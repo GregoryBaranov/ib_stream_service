@@ -33,6 +33,8 @@
 #include <QMenuBar>
 #include <QAbstractScrollArea>
 #include <QScrollBar>
+#include <QApplication>
+#include <QClipboard>
 
 class MessageViewDelegate;
 
@@ -187,6 +189,8 @@ private slots:
     void slot_muteUser();
     void slot_muteAllUser();
     void slot_unMuteAllUser();
+
+    void slot_CopySessionNum();
 
     void on_MessageBoardList_doubleClicked(const QModelIndex &index);
     void on_MessageBoardList_clicked(const QModelIndex &index);

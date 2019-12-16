@@ -831,11 +831,6 @@ void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &po
         QAction * Bun = new QAction(trUtf8("Bun / Unban"), this);
         /* Подключаем СЛОТы обработчики для действий контекстного меню */
 
-//        Mute->setIcon(QIcon(StyleApp::getLogoMute()));
-//        MuteAll->setIcon(QIcon(":/image/muteAll.png"));
-//        UnMuteAll->setIcon(QIcon(":/image/unMuteAll.png"));
-//        Bun->setIcon(QIcon(StyleApp::getLogoBan()));
-
         connect(Mute, SIGNAL(triggered()), this, SLOT(slot_muteUser()));     // Обработчик вызова диалога редактирования
         connect(MuteAll, SIGNAL(triggered()), this, SLOT(slot_muteAllUser()));     // Обработчик вызова диалога редактирования
         connect(UnMuteAll, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));

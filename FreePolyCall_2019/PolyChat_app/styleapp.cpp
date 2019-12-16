@@ -92,6 +92,20 @@ QString StyleApp::getDarkContextMenu()
            "}";
 }
 
+QString StyleApp::getDarkMessageBoardList()
+{
+    return "QListView {"
+           "background:#3d3d3d;"
+           ""
+           "}";
+}
+
+QString StyleApp::getDarkLineEdit()
+{
+    return "background:#3d3d3d;"
+           "color: #fff";
+}
+
 QString StyleApp::getDarkMessageBoardItem()
 {
     return  "QListView::item {"

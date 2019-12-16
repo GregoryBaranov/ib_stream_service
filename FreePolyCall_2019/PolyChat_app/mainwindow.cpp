@@ -57,9 +57,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::settingDesigner() // Вид и проверки для hostEdit, spinPort, connect;
 {
-    ui->GroupUserListWidget->hide();
-    ui->Mute_Button->hide();
-    ui->pnlLogs->hide();
     ui->lable_session_num->setReadOnly(true);
     ui->TitleEdit->setPlaceholderText("Title");
 
@@ -82,7 +79,8 @@ void MainWindow::settingDesigner() // Вид и проверки для hostEdit
     ui->hostEdit->setValidator(ipValidator);
     ui->hostEdit->setPlaceholderText("127.0.0.1");
 //    ui->hostEdit->setText("31.10.65.179");
-//    ui->hostEdit->setText("127.0.0.1");
+    ui->hostEdit->setText("127.0.0.1");
+    ui->TitleEdit->setText("Title stream");
 
     ui->spinPort->setMaximum(999999999);
     ui->spinPort->setValue(5000);
@@ -101,9 +99,10 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
 
     // позволяет нажать кнопку send с помощью Enter
     ui->label->setDisabled(true);
-
     ui->Connect->setDisabled(false);
     ui->Disconnect->setDisabled(true);
+
+    ui->sattingStackedWidget->setCurrentIndex(0);
 
     // Только для чтения информации
     ui->logBoard->setReadOnly(true);
@@ -123,7 +122,7 @@ void MainWindow::cursorTracking()
     // Разрешаем остлеживание курсора по всему приложению (блокам)
     ui->centralWidget->setMouseTracking(true);
     ui->titleBar->setMouseTracking(true);
-    ui->pnlSettings->setMouseTracking(true);
+    ui->sattingStackedWidget->setMouseTracking(true);
     ui->pnlStream->setMouseTracking(true);
     ui->pnlChat->setMouseTracking(true);
 }
@@ -358,14 +357,14 @@ void MainWindow::onDisconnectBtnClick() // Слот для кнопки откл
 
 void MainWindow::onSendMessageBtnClick() // Слот для кнопки отправки сообщения
 {
-    QString test = ui->textEdit->toPlainText();
+    QString test = ui->messageEdit->toPlainText();
 
     // to do
     // Сделать регулярку для проверки на множество пробелов
-    if(ui->textEdit->toPlainText() != "") // Проверка на пустое сообщение
+    if(ui->messageEdit->toPlainText() != "") // Проверка на пустое сообщение
     {
-        client->sendMessage(ui->textEdit->toPlainText()); // отправка сообщения
-        ui->textEdit->clear(); // очищение отправленного сообщения
+        client->sendMessage(ui->messageEdit->toPlainText()); // отправка сообщения
+        ui->messageEdit->clear(); // очищение отправленного сообщения
     }
 }
 
@@ -446,6 +445,8 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
         ui->MessageBoardList->setWordWrap(true);
         ui->MessageBoardList->setItemDelegate(new MessageViewDelegate(this));
 
+        QTime currTime = QTime::currentTime();
+
         QRegExp re( "([A-zА-я0-9]+)([:]{1})(([\\S+)([\n ]{0,}))" );
 
         // Парсинг сообщения для получения имени и основного текста
@@ -457,6 +458,7 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
             ui->logBoard->append(re.cap(1)+" написал сообщение!"); // Ведём логи....
             popUpТotification(re.cap(1), " написал сообщение!");
             listCounterMsg.push_back(re.cap(3) + " \n");
+            listDateMessage.push_back(currTime.toString("hh:mm:ss"));
         }
 
         // добавление сообщения в QlistView
@@ -465,6 +467,7 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
             modelMsg->list.push_front("1"); // Щетчик
             modelMsg->listName << listCounterName[index]; // Добаляем name
             modelMsg->listDescription<< listCounterMsg[index]; // Добаляем message
+            modelMsg->listDate << listDateMessage[index]; // Добаляем message
         }
 
         ui->MessageBoardList->scrollToBottom(); // при новом сообщениии прокрутка вниз
@@ -503,7 +506,7 @@ void MainWindow::on_Settings_clicked() // Слот для отображения
     static int ShowOrHide = 0;
     if(++ShowOrHide % 2) // Если открыт то закрываем, иначе отображаем
     {
-        QPropertyAnimation *animation = new QPropertyAnimation(ui->pnlSettings, "maximumWidth"); //wdgSMS is your widget
+        QPropertyAnimation *animation = new QPropertyAnimation(ui->sattingStackedWidget, "maximumWidth"); //wdgSMS is your widget
         animation->setDuration(100);
         animation->setStartValue(302);
         animation->setEndValue(0);
@@ -511,7 +514,7 @@ void MainWindow::on_Settings_clicked() // Слот для отображения
     }
     else
     {
-        QPropertyAnimation *animation = new QPropertyAnimation(ui->pnlSettings, "maximumWidth");
+        QPropertyAnimation *animation = new QPropertyAnimation(ui->sattingStackedWidget, "maximumWidth");
         animation->setDuration(100);
         animation->setStartValue(0);
         animation->setEndValue(302);
@@ -540,16 +543,32 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     // Выставление стиля для темы "Dark"
     // Выставление стиля для дефолтной темы "Dark"
     ui->centralWidget->setStyleSheet(StyleApp::getMainDarkBackground());
+    ui->sattingStackedWidget->setStyleSheet(StyleApp::getMainDarkBackground());
 
     ui->hostEdit->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->spinPort->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->Connect->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->ChatBtn->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->closeUserListPanel->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->closeLogPanel->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->Mute_Button->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->To_Ban_Button->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->BtnUserControl->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->btnShowLogs->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->Settings->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->Disconnect->setStyleSheet(StyleApp::getDarkBtnDisable());
     ui->StartSession->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->StopSession->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->send->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->MessageBoardList->setStyleSheet(StyleApp::getDarkMessageBoardList());
+    ui->sattingStackedWidget->setStyleSheet("padding: 10px;");
+    ui->messageEdit->setStyleSheet(StyleApp::getMainDarkBackground());
+    ui->TitleEdit->setStyleSheet(StyleApp::getDarkLineEdit());
+    ui->hostEdit->setStyleSheet(StyleApp::getDarkLineEdit());
+    ui->lable_session_num->setStyleSheet(StyleApp::getDarkLineEdit());
+    ui->lineSearchUserList->setStyleSheet(StyleApp::getDarkLineEdit());
+    ui->listViewUser->setStyleSheet(StyleApp::getDarkLineEdit());
+    ui->logBoard->setStyleSheet(StyleApp::getDarkLineEdit());
 
     ui->btn_maximize->setStyleSheet(StyleApp::getDarkBtnMaximize());
     ui->btn_minimize->setStyleSheet(StyleApp::getDarkBtnMinimize());
@@ -563,24 +582,13 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->Settings->setIcon(QIcon(StyleApp::getBtnShowSettingIcon()));
     ui->Settings->setIconSize(QSize(35,35));
 
-    ui->textEdit->setPlaceholderText("Message...");
-    ui->lable_session_num->setText("#STREAM");
+    ui->messageEdit->setPlaceholderText("Message...");
+    ui->lable_session_num->setPlaceholderText("Session");
 }
 
 void MainWindow::on_BtnUserControl_clicked() // Открытие/закрытие панельки со списком юзеров
 {
-    if(ui->GroupUserListWidget->isVisible()){
-        ui->GroupUserListWidget->hide();
-//        ui->To_Ban_Button->hide();
-        ui->Mute_Button->hide();
-    }
-    else
-    {
-        ui->GroupUserListWidget->show();
-//        ui->To_Ban_Button->show();
-        ui->Mute_Button->show();
-    }
-
+    ui->sattingStackedWidget->setCurrentIndex(2);
 }
 
 void MainWindow::on_To_Ban_Button_clicked() // Панелька со списком юзеров со статусом бан
@@ -821,27 +829,38 @@ void MainWindow::slot_unMuteAllUser()
 void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &pos)
 {
     /* Создаем объект контекстного меню */
-        QMenu * menu = new QMenu();
-        /* Создаём действия для контекстного меню */
-        menu->setStyleSheet(StyleApp::getDarkContextMenu());
+    QMenu * menu = new QMenu();
+    /* Создаём действия для контекстного меню */
+    menu->setStyleSheet(StyleApp::getDarkContextMenu());
 
-        QAction * Mute = new QAction(trUtf8("Mute / Unmute"), this);
-        QAction * MuteAll = new QAction(trUtf8("Mute All"), this);
-        QAction * UnMuteAll = new QAction(trUtf8("Unmute All"), this);
-        QAction * Bun = new QAction(trUtf8("Bun / Unban"), this);
-        /* Подключаем СЛОТы обработчики для действий контекстного меню */
+    QAction * Mute = new QAction(trUtf8("Mute"), this);
+    QAction * Ban = new QAction(trUtf8("Ban"), this);
 
-        connect(Mute, SIGNAL(triggered()), this, SLOT(slot_muteUser()));     // Обработчик вызова диалога редактирования
-        connect(MuteAll, SIGNAL(triggered()), this, SLOT(slot_muteAllUser()));     // Обработчик вызова диалога редактирования
-        connect(UnMuteAll, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));
-        /* Устанавливаем действия в меню */
-        menu->addAction(Mute);
-        menu->addAction(Bun);
-        menu->addAction(MuteAll);
-        menu->addAction(UnMuteAll);
+    QAction * Unmute = new QAction(trUtf8("Unmute"), this);
+    QAction * Unbun = new QAction(trUtf8("Unban"), this);
 
-        /* Вызываем контекстное меню */
-        menu->popup(ui->MessageBoardList->viewport()->mapToGlobal(pos));
+    QAction * MuteAll = new QAction(trUtf8("Mute All"), this);
+    QAction * UnMuteAll = new QAction(trUtf8("Unmute All"), this);
+
+    /* Подключаем СЛОТы обработчики для действий контекстного меню */
+
+    connect(Mute, SIGNAL(triggered()), this, SLOT(slot_muteUser()));     // Обработчик вызова диалога редактирования
+    connect(MuteAll, SIGNAL(triggered()), this, SLOT(slot_muteAllUser()));     // Обработчик вызова диалога редактирования
+    connect(UnMuteAll, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));
+    /* Устанавливаем действия в меню */
+    menu->addAction(Mute);
+    menu->addAction(Ban);
+    menu->addSeparator();
+
+    menu->addAction(Unmute);
+    menu->addAction(Unbun);
+    menu->addSeparator();
+
+    menu->addAction(MuteAll);
+    menu->addAction(UnMuteAll);
+
+    /* Вызываем контекстное меню */
+    menu->popup(ui->MessageBoardList->viewport()->mapToGlobal(pos));
 }
 
 // При соединении что-то пошло не так
@@ -857,7 +876,7 @@ void MainWindow::FailedConnect(QString Error)
     ui->Connect->setDisabled(false);
     ui->Disconnect->setDisabled(true);
 
-    ui->lable_session_num->setText("#STREAM");
+    ui->lable_session_num->clear();
 }
 
 QString MainWindow::getHost()
@@ -874,20 +893,15 @@ unsigned int MainWindow::getPort()
 
 void MainWindow::on_btnShowLogs_clicked()
 {
-    if(ui->pnlLogs->isVisible())
-    {
-        ui->pnlLogs->hide();
-    }
-    else
-    {
-        ui->pnlLogs->show();
-    }
+    ui->sattingStackedWidget->setCurrentIndex(1);
 }
 
-void MainWindow::slot_CopySessionNum()
+void MainWindow::on_closeLogPanel_clicked()
 {
-    QApplication::clipboard()->setText(ui->lable_session_num->text());
-    popUp = new PopUp();
-    popUp->setPopupText("Номер сессии скопирован...");
-    popUp->show();
+    ui->sattingStackedWidget->setCurrentIndex(0);
+}
+
+void MainWindow::on_closeUserListPanel_clicked()
+{
+    ui->sattingStackedWidget->setCurrentIndex(0);
 }

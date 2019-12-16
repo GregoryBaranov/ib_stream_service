@@ -71,6 +71,7 @@ void MessageViewDelegate::paintObject(QPainter * painter, const QStyleOptionView
 {
     QString name = index.data(ListMessageModel::DetailRole).toString();
     QString description = index.data(ListMessageModel::DescriptionRole).toString();
+    QString date = index.data(ListMessageModel::DateRole).toString();
 
     QRect rect(option.rect.topLeft(), option.rect.bottomRight());
 
@@ -82,7 +83,14 @@ void MessageViewDelegate::paintObject(QPainter * painter, const QStyleOptionView
     rect.setLeft(rect.left() + 72);
 
     p.save();
+    rect.setTopRight(rect.topRight());
     rect.setTop(rect.top() + 5);
+    rect.setRight(rect.right() - 10);
+    p.drawText(rect, Qt::EditRole, date);
+    p.restore();
+
+    p.save();
+    rect.setTop(rect.top());
     rect.setRight(rect.right());
     p.drawText(rect, Qt::TextWordWrap , name);
     p.restore();
@@ -101,11 +109,11 @@ void MessageViewDelegate::paintSetIcon( QPainter * painter, const QStyleOptionVi
     p.translate(option.rect.topLeft());
     if(index.data(Qt::DecorationRole) != ListMessageModel::RoleStudent)
     {
-        p.drawImage(5,5, QImage(":/image/techer.png"));
+        p.drawImage(5,10, QImage(":/image/techer.png"));
     }
     else
     {
-        p.drawImage(5,5, QImage(":/image/lerner.png"));
+        p.drawImage(5,10, QImage(":/image/lerner.png"));
     }
 }
 
@@ -116,7 +124,7 @@ QSize MessageViewDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
     QString Text = model->data(index, ListMessageModel::DescriptionRole ).toString();
     QRect neededsize = fm.boundingRect( option.rect, Qt::TextWordWrap, Text);
 
-    return QSize(option.rect.width(), neededsize.height()+35);
+    return QSize(option.rect.width(), neededsize.height()+40);
 }
 
 

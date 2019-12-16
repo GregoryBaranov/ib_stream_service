@@ -15,6 +15,8 @@ public:
     static QString getDarkBtnDisable();
     static QString getDarkContextMenu();
     static QString getDarkMessageBoardItem();
+    static QString getDarkMessageBoardList();
+    static QString getDarkLineEdit();
 
     //******************************************
 

@@ -21,7 +21,36 @@ socket.on(window.location.pathname.substr(1), function (msg) {
     $("#supa").toggle();
     $("#supa").show();
   }
-  if (typeof msg.message !== 'undefined' && msg.message != '' && msg.message != ' ') {
+  if (typeof msg.title !== '' && msg.image != '' && msg.website != ' ') {
+    var output = document.getElementById("output");
+    if (msg.id == 'streamer') {
+      $('div.message_holder').append(
+        '<div style="word-wrap: break-word;" class="p-3 mb-2 bg-danger text-white rounded"  ><b style="color: #000;">' +
+        'Стример: ' + '</b>' + msg.message + 
+        '<a href="//' + msg.website + '" target="_blank"><div class="row align-items-center"><div class="col"><div class="container">' +
+        '<div class="row align-items-center"><div class="col">' +
+        '<img class="card-img-top" src=' + msg.image + '>' +
+        '</div><div class="col">' +
+        '<h5 class="card-title">' + msg.title + '</h5>' +
+        '</div></div></div></div></a></div>')
+    } else {
+      $('div.message_holder').append(
+        '<div style="word-wrap: break-word;" class="p-3 mb-2 bg-info text-white rounded message_url"><b style="color: #000;">' +
+        msg.id + ': </b>' + msg.message +
+        '<a href="//' + msg.website + '" target="_blank"><div class="row align-items-center"><div class="col"><div class="container">' +
+        '<div class="row align-items-center"><div class="col">' +
+        '<img class="card-img-top" src=' + msg.image + '>' +
+        '</div><div class="col">' +
+        '<h5 class="card-title">' + msg.title + '</h5>' +
+        '</div></div></div></div></a></div>')
+    }
+
+
+    if (output.selectionStart == output.selectionEnd) {
+      output.scrollTop = output.scrollHeight;
+    }
+  }
+  else if (typeof msg.message !== 'undefined' && msg.message != '' && msg.message != ' ') {
     var output = document.getElementById("output");
     if (msg.id == 'streamer') {
       $('div.message_holder').append(
@@ -29,15 +58,17 @@ socket.on(window.location.pathname.substr(1), function (msg) {
         'Стример: ' + '</b>' + msg.message + '</div>')
     } else {
       $('div.message_holder').append(
-        '<div style="word-wrap: break-word;" class="p-3 mb-2 bg-info text-white rounded"><b style="color: #000;">' +
+        '<div style="word-wrap: break-word;" class="p-3 mb-2 bg-info text-white rounded message_url"><b style="color: #000;">' +
         msg.id + ': </b>' + msg.message + '</div>')
     }
+
 
     if (output.selectionStart == output.selectionEnd) {
       output.scrollTop = output.scrollHeight;
     }
   }
 })
+
 
 Temp = 0;
 $(document).ready(function () {

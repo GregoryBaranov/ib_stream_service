@@ -54,6 +54,7 @@ public:
     QList<QString> list;
     QList<QString> listName;
     QList<QString> listDescription;
+    QList<QString> listDate;
 private:
 //    QList<QString> list;
 

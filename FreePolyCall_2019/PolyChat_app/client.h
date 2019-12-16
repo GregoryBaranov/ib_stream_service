@@ -19,12 +19,20 @@ class Client : public QObject
 {
     Q_OBJECT
 
+    enum CheckConnect
+    {
+        SUCCESS_CONNECT,
+        FAILURE_CONNECT,
+        NOT_RECOGNIZED
+    };
+
 public:
     explicit Client(QObject *parent = nullptr); // явный конструктор
     ~Client();
 
     void connectSocket(const QString& host, unsigned int port); // функция установки соединения
     void sendMessage(const QString& message); // функция отправки сообщения
+    void clientDisconnect();
 
 private:
     QNetworkAccessManager *manager;
@@ -32,6 +40,7 @@ private:
     QString _host;
     QWebSocket *clientSocket;
     int *Namber;
+    CheckConnect checkConnect;
 
     template<class T1, class T2>
     T1 generateSessionNumber(T1 rng, T2 range);

@@ -79,11 +79,31 @@ QString StyleApp::getDarkBtnClose()
 QString StyleApp::getDarkContextMenu()
 {
     return "QMenu {"
-           "background:#3d3d3d;"
+           "background:#2f2f2f;"
            "color: #fff;"
-           "border: 2px solid #5B5B5B;"
-           "font-size: 18px;"
+           "border: 2px solid #000;"
+           "padding: 10px;"
+           "font-size: 20px;"
+           "text-align: center;"
+           "}"
+           "QMenu::item:selected {"
+           "padding: 10px;"
+           "background: #373737;"
            "}";
+}
+
+QString StyleApp::getDarkMessageBoardList()
+{
+    return "QListView {"
+           "background:#3d3d3d;"
+           ""
+           "}";
+}
+
+QString StyleApp::getDarkLineEdit()
+{
+    return "background:#3d3d3d;"
+           "color: #fff";
 }
 
 QString StyleApp::getDarkMessageBoardItem()

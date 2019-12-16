@@ -33,6 +33,9 @@
 #include <QMenuBar>
 #include <QAbstractScrollArea>
 #include <QScrollBar>
+#include <QApplication>
+#include <QClipboard>
+#include <QLine>
 
 class MessageViewDelegate;
 
@@ -98,6 +101,7 @@ public:
     QString getHost();
     unsigned int getPort();
 
+    CheckConnect checkConnect;
 public slots:
     void setPreviousPosition(QPoint previousPosition); // устанавливаем новую предыдущую позицию
 
@@ -121,6 +125,8 @@ private:
     void mainApplicationDesigner(); // Дефолтный фид приложения
     void settingDesigner(); // Вид и проверки для hostEdit, spinPort, connect;
     int closeApp();
+
+    void on_DarkDesign_clicked(); // Слот для переключения на темную тему
     void disableBtnStyle(QPushButton *, QPushButton *);
 
     // Переменная, от которой будем отталкиваться при работе с перемещением и изменением размера окна
@@ -142,10 +148,10 @@ private:
 
     BellStatus statusBell; // enum для проверки статуса окна
     showMesseg flagMsg;
-    CheckConnect checkConnect;
 
     QStringList listCounterMsg;
     QStringList listCounterName;
+    QStringList listDateMessage;
 
     int msgBoardWidth;
 
@@ -176,7 +182,6 @@ private slots:
     void onSendMessageBtnClick(); // Слот для кнопки отправки сообщения
     void on_Settings_clicked(); // Слот для отображения/скрытия меню настроек
     void on_btn_close_clicked(); // Слот для отключения от сервера
-    void on_DarkDesign_clicked(); // Слот для переключения на темную тему
     void on_BtnUserControl_clicked(); // Слот отображения списка пользоватеей
     void on_To_Ban_Button_clicked(); // Слот для бана пользователей
     void on_Mute_Button_clicked(); // Слот для мьюта пользователей
@@ -193,6 +198,8 @@ private slots:
     void on_MessageBoardList_customContextMenuRequested(const QPoint &pos);
 
     void on_btnShowLogs_clicked();
+    void on_closeLogPanel_clicked();
+    void on_closeUserListPanel_clicked();
 };
 
 #endif // MAINWINDOW_H

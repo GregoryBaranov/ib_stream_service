@@ -42,7 +42,7 @@
                   required id="text_id" name="ses_id" placeholder='SessionID' title="5 цифр" value="12345">
               </div>
               <div class="col d-flex justify-content-center">
-                <input type="text" class="btn font-weight-bolder d-flex justify-content-center" placeholder='Username'  oninput="stst()" name="name_usr"
+                <input type="text" class="btn font-weight-bolder d-flex justify-content-center" placeholder='Username'  oninput="stst()" name="name_usr" maxlength="20"
                   required value="Username">
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
@@ -222,3 +222,4 @@ function stst(){
    }
 
 </script>
+

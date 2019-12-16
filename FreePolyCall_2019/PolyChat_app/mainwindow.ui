@@ -6,16 +6,323 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1227</width>
-    <height>624</height>
+    <width>1403</width>
+    <height>716</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="1" rowspan="2">
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="1" column="0">
+     <widget class="QWidget" name="pnlStream" native="true">
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="1" column="0">
+        <widget class="QPushButton" name="StartSession">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Запустить</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="StopSession">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Остановить</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QStackedWidget" name="sattingStackedWidget">
+      <property name="maximumSize">
+       <size>
+        <width>302</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <widget class="QWidget" name="page">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="2" column="0">
+         <widget class="QSpinBox" name="spinPort">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>140</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0" colspan="2">
+         <widget class="QPushButton" name="BtnUserControl">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>280</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>User control</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QPushButton" name="Connect">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>140</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Connect</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QLineEdit" name="hostEdit">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>280</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="lable_session_num">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>140</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QPushButton" name="Disconnect">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>140</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Disconnect</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QLineEdit" name="TitleEdit">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>280</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0" colspan="2">
+         <widget class="QPushButton" name="btnShowLogs">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>280</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Show log panel</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0" colspan="2">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_2">
+       <layout class="QGridLayout" name="gridLayout_8">
+        <item row="1" column="0">
+         <widget class="QTextEdit" name="logBoard">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QPushButton" name="closeLogPanel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Exit </string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_3">
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0" colspan="2">
+         <widget class="QPushButton" name="closeUserListPanel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Exit </string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QListWidget" name="listViewUser"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QPushButton" name="Mute_Button">
+          <property name="minimumSize">
+           <size>
+            <width>130</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Mute</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QPushButton" name="To_Ban_Button">
+          <property name="minimumSize">
+           <size>
+            <width>130</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Ban</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QLineEdit" name="lineSearchUserList">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="placeholderText">
+           <string>Search...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item row="1" column="1">
      <widget class="QWidget" name="pnlChat" native="true">
       <property name="maximumSize">
        <size>
@@ -24,6 +331,16 @@
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
+       <item row="1" column="0">
+        <widget class="QTextEdit" name="messageEdit">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>60</height>
+          </size>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="1">
         <widget class="QPushButton" name="send">
          <property name="minimumSize">
@@ -53,195 +370,6 @@
         <widget class="QListView" name="MessageBoardList">
          <property name="styleSheet">
           <string notr="true"/>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QTextEdit" name="textEdit">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>60</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QWidget" name="pnlSettings" native="true">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="1" column="0" colspan="2">
-        <widget class="QLineEdit" name="hostEdit">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QPushButton" name="Connect">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Connect</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0" colspan="2">
-        <widget class="QPushButton" name="btnShowLogs">
-         <property name="text">
-          <string>Logs</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0" colspan="2">
-        <widget class="QPushButton" name="BtnUserControl">
-         <property name="text">
-          <string>User control</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QPushButton" name="Disconnect">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Disconnect</string>
-         </property>
-        </widget>
-       </item>
-       <item row="13" column="0" colspan="2">
-        <widget class="QWidget" name="GroupUserListWidget" native="true">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>70</height>
-          </size>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="1" column="0" colspan="4">
-           <widget class="QListWidget" name="listViewUser"/>
-          </item>
-          <item row="0" column="0" colspan="4">
-           <widget class="QLineEdit" name="lineSearchUserList">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>40</height>
-             </size>
-            </property>
-            <property name="placeholderText">
-             <string>Search...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="To_Ban_Button">
-            <property name="text">
-             <string>To ban</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QPushButton" name="Mute_Button">
-            <property name="text">
-             <string>Mute</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QSpinBox" name="spinPort">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLabel" name="lable_session_num">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QLineEdit" name="TitleEdit">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="0" rowspan="2">
-     <widget class="QWidget" name="pnlStream" native="true">
-      <layout class="QGridLayout" name="gridLayout_7">
-       <item row="1" column="1">
-        <widget class="QPushButton" name="StopSession">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Остановить</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="StartSession">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Запустить</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string/>
          </property>
         </widget>
        </item>
@@ -412,28 +540,6 @@ padding:1px;</string>
          </property>
          <property name="default">
           <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="3" column="0" colspan="3">
-     <widget class="QWidget" name="pnlLogs" native="true">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>300</height>
-       </size>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_6">
-       <item row="0" column="1">
-        <widget class="QTextEdit" name="logBoard">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>300</height>
-          </size>
          </property>
         </widget>
        </item>

@@ -190,8 +190,10 @@ private slots:
     void on_ChatBtn_clicked(); // Скрытие чата
 
     void slot_muteUser();
+    void slot_unMuteUser();
     void slot_muteAllUser();
     void slot_unMuteAllUser();
+
 
     void on_MessageBoardList_doubleClicked(const QModelIndex &index);
     void on_MessageBoardList_clicked(const QModelIndex &index);

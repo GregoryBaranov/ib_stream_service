@@ -759,6 +759,10 @@ void MainWindow::slot_muteUser()
     {
         QModelIndex index = ui->MessageBoardList->currentIndex();
         QString username = index.data(Qt::DisplayRole).toString();
+
+        QList<QListWidgetItem *> items = ui->listViewUser->findItems(username, Qt::MatchExactly);
+        int row = ui->listViewUser->row(items.first());
+
         if (username != "Streamer")
         {
             if (checkUserInList(mute_user_list, username) == false)
@@ -768,8 +772,29 @@ void MainWindow::slot_muteUser()
                 client->sendMessage(status); // отправка оповещения на сервер
                 client->sendMessage(mute); // отправка оповещения на сервер
                 mute_user_list.push_back(username);
+
+                delete ui->listViewUser->takeItem(row);
+
+                user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoMute()), username);
+                ui->listViewUser->addItem(user_in_list);
             }
-            else
+        }
+    }
+}
+
+void MainWindow::slot_unMuteUser()
+{
+    if (!listCounterName.isEmpty() && !userList.empty())
+    {
+        QModelIndex index = ui->MessageBoardList->currentIndex();
+        QString username = index.data(Qt::DisplayRole).toString();
+
+        QList<QListWidgetItem *> items = ui->listViewUser->findItems(username, Qt::MatchExactly);
+        int row = ui->listViewUser->row(items.first());
+
+        if (username != "Streamer")
+        {
+            if (checkUserInList(mute_user_list, username) == true)
             {
                 QString status = "UNMUTE " + username;
                 QString un_mute = "%%%UNMUTE&&" + username + "$$$";
@@ -777,6 +802,12 @@ void MainWindow::slot_muteUser()
                 client->sendMessage(un_mute); // отправка оповещения на сервер
 
                 mute_user_list.remove(username); // Удаляем user-a из списка mute_user_list
+
+                delete ui->listViewUser->takeItem(row);
+
+                user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), username);
+                ui->listViewUser->addItem(user_in_list);
+
             }
         }
     }
@@ -830,6 +861,7 @@ void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &po
 {
     /* Создаем объект контекстного меню */
     QMenu * menu = new QMenu();
+
     /* Создаём действия для контекстного меню */
     menu->setStyleSheet(StyleApp::getDarkContextMenu());
 
@@ -843,19 +875,24 @@ void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &po
     QAction * UnMuteAll = new QAction(trUtf8("Unmute All"), this);
 
     /* Подключаем СЛОТы обработчики для действий контекстного меню */
-
     connect(Mute, SIGNAL(triggered()), this, SLOT(slot_muteUser()));     // Обработчик вызова диалога редактирования
     connect(MuteAll, SIGNAL(triggered()), this, SLOT(slot_muteAllUser()));     // Обработчик вызова диалога редактирования
     connect(UnMuteAll, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));
+    connect(Unmute, SIGNAL(triggered()), this, SLOT(slot_unMuteUser()));     // Обработчик вызова диалога редактирования
+//    connect(Unbun, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));
+//    connect(Ban, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));
+
     /* Устанавливаем действия в меню */
     menu->addAction(Mute);
     menu->addAction(Ban);
     menu->addSeparator();
 
+    //*********************************
     menu->addAction(Unmute);
     menu->addAction(Unbun);
     menu->addSeparator();
 
+    //*********************************
     menu->addAction(MuteAll);
     menu->addAction(UnMuteAll);
 

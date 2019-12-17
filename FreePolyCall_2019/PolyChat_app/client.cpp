@@ -39,7 +39,6 @@ void Client::onResult(QNetworkReply *reply)
             qDebug() << reply->errorString();
 
             checkConnect = FAILURE_CONNECT;
-            wind->deleteLater();
         }
     }
     else

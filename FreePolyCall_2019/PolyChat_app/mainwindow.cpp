@@ -318,13 +318,8 @@ void MainWindow::onConnectBtnClick() // Слот для кнопки соеди�
     checkConnect = FAILURE_CONNECT;
 
     ui->logBoard->append("Connection attempt...");
-    if (ui->TitleEdit->text() == "")
-    {
-        popUp = new PopUp();
-        popUp->setPopupText("Введите название стрима!");
-        popUp->show();
-    }
-    else if (ui->hostEdit->text() == "")
+
+    if (ui->hostEdit->text() == "")
     {
         popUp = new PopUp();
         popUp->setPopupText("Введите хост!");

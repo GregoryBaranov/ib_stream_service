@@ -588,19 +588,6 @@ void MainWindow::on_BtnUserControl_clicked() // Открытие/закрыти�
 
 void MainWindow::on_To_Ban_Button_clicked() // Панелька со списком юзеров со статусом бан
 {
-//    if(ui->listViewUser->currentItem())
-//    {
-//        QString status = "BAN " + ui->listViewUser->currentItem()->text(); // само сообщение
-//        client->sendMessage(status); // отправка оповещения на сервер
-
-//        QString username = ui->listViewUser->currentItem()->text();
-//        user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoBan()), username);
-//        ui->listViewUser->addItem(user_in_list);
-
-//        bun_user_list.push_back(username);
-
-//        delete ui->listViewUser->currentItem();
-//    }
 }
 
 void MainWindow::on_Mute_Button_clicked() // Сигнал о мьюте пользователя

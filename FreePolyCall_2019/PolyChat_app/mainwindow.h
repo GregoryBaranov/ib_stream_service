@@ -5,27 +5,16 @@
 #include "popup.h"
 #include "client.h"
 #include <QPushButton>
-#include <QLineEdit>
-#include <QTextEdit>
 #include <QListWidget>
-#include <QLabel>
 #include <list>
-#include <string>
-#include <fstream>
-#include <sstream>
 #include <QStandardItemModel>
 #include <QMouseEvent>
 #include <QMessageBox>
-#include <QInputDialog>
-#include <QFileDialog>
-#include <QDir>
 #include <QGraphicsDropShadowEffect>
 #include <QToolButton>
 #include <QRegExp>
 #include <QRegExpValidator>
 #include <QPropertyAnimation>
-#include <QThread>
-#include <random>
 #include <ctime>
 #include "messageviewdelegate.h"
 #include "listmessagemodel.h"
@@ -34,8 +23,6 @@
 #include <QAbstractScrollArea>
 #include <QScrollBar>
 #include <QApplication>
-#include <QClipboard>
-#include <QLine>
 
 class MessageViewDelegate;
 

@@ -171,7 +171,6 @@ def handle_my_custom_event(json): #Получаем Json
     if json['message'].encode().decode('utf8','replace').replace('<', '&lt') != "" and flag == True: #Если в Json есть собщение, то
 
         dict_elem = link(json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
-
         data = {'id': test,'message': json['message'].encode().decode('utf8','replace').replace('<', '&lt'),'title':dict_elem['title'],'website': dict_elem['website'], 'image': dict_elem['image']} #Заменяем знак '<' на спецсимвол для защиты от html разметки 
         print(json['id'].encode().decode('utf8','replace') + json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
         socketio.emit(json['session_id'], data) #Отправляем сообщение в браузер
@@ -197,7 +196,7 @@ def link(msg):
         return dict_elem
     except:
         return dict_elem
-
+      
 if __name__ == "__main__":
     global Stream,ignor,bd,sn
     Stream = {}

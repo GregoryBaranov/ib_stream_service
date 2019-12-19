@@ -420,7 +420,7 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
         popUp->show();
 
-        client->sendMessage("%%%NAME&&" + ui->TitleEdit->text() + "$$$");
+        client->sendMessage("%%%NAME&&" + ui->TitleEdit->text() + " $$$");
 
         flagMsg = hideMessage;
     }

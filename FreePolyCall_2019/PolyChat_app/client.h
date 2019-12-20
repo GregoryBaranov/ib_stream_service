@@ -35,6 +35,7 @@ public:
     void clientDisconnect();
 
 private:
+    PopUp *popUp;
     QNetworkAccessManager *manager;
     unsigned int _port;
     QString _host;

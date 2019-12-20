@@ -1,9 +1,11 @@
 #include "client.h"
 #include "mainwindow.h"
 #include <QMaskGenerator>
+#include <smart_pointer.h>
 
 Client::Client(QObject *parent) : QObject(parent)
 {
+    popUp = new PopUp();
     checkConnect = FAILURE_CONNECT;
 
     clientSocket = new QWebSocket();
@@ -15,9 +17,7 @@ Client::Client(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(onReady(QString)),this,SLOT(reciveBuf(QString)));
 }
 
-Client::~Client(){
-    delete Namber;
-}
+Client::~Client(){}
 
 void Client::chatData()
 {
@@ -29,14 +29,17 @@ void Client::chatData()
 
 void Client::onResult(QNetworkReply *reply)
 {
+    smart_pointer<MainWindow> wind(new MainWindow());
+//    MainWindow *wind = new MainWindow;
     if(reply->error())
     {
-        if (checkConnect == FAILURE_CONNECT || checkConnect == NOT_RECOGNIZED)
+        if (checkConnect == FAILURE_CONNECT)
         {
-            MainWindow * wind = new MainWindow;
-            wind->FailedConnect("Host: " + _host + " Error: " + reply->errorString());
-            qDebug() << "ERROR";
+            wind->FailedConnect();
             qDebug() << reply->errorString();
+
+            popUp->setPopupText("ERROR: "+reply->errorString());
+            popUp->show();
 
             checkConnect = FAILURE_CONNECT;
         }
@@ -79,7 +82,7 @@ void Client::clientDisconnect()
 
 void Client::connectSocket(const QString& host, unsigned int port) // Соединяется с сервером
 {
-    checkConnect = NOT_RECOGNIZED;
+    checkConnect = FAILURE_CONNECT;
 
     _port = port;
     _host = host;

@@ -83,7 +83,7 @@ public:
     QImage defautIcon() const;
     void setDefaultIcon(const QImage & img);
     int getMsgBoardWidth();
-    void FailedConnect(QString Error);
+    void FailedConnect();
 
     QString getHost();
     unsigned int getPort();
@@ -99,12 +99,12 @@ signals:
 private:
     Ui::MainWindow *ui;
 
-    MessageViewDelegate * delegate;
-
-
     Client* client;
 
     PopUp *popUp;
+
+    QPropertyAnimation *animationStackedWidget;
+    QPropertyAnimation *animationPnlChat;
 
     int numberListMsg;
 
@@ -186,8 +186,6 @@ private slots:
     void on_MessageBoardList_clicked(const QModelIndex &index);
     void on_MessageBoardList_customContextMenuRequested(const QPoint &pos);
 
-    void on_btnShowLogs_clicked();
-    void on_closeLogPanel_clicked();
     void on_closeUserListPanel_clicked();
 };
 

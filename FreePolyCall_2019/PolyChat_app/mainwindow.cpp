@@ -14,6 +14,10 @@ MainWindow::MainWindow(QWidget *parent) :
     btn_max(); // Кнопка каоторая отвечает за свёртывание и развертывание программы в маленький и большой режимы
 
     client = new Client(this);
+    popUp = new PopUp();
+
+    animationStackedWidget = new QPropertyAnimation(ui->sattingStackedWidget, "maximumWidth");
+    animationPnlChat = new QPropertyAnimation(ui->pnlChat, "maximumWidth");
 
     // connect для получения сообщений
     connect(client, SIGNAL(receiveMessage(QString)),
@@ -51,8 +55,9 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete user_in_list;
     delete popUp;
+    delete animationStackedWidget;
+    delete animationPnlChat;
 }
 
 void MainWindow::settingDesigner() // Вид и проверки для hostEdit, spinPort, connect;
@@ -80,7 +85,7 @@ void MainWindow::settingDesigner() // Вид и проверки для hostEdit
     ui->hostEdit->setPlaceholderText("127.0.0.1");
 //    ui->hostEdit->setText("31.10.65.179");
     ui->hostEdit->setText("127.0.0.1");
-    ui->TitleEdit->setText("Title stream");
+//    ui->TitleEdit->setText("Title stream");
 
     ui->spinPort->setMaximum(999999999);
     ui->spinPort->setValue(5000);
@@ -104,8 +109,6 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
 
     ui->sattingStackedWidget->setCurrentIndex(0);
 
-    // Только для чтения информации
-    ui->logBoard->setReadOnly(true);
     ui->MessageBoardList->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->MessageBoardList->setStyleSheet(StyleApp::getDarkMessageBoardItem());
     ui->MessageBoardList->verticalScrollBar()->setStyleSheet(StyleApp::getInvisibleStyle());
@@ -317,11 +320,8 @@ void MainWindow::onConnectBtnClick() // Слот для кнопки соеди�
 {
     checkConnect = FAILURE_CONNECT;
 
-    ui->logBoard->append("Connection attempt...");
-
     if (ui->hostEdit->text() == "")
     {
-        popUp = new PopUp();
         popUp->setPopupText("Введите хост!");
         popUp->show();
     }
@@ -347,7 +347,10 @@ void MainWindow::onDisconnectBtnClick() // Слот для кнопки откл
     ui->listViewUser->clear();
     userList.clear();
     qDebug() << userList;
-    FailedConnect("Disconnected");
+
+    FailedConnect();
+    popUp->setPopupText("Disconnected");
+    popUp->show();
 }
 
 void MainWindow::onSendMessageBtnClick() // Слот для кнопки отправки сообщения
@@ -396,11 +399,9 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
     while( ( lastPos = re.indexIn( message, lastPos ) ) != -1)
     {
         lastPos += re.matchedLength();
-        user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), re.cap( 1 ));
         userList.push_front(re.cap( 1 ));
-        ui->listViewUser->addItem(user_in_list);
+        ui->listViewUser->addItem(new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), re.cap( 1 )));
         flagMsg = hideMessage;
-        popUpТotification(re.cap( 1 ), "подключился!");
     }
 
     if (message == "Pong")
@@ -412,15 +413,13 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
         disableBtnStyle(ui->Disconnect, ui->Connect);
 
-        popUp = new PopUp();
         popUp->setPopupText("Успешное соединение!");
 
-        ui->logBoard->append("Сессия №" + num_session);
         ui->lable_session_num->setText(num_session);
 
         popUp->show();
 
-        client->sendMessage("%%%NAME&&" + ui->TitleEdit->text() + "$$$");
+        client->sendMessage("%%%NAME&& " + ui->TitleEdit->text() + "$$$");
 
         flagMsg = hideMessage;
     }
@@ -428,13 +427,13 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
     if (message == "Streamer: Disconnect")
     {
         flagMsg = hideMessage;
-        ui->logBoard->append("Disconected...");
     }
 
 
     if(flagMsg == showMessage)
     {
         // Создаем модель и присваеваем delegate для QListView
+
         ListMessageModel * modelMsg = new ListMessageModel(this);
         ui->MessageBoardList->setModel(modelMsg);
         ui->MessageBoardList->setWordWrap(true);
@@ -450,7 +449,6 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
         {
             lastPos += re.matchedLength();
             listCounterName.push_back(re.cap(1));
-            ui->logBoard->append(re.cap(1)+" написал сообщение!"); // Ведём логи....
             popUpТotification(re.cap(1), " написал сообщение!");
             listCounterMsg.push_back(re.cap(3) + " \n");
             listDateMessage.push_back(currTime.toString("hh:mm:ss"));
@@ -486,8 +484,6 @@ void MainWindow::popUpТotification(QString msg, QString totification)
 {
     if(statusBell == hideChat)
     {
-        popUp = new PopUp();
-
         if (msg.split(":")[0] != "")
         {
             popUp->setPopupText(msg.split(":")[0] + " " + totification);
@@ -501,19 +497,17 @@ void MainWindow::on_Settings_clicked() // Слот для отображения
     static int ShowOrHide = 0;
     if(++ShowOrHide % 2) // Если открыт то закрываем, иначе отображаем
     {
-        QPropertyAnimation *animation = new QPropertyAnimation(ui->sattingStackedWidget, "maximumWidth"); //wdgSMS is your widget
-        animation->setDuration(100);
-        animation->setStartValue(302);
-        animation->setEndValue(0);
-        animation->start();
+        animationStackedWidget->setDuration(100);
+        animationStackedWidget->setStartValue(302);
+        animationStackedWidget->setEndValue(0);
+        animationStackedWidget->start();
     }
     else
     {
-        QPropertyAnimation *animation = new QPropertyAnimation(ui->sattingStackedWidget, "maximumWidth");
-        animation->setDuration(100);
-        animation->setStartValue(0);
-        animation->setEndValue(302);
-        animation->start();
+        animationStackedWidget->setDuration(100);
+        animationStackedWidget->setStartValue(0);
+        animationStackedWidget->setEndValue(302);
+        animationStackedWidget->start();
     }
 }
 
@@ -545,11 +539,9 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->Connect->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->ChatBtn->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->closeUserListPanel->setStyleSheet(StyleApp::getDarkBtnStyle());
-    ui->closeLogPanel->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->Mute_Button->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->To_Ban_Button->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->BtnUserControl->setStyleSheet(StyleApp::getDarkBtnStyle());
-    ui->btnShowLogs->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->Settings->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->Disconnect->setStyleSheet(StyleApp::getDarkBtnDisable());
     ui->StartSession->setStyleSheet(StyleApp::getDarkBtnStyle());
@@ -563,8 +555,6 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->lable_session_num->setStyleSheet(StyleApp::getDarkLineEdit());
     ui->lineSearchUserList->setStyleSheet(StyleApp::getDarkLineEdit());
     ui->listViewUser->setStyleSheet(StyleApp::getDarkLineEdit());
-    ui->logBoard->setStyleSheet(StyleApp::getDarkLineEdit());
-
     ui->btn_maximize->setStyleSheet(StyleApp::getDarkBtnMaximize());
     ui->btn_minimize->setStyleSheet(StyleApp::getDarkBtnMinimize());
     ui->btn_close->setStyleSheet(StyleApp::getDarkBtnClose());
@@ -581,11 +571,6 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->lable_session_num->setPlaceholderText("Session");
 }
 
-void MainWindow::on_BtnUserControl_clicked() // Открытие/закрытие панельки со списком юзеров
-{
-    ui->sattingStackedWidget->setCurrentIndex(2);
-}
-
 void MainWindow::on_To_Ban_Button_clicked() // Панелька со списком юзеров со статусом бан
 {
 }
@@ -594,18 +579,20 @@ void MainWindow::on_Mute_Button_clicked() // Сигнал о мьюте поль
 {
     if(ui->listViewUser->currentItem())
     {
-        QString status = "MUTE " + ui->listViewUser->currentItem()->text();
-        QString mute = "%%%MUTE&&" + ui->listViewUser->currentItem()->text() + "$$$";
-        client->sendMessage(status); // отправка оповещения на сервер
-        client->sendMessage(mute); // отправка оповещения на сервер
+        if (checkUserInList(mute_user_list, ui->listViewUser->currentItem()->text()) == false) // проверка есть ли user в списке замьюченых
+        {
+            QString status = "MUTE " + ui->listViewUser->currentItem()->text();
+            QString mute = "%%%MUTE&&" + ui->listViewUser->currentItem()->text() + "$$$";
+            client->sendMessage(status); // отправка оповещения на сервер
+            client->sendMessage(mute); // отправка оповещения на сервер
 
-        QString username = ui->listViewUser->currentItem()->text();
-        user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoMute()), username);
-        ui->listViewUser->addItem(user_in_list);
+            QString username = ui->listViewUser->currentItem()->text();
 
-        mute_user_list.push_back(username);
+            ui->listViewUser->addItem(new QListWidgetItem(QIcon(StyleApp::getLogoMute()), username));
+            mute_user_list.push_back(username);
 
-        delete ui->listViewUser->currentItem();
+            delete ui->listViewUser->currentItem();
+        }
     }
 }
 
@@ -620,8 +607,7 @@ void MainWindow::slot_UnMuteUser(QListWidgetItem* item) // Метод для р�
         client->sendMessage(status); // отправка оповещения на сервер
         client->sendMessage(un_mute); // отправка оповещения на сервер
 
-        item = new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), username);
-        ui->listViewUser->addItem(item);
+        ui->listViewUser->addItem(new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), username));
 
         mute_user_list.remove(username); // Удаляем user-a из списка mute_user_list
 
@@ -634,8 +620,7 @@ void MainWindow::slot_UnMuteUser(QListWidgetItem* item) // Метод для р�
         client->sendMessage(status); // отправка оповещения на сервер
         client->sendMessage(un_mute); // отправка оповещения на сервер
 
-        item = new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), username);
-        ui->listViewUser->addItem(item);
+        ui->listViewUser->addItem(new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), username));
 
         bun_user_list.remove(username); // Удаляем user-a из списка ban_user_list
 
@@ -679,25 +664,23 @@ bool MainWindow::checkUserInList(const list<T1> &lst, T2 username)
 // Анимация открытия и закрытия чата
 void MainWindow::on_ChatBtn_clicked()
 {
-    QPropertyAnimation *animation = new QPropertyAnimation(ui->pnlChat, "maximumWidth");
-
     static int ShowOrHide = 0;
 
     if(++ShowOrHide % 2) // Если открыт то закрываем, иначе отображаем
     {
-        animation->setDuration(100);
-        animation->setStartValue(500);
-        animation->setEndValue(0);
-        animation->start();
+        animationPnlChat->setDuration(100);
+        animationPnlChat->setStartValue(500);
+        animationPnlChat->setEndValue(0);
+        animationPnlChat->start();
 
         statusBell = hideChat; // Статус для оповещения
     }
     else
     {
-        animation->setDuration(100);
-        animation->setStartValue(0);
-        animation->setEndValue(500);
-        animation->start();
+        animationPnlChat->setDuration(100);
+        animationPnlChat->setStartValue(0);
+        animationPnlChat->setEndValue(500);
+        animationPnlChat->start();
 
         ui->ChatBtn->setIcon(QIcon(StyleApp::getLogoDefMessage()));
         ui->ChatBtn->setIconSize(QSize(45,45));
@@ -742,11 +725,11 @@ void MainWindow::slot_muteUser()
         QModelIndex index = ui->MessageBoardList->currentIndex();
         QString username = index.data(Qt::DisplayRole).toString();
 
-        QList<QListWidgetItem *> items = ui->listViewUser->findItems(username, Qt::MatchExactly);
-        int row = ui->listViewUser->row(items.first());
-
         if (username != "Streamer")
         {
+            QList<QListWidgetItem *> items = ui->listViewUser->findItems(username, Qt::MatchExactly);
+            int row = ui->listViewUser->row(items.first());
+
             if (checkUserInList(mute_user_list, username) == false)
             {
                 QString status = "MUTE " + username;
@@ -757,8 +740,7 @@ void MainWindow::slot_muteUser()
 
                 delete ui->listViewUser->takeItem(row);
 
-                user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoMute()), username);
-                ui->listViewUser->addItem(user_in_list);
+                ui->listViewUser->addItem(new QListWidgetItem(QIcon(StyleApp::getLogoMute()), username));
             }
         }
     }
@@ -770,12 +752,11 @@ void MainWindow::slot_unMuteUser()
     {
         QModelIndex index = ui->MessageBoardList->currentIndex();
         QString username = index.data(Qt::DisplayRole).toString();
-
-        QList<QListWidgetItem *> items = ui->listViewUser->findItems(username, Qt::MatchExactly);
-        int row = ui->listViewUser->row(items.first());
-
         if (username != "Streamer")
         {
+            QList<QListWidgetItem *> items = ui->listViewUser->findItems(username, Qt::MatchExactly);
+            int row = ui->listViewUser->row(items.first());
+
             if (checkUserInList(mute_user_list, username) == true)
             {
                 QString status = "UNMUTE " + username;
@@ -787,9 +768,7 @@ void MainWindow::slot_unMuteUser()
 
                 delete ui->listViewUser->takeItem(row);
 
-                user_in_list = new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), username);
-                ui->listViewUser->addItem(user_in_list);
-
+                ui->listViewUser->addItem(new QListWidgetItem(QIcon(StyleApp::getLogoStudent()), username));
             }
         }
     }
@@ -820,8 +799,6 @@ void MainWindow::slot_muteAllUser()
         QString muteAll = "%%%MUTE&&";
         QString lastUser = userList.back();
         muteAll = muteOrUnMute(userList, muteAll, lastUser);
-        qDebug() << muteAll;
-        qDebug() << muteAll;
         client->sendMessage(muteAll);
     }
 }
@@ -832,9 +809,7 @@ void MainWindow::slot_unMuteAllUser()
     {
         QString UnMuteAll = "%%%UNMUTE&&";
         QString lastUser = userList.back();
-        qDebug() << UnMuteAll;
         UnMuteAll = muteOrUnMute(userList, UnMuteAll, lastUser);
-        qDebug() << UnMuteAll;
         client->sendMessage(UnMuteAll);
     }
 }
@@ -883,12 +858,8 @@ void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &po
 }
 
 // При соединении что-то пошло не так
-void MainWindow::FailedConnect(QString Error)
+void MainWindow::FailedConnect()
 {
-    popUp = new PopUp();
-    popUp->setPopupText(Error);
-    popUp->show();
-
     disableBtnStyle(ui->Connect, ui->Disconnect);
 
     // Логическая блокировка кнопок Disconnect и разблокировка connect
@@ -896,6 +867,7 @@ void MainWindow::FailedConnect(QString Error)
     ui->Disconnect->setDisabled(true);
 
     ui->lable_session_num->clear();
+//    ui->hostEdit->clear();
 }
 
 QString MainWindow::getHost()
@@ -909,15 +881,9 @@ unsigned int MainWindow::getPort()
     return port;
 }
 
-
-void MainWindow::on_btnShowLogs_clicked()
+void MainWindow::on_BtnUserControl_clicked() // Открытие/закрытие панельки со списком юзеров
 {
     ui->sattingStackedWidget->setCurrentIndex(1);
-}
-
-void MainWindow::on_closeLogPanel_clicked()
-{
-    ui->sattingStackedWidget->setCurrentIndex(0);
 }
 
 void MainWindow::on_closeUserListPanel_clicked()

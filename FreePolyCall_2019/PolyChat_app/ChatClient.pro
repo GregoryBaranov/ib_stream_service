@@ -28,6 +28,7 @@ HEADERS  += mainwindow.h \
     listmessagemodel.h \
     messageviewdelegate.h \
     popup.h \
+    smart_pointer.h \
     styleapp.h
 
 FORMS    += mainwindow.ui

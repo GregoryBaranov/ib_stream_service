@@ -5,27 +5,16 @@
 #include "popup.h"
 #include "client.h"
 #include <QPushButton>
-#include <QLineEdit>
-#include <QTextEdit>
 #include <QListWidget>
-#include <QLabel>
 #include <list>
-#include <string>
-#include <fstream>
-#include <sstream>
 #include <QStandardItemModel>
 #include <QMouseEvent>
 #include <QMessageBox>
-#include <QInputDialog>
-#include <QFileDialog>
-#include <QDir>
 #include <QGraphicsDropShadowEffect>
 #include <QToolButton>
 #include <QRegExp>
 #include <QRegExpValidator>
 #include <QPropertyAnimation>
-#include <QThread>
-#include <random>
 #include <ctime>
 #include "messageviewdelegate.h"
 #include "listmessagemodel.h"
@@ -34,8 +23,6 @@
 #include <QAbstractScrollArea>
 #include <QScrollBar>
 #include <QApplication>
-#include <QClipboard>
-#include <QLine>
 
 class MessageViewDelegate;
 
@@ -96,7 +83,7 @@ public:
     QImage defautIcon() const;
     void setDefaultIcon(const QImage & img);
     int getMsgBoardWidth();
-    void FailedConnect(QString Error);
+    void FailedConnect();
 
     QString getHost();
     unsigned int getPort();
@@ -112,12 +99,12 @@ signals:
 private:
     Ui::MainWindow *ui;
 
-    MessageViewDelegate * delegate;
-
-
     Client* client;
 
     PopUp *popUp;
+
+    QPropertyAnimation *animationStackedWidget;
+    QPropertyAnimation *animationPnlChat;
 
     int numberListMsg;
 
@@ -199,8 +186,6 @@ private slots:
     void on_MessageBoardList_clicked(const QModelIndex &index);
     void on_MessageBoardList_customContextMenuRequested(const QPoint &pos);
 
-    void on_btnShowLogs_clicked();
-    void on_closeLogPanel_clicked();
     void on_closeUserListPanel_clicked();
 };
 

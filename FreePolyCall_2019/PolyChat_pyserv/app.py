@@ -123,7 +123,11 @@ def echo_socket(ws,id_ses):  #Получение сокета
             else:
                 ws.send('Streamer: ' + message) #Отправляем их обратно на QT
                 print(message)
-                data = {'id': 'streamer','message': message} #Записываем в Json
+
+                dict_elem = link(message)
+
+
+                data = {'id': 'streamer','message': message,'title':dict_elem['title'],'website': dict_elem['website'], 'image': dict_elem['image']} #Записываем в Json
                 socketio.emit(id_ses, data) #Пересылаем сообщение от QT в браузер
                 if message == "Disconnect":
                     print("Сокеты стримера")
@@ -150,21 +154,24 @@ def handle_my_custom_event(json): #Получаем Json
                         if test == i:
                             flag = False
                             
-    dict_elem = {'title': '','website': '', 'image': ''}
+    # dict_elem = {'title': '','website': '', 'image': ''}
     
-    try:
-        result = re.search(r'(https?:\/\/)?([0-9a-z.-]+\.)([a-z]{2,6})(([\/a-zA-Z0-9_.-]*)*\/?[\S]*)', json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
-        if result:
-            if not result.group(1):
-                dict_elem = link_preview.generate_dict('http://' + result.group(0)) # this is a dict()
-                dict_elem['website'] = result.group(0)
-            else:
-                dict_elem = link_preview.generate_dict(result.group(0))
-                dict_elem['website'] = result.group(2) + result.group(3) + result.group(4)
-    except:
-        pass
+    # try:
+    #     result = re.search(r'(https?:\/\/)?([0-9a-z.-]+\.)([a-z]{2,6})(([\/a-zA-Z0-9_.-]*)*\/?[\S]*)', json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
+    #     if result:
+    #         if not result.group(1):
+    #             dict_elem = link_preview.generate_dict('http://' + result.group(0)) # this is a dict()
+    #             dict_elem['website'] = result.group(0)
+    #         else:
+    #             dict_elem = link_preview.generate_dict(result.group(0))
+    #             dict_elem['website'] = result.group(2) + result.group(3) + result.group(4)
+    # except:
+    #     pass
 
     if json['message'].encode().decode('utf8','replace').replace('<', '&lt') != "" and flag == True: #Если в Json есть собщение, то
+
+        dict_elem = link(json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
+
         data = {'id': test,'message': json['message'].encode().decode('utf8','replace').replace('<', '&lt'),'title':dict_elem['title'],'website': dict_elem['website'], 'image': dict_elem['image']} #Заменяем знак '<' на спецсимвол для защиты от html разметки 
         print(json['id'].encode().decode('utf8','replace') + json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
         socketio.emit(json['session_id'], data) #Отправляем сообщение в браузер
@@ -175,6 +182,21 @@ def handle_my_custom_event(json): #Получаем Json
     if Stream[json['session_id']] and flag == True:   
         Stream[json['session_id']].send(test + ": " + json['message'].encode().decode('utf8','replace').replace('<', '&lt')) #Отправляем QT стримеру сообщение
 
+
+def link(msg):
+    dict_elem = {'title': '','website': '', 'image': ''}
+    try:
+        result = re.search(r'(https?:\/\/)?([0-9a-z.-]+\.)([a-z]{2,6})(([\/a-zA-Z0-9_.-]*)*\/?[\S]*)', msg)
+        if result:
+            if not result.group(1):
+                dict_elem = link_preview.generate_dict('http://' + result.group(0)) # this is a dict()
+                dict_elem['website'] = result.group(0)
+            else:
+                dict_elem = link_preview.generate_dict(result.group(0))
+                dict_elem['website'] = result.group(2) + result.group(3) + result.group(4)
+        return dict_elem
+    except:
+        return dict_elem
 
 if __name__ == "__main__":
     global Stream,ignor,bd,sn

@@ -17,6 +17,7 @@ public:
     static QString getDarkMessageBoardItem();
     static QString getDarkMessageBoardList();
     static QString getDarkLineEdit();
+    static QString getTitleEdit();
 
     //******************************************
 

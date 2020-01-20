@@ -20,6 +20,16 @@ QString StyleApp::getDarkBtnStyle()
            "}";
 };
 
+QString StyleApp::getTitleEdit()
+{
+    return "QGroupBox {"
+           "font-size: 18px;"
+           "color: #fff;"
+           "margin: 5px;"
+           "}";
+}
+
+
 QString StyleApp::getDarkBtnMaximize()
 {
     return "QPushButton {"

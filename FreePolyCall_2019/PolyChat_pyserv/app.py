@@ -75,11 +75,20 @@ def ransddom():
 @app.route('/<int:id_ses>')
 def qwe(id_ses):
     temp = None
+    id_ses = str(id_ses)
+    Cookie = request.cookies.get('Cookie', '')
     try:
-        if Stream[str(id_ses)]:
-            temp = sn[str(id_ses)]
-            print(sn[str(id_ses)])
-            return render_template('page2.html',temp = temp)
+        if Stream[id_ses] and Cookie:
+            for i in bd[id_ses]:
+                for key,value in i.items():
+                    if value == Cookie:
+                        temp = sn[id_ses]
+                        print(sn[id_ses])
+                        return render_template('page2.html',temp = temp)
+                    else:
+                        return redirect('/')
+        else:
+            return redirect('/')
     except:
         return redirect('/')
 

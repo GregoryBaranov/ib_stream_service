@@ -18,6 +18,8 @@ socket.on(window.location.pathname.substr(1), function (msg) {
     $("#supa").hide();
   }
   if (Temp == 0) {
+    $("#btn").addClass('blink').html();
+    $("#supa2").hide();
     $("#supa").toggle();
     $("#supa").show();
   }
@@ -81,6 +83,8 @@ $(document).ready(function () {
   $("#btn").click(function () {
     $("#supa").hide();
     $("#Create").toggle();
+    $("#supa2").show();
+    $("#btn").removeClass('blink').html();
     if (Temp == 0) {
       Temp = 1;
     } else {

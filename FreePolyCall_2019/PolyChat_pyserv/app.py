@@ -20,11 +20,6 @@ application = app
 app.secret_key = "super secret key"
 
 
-# arr = ""
-#     for key in red1.keys():
-#         arr += "#{}${}&&".format(key.decode('utf8','replace'), red1.get(key).decode('utf8','replace'))
-
-
 @app.route('/', methods=['GET','POST'])
 def home():
     if request.method == 'POST':
@@ -93,7 +88,7 @@ def echo_socket(ws,id_ses):  #Получение сокета
     try:
         ws.send('Pong')
         id_ses = str(id_ses)
-        # bd.update({id_ses:[]})
+
         print(bd)
         print(ws) #Проверка сокета
         print(Stream)
@@ -121,21 +116,23 @@ def echo_socket(ws,id_ses):  #Получение сокета
                 if result.group(1) == "NAME":
                     sn.update({id_ses:result.group(2)})
             else:
-                ws.send('Streamer: ' + message) #Отправляем их обратно на QT
-                print(message)
+                result = re.findall(r'[^\s]+', message)
+                if result:
+                    message = " ".join(result)
 
-                dict_elem = link(message)
+                    ws.send('Streamer: ' + message) #Отправляем их обратно на QT
+                    print('Сообщение - ' + message)
+                    dict_elem = link(message)
+                    data = {'id': 'streamer','message': message,'title':dict_elem['title'],'website': dict_elem['website'], 'image': dict_elem['image']} #Записываем в Json
+                    socketio.emit(id_ses, data) #Пересылаем сообщение от QT в браузер
+                    if message == "Disconnect":
+                        print("Сокеты стримера")
+                        print(Stream) #Проверка пустоты
+                        Stream.pop(id_ses)
+                        bd.pop(id_ses)
+                        sn.pop(id_ses)
+                        ws.close() #Qt стример отключился
 
-
-                data = {'id': 'streamer','message': message,'title':dict_elem['title'],'website': dict_elem['website'], 'image': dict_elem['image']} #Записываем в Json
-                socketio.emit(id_ses, data) #Пересылаем сообщение от QT в браузер
-                if message == "Disconnect":
-                    print("Сокеты стримера")
-                    print(Stream) #Проверка пустоты
-                    Stream.pop(id_ses)
-                    bd.pop(id_ses)
-                    sn.pop(id_ses)
-                    ws.close() #Qt стример отключился
     except TypeError:
         Stream.pop(id_ses)
         bd.pop(id_ses)
@@ -154,33 +151,23 @@ def handle_my_custom_event(json): #Получаем Json
                         if test == i:
                             flag = False
                             
-    # dict_elem = {'title': '','website': '', 'image': ''}
-    
-    # try:
-    #     result = re.search(r'(https?:\/\/)?([0-9a-z.-]+\.)([a-z]{2,6})(([\/a-zA-Z0-9_.-]*)*\/?[\S]*)', json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
-    #     if result:
-    #         if not result.group(1):
-    #             dict_elem = link_preview.generate_dict('http://' + result.group(0)) # this is a dict()
-    #             dict_elem['website'] = result.group(0)
-    #         else:
-    #             dict_elem = link_preview.generate_dict(result.group(0))
-    #             dict_elem['website'] = result.group(2) + result.group(3) + result.group(4)
-    # except:
-    #     pass
+    message = json['message'].encode().decode('utf8','replace').replace('<', '&lt')
+    result = re.findall(r'[^\s]+', message)
+    if result:
+        message = " ".join(result)
+        if  flag == True: #Если в Json есть собщение, то
 
-    if json['message'].encode().decode('utf8','replace').replace('<', '&lt') != "" and flag == True: #Если в Json есть собщение, то
+            dict_elem = link(message)
 
-        dict_elem = link(json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
+            data = {'id': test,'message': message,'title':dict_elem['title'],'website': dict_elem['website'], 'image': dict_elem['image']} #Заменяем знак '<' на спецсимвол для защиты от html разметки 
+            print(json['id'].encode().decode('utf8','replace') + message)
+            socketio.emit(json['session_id'], data) #Отправляем сообщение в браузер
 
-        data = {'id': test,'message': json['message'].encode().decode('utf8','replace').replace('<', '&lt'),'title':dict_elem['title'],'website': dict_elem['website'], 'image': dict_elem['image']} #Заменяем знак '<' на спецсимвол для защиты от html разметки 
-        print(json['id'].encode().decode('utf8','replace') + json['message'].encode().decode('utf8','replace').replace('<', '&lt'))
-        socketio.emit(json['session_id'], data) #Отправляем сообщение в браузер
-
-        print(json['session_id'])
-        print(bd)
-        print(ignor)
-    if Stream[json['session_id']] and flag == True:   
-        Stream[json['session_id']].send(test + ": " + json['message'].encode().decode('utf8','replace').replace('<', '&lt')) #Отправляем QT стримеру сообщение
+            print(json['session_id'])
+            print(bd)
+            print(ignor)
+        if Stream[json['session_id']] and flag == True:   
+            Stream[json['session_id']].send(test + ": " + message) #Отправляем QT стримеру сообщение
 
 
 def link(msg):

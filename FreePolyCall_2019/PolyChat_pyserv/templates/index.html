@@ -44,11 +44,6 @@
               <div class="col d-flex justify-content-center">
                 <input type="text" class="btn font-weight-bolder d-flex justify-content-center" placeholder='Username'  oninput="stst()" name="name_usr" maxlength="20"
                   required value="Username">
-                {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <p class="text-danger"> {{ messages }} </p>
-                {% endif %}
-                {% endwith %}
               </div>
               <div class="col d-flex justify-content-center">
                 <input type="email" class="btn font-weight-bolder d-flex justify-content-center"
@@ -60,6 +55,18 @@
               </div>
             </div>
         </div>
+        <div class="mt-2 text-center">
+          {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          <div class="alert alert-danger alert-dismissible fade show  role="alert">
+            <strong> {{ messages }} </strong> 
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endif %}
+          {% endwith %}
+  </div>
         </form>
       </div>
     </div>

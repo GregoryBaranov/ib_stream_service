@@ -35,7 +35,7 @@ def home():
                             if value == request.cookies.get('Cookie', ''):
                                 return redirect(ses_id)
                             elif key == Username:
-                                flash("Ник занят")
+                                flash("Данный никнейм занят другим пользователем")
                                 return render_template('index.html')
                 except:
                     pass

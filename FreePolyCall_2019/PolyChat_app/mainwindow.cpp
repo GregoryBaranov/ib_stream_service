@@ -63,7 +63,7 @@ MainWindow::~MainWindow()
 void MainWindow::settingDesigner() // Вид и проверки для hostEdit, spinPort, connect;
 {
     ui->lable_session_num->setReadOnly(true);
-    ui->TitleEdit->setPlaceholderText("Title");
+    ui->TitleEdit->setPlaceholderText("Название");
 
     /* Создаем строку для регулярного выражения */
     QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
@@ -419,7 +419,15 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
         popUp->show();
 
+        QRegExp qe( "^\s*$" );
+
+        if ( qe.exactMatch(ui->TitleEdit->text()))
+        {
+            ui->TitleEdit->setText("Default Stream");
+        }
+
         client->sendMessage("%%%NAME&& " + ui->TitleEdit->text() + "$$$");
+
 
         flagMsg = hideMessage;
     }
@@ -428,7 +436,6 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
     {
         flagMsg = hideMessage;
     }
-
 
     if(flagMsg == showMessage)
     {
@@ -558,6 +565,10 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->btn_maximize->setStyleSheet(StyleApp::getDarkBtnMaximize());
     ui->btn_minimize->setStyleSheet(StyleApp::getDarkBtnMinimize());
     ui->btn_close->setStyleSheet(StyleApp::getDarkBtnClose());
+    ui->groupBoxHost->setStyleSheet(StyleApp::getTitleEdit());
+    ui->groupBoxPort->setStyleSheet(StyleApp::getTitleEdit());
+    ui->groupBoxNumSession->setStyleSheet(StyleApp::getTitleEdit());
+    ui->groupBoxTitleSession->setStyleSheet(StyleApp::getTitleEdit());
 
     ui->label->setText(StyleApp::getLogoPolytech());
 
@@ -567,8 +578,8 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->Settings->setIcon(QIcon(StyleApp::getBtnShowSettingIcon()));
     ui->Settings->setIconSize(QSize(35,35));
 
-    ui->messageEdit->setPlaceholderText("Message...");
-    ui->lable_session_num->setPlaceholderText("Session");
+    ui->messageEdit->setPlaceholderText("Сообщение...");
+    ui->lable_session_num->setPlaceholderText("Номер сессии");
 }
 
 void MainWindow::on_To_Ban_Button_clicked() // Панелька со списком юзеров со статусом бан

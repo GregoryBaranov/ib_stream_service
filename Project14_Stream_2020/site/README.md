@@ -1,5 +1,5 @@
 # Сайт
 
-https://pd.fit.mospolytech.ru/docs/report/
+http://pd.std-865.ist.mospolytech.ru/
 
-Поместите в эту папку файлы сайта проекта.
+В этой папке расположены файлы сайта проекта.

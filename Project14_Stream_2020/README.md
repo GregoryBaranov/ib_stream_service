@@ -5,16 +5,6 @@
 Ссылка на сайт: http://31.10.65.179:5000/
 Ссылка на сайт для проекта: http://pd.std-865.ist.mospolytech.ru/
 
-+ Необходимо установить для запуска сервера (flask, flask_socketio, flask_sockets, websockets).
-+ Команды для установки:
-<pre>
-  $ pip install flask
-  $ pip install flask_socketio
-  $ pip install flask_sockets
-  $ pip install websockets
-  $ pip install link_preview
-</pre>
-
 ## Задачи на проект
 + Рефакторинг репозитория. Привести в порядок. 
 + Выработка системных требований. 

@@ -31,5 +31,7 @@
         <file>image/window-minimize.png</file>
         <file>image/window-restore-gray.png</file>
         <file>image/window-restore.png</file>
+        <file>image/icon.ico</file>
+        <file>image/screeen_top.ico</file>
     </qresource>
 </RCC>

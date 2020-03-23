@@ -78,7 +78,7 @@ public:
     ~MainWindow(); // деструктор
 
     void hide_all(QListWidget *listWidjet); // скрывает все не нужные элименты
-    void popUpТotification(QString msg = "", QString totification = "");
+    void popUpView(QString msg = "", QString totification = "");
 
     QImage defautIcon() const;
     void setDefaultIcon(const QImage & img);

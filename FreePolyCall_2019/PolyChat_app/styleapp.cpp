@@ -144,7 +144,8 @@ QString StyleApp::getInvisibleStyle()
 
 QString StyleApp::getLogoPolytech()
 {
-    return "<img src=\":/image/top_logo.png\"/>";
+//    return "<img src=\":/image/icon.ico\"/>";
+    return ":/image/screeen_top.ico";
 }
 
 QString StyleApp::getBtnShowChatIcon()

@@ -255,6 +255,7 @@ tmp_rcc\qrc_image.cpp: ..\image.qrc \
 		..\image\unMute.png \
 		..\image\white_search.png \
 		..\image\top_logo.png \
+		..\image\screeen_top.ico \
 		..\image\window-minimize-gray.png \
 		..\image\techer.png \
 		..\image\_114579-839.jpg \
@@ -269,6 +270,7 @@ tmp_rcc\qrc_image.cpp: ..\image.qrc \
 		..\image\window-restore.png \
 		..\image\lerner.png \
 		..\image\window-minimize.png \
+		..\image\icon.ico \
 		..\image\search.png \
 		..\image\skip-previous.png \
 		..\image\icons8-???????-32.png \

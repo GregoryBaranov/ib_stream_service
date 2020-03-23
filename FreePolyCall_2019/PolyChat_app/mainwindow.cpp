@@ -423,7 +423,7 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
         if ( qe.exactMatch(ui->TitleEdit->text()))
         {
-            ui->TitleEdit->setText("Default Stream");
+            ui->TitleEdit->setText("");
         }
 
         client->sendMessage("%%%NAME&& " + ui->TitleEdit->text() + "$$$");
@@ -456,7 +456,7 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
         {
             lastPos += re.matchedLength();
             listCounterName.push_back(re.cap(1));
-            popUpТotification(re.cap(1), " написал сообщение!");
+            popUpView(re.cap(1), " написал сообщение!");
             listCounterMsg.push_back(re.cap(3) + " \n");
             listDateMessage.push_back(currTime.toString("hh:mm:ss"));
         }
@@ -487,7 +487,7 @@ int MainWindow::getMsgBoardWidth()
     return  msgBoardWidth;
 }
 
-void MainWindow::popUpТotification(QString msg, QString totification)
+void MainWindow::popUpView(QString msg, QString totification)
 {
     if(statusBell == hideChat)
     {
@@ -570,10 +570,9 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->groupBoxNumSession->setStyleSheet(StyleApp::getTitleEdit());
     ui->groupBoxTitleSession->setStyleSheet(StyleApp::getTitleEdit());
 
-    ui->label->setText(StyleApp::getLogoPolytech());
-
     ui->ChatBtn->setIcon(QIcon(StyleApp::getBtnShowChatIcon()));
     ui->ChatBtn->setIconSize(QSize(45,45));
+    ui->label->setPixmap(StyleApp::getLogoPolytech());
 
     ui->Settings->setIcon(QIcon(StyleApp::getBtnShowSettingIcon()));
     ui->Settings->setIconSize(QSize(35,35));

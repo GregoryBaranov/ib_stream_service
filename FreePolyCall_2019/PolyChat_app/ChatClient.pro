@@ -34,16 +34,16 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 
 
-QMAKE_EXTRA_TARGETS += before_build makefilehook
+#QMAKE_EXTRA_TARGETS += before_build makefilehook
 
-makefilehook.target = $(MAKEFILE)
-makefilehook.depends = .beforebuild
+#makefilehook.target = $(MAKEFILE)
+#makefilehook.depends = .beforebuild
 
-PRE_TARGETDEPS += .beforebuild
+#PRE_TARGETDEPS += .beforebuild
 
-before_build.target = .beforebuild
-before_build.depends = FORCE
-before_build.commands = chcp 1251
+#before_build.target = .beforebuild
+#before_build.depends = FORCE
+#before_build.commands = chcp 1251
 
 RESOURCES += \
     image.qrc

@@ -103,6 +103,9 @@
          <property name="text">
           <string/>
          </property>
+         <property name="pixmap">
+          <pixmap>../../../../Users/swall/Desktop/LOGOPOLIKEK.png</pixmap>
+         </property>
         </widget>
        </item>
       </layout>

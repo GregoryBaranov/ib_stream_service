@@ -9,9 +9,8 @@ https://pd.fit.mospolytech.ru/docs/report/
 ## Индивидуальные планы работы
 
 - [Стебло А.С.](Steblo.md)
-- [Захаров В.А.](petrov.md)
-- [Константинов Д.А.](Konstantinov.md)
 - [Захаров В.А.](Zaharov.md)
+- [Константинов Д.А.](Konstantinov.md)
 - [Чикишев Т.В.](Chikishev.md)
 - [Баранов Г.А.](Baranov.md)
 - [Новикова Ю.О.](Novikova.md)

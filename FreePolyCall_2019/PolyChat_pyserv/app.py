@@ -86,9 +86,11 @@ def qwe(id_ses):
                         print(sn[id_ses])
                         return render_template('page2.html',temp = temp)
                     else:
-                        return redirect('/')
+                        print("---------------------------------------------------")
+                        pass
         else:
             return redirect('/')
+        return redirect('/')
     except:
         return redirect('/')
 

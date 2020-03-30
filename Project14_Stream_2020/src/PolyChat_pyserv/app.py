@@ -7,6 +7,8 @@ import json
 import socket
 import random
 import math, re, sys
+import sqlite3
+from sqlite3 import Error
 from link_preview import link_preview
 #from werkzeug.contrib.cache import MemcachedCache      
 #from __init__ import buf
@@ -19,6 +21,52 @@ sockets = Sockets(app)
 application = app
 app.secret_key = "super secret key"
 
+def create_table(conn, create_table_sql):
+    """ create a table from the create_table_sql statement
+    :param conn: Connection object
+    :param create_table_sql: a CREATE TABLE statement
+    :return:
+    """
+    try:
+        c = conn.cursor()
+        c.execute(create_table_sql)
+    except Error as e:
+        print(e)
+
+def create_connection():
+    """ create a database connection to a database that resides
+        in the memory
+    """
+    global conn
+    conn = None
+    try: 
+        conn = sqlite3.connect(':memory:')
+        print(sqlite3.version)
+        if conn is not None:
+            sql_create_session_table = """ CREATE TABLE IF NOT EXISTS Session (
+                                        id integer PRIMARY KEY,
+                                        name_stream text,
+                                        socket text,
+                                        session integer
+                                    ); """
+            sql_create_users_table = """CREATE TABLE IF NOT EXISTS Users (
+                                    id integer PRIMARY KEY,
+                                    username text NOT NULL,
+                                    cookie integer NOT NULL,
+                                    status_ban bool NOT NULL,
+                                    status_activity bool NOT NULL,
+                                    id_session integer NOT NULL,
+                                    FOREIGN KEY (id_session) REFERENCES Session (session) 
+                                    ON DELETE cascade
+                                );"""
+            # create projects table
+            create_table(conn, sql_create_session_table)
+            # create tasks table
+            create_table(conn, sql_create_users_table)
+        else:
+            print("Error! cannot create the database connection.")
+    except Error as e:
+        print(e)
 
 @app.route('/', methods=['GET','POST'])
 def home():
@@ -30,24 +78,54 @@ def home():
             result = re.search(r'^[a-zA-Zа-яА-Я0-9]{2,20}$', Username)
             if result:
                 try:
-                    for i in bd[ses_id]:
-                        for key,value in i.items():
-                            if value == request.cookies.get('Cookie', ''):
+                    sql = ''' SELECT cookie, username  FROM Users WHERE cookie = ? or username = ?''' 
+                    cookie = request.cookies.get('Cookie', '')
+                    task = (cookie,Username)
+                    cur = conn.cursor()
+                    cu = cur.execute(sql,task)
+                    if cu:
+                        for i in cu:
+                            print(i)
+                            if i[0]:
                                 return redirect(ses_id)
-                            elif key == Username:
+                            else:
                                 flash("Данный никнейм занят другим пользователем")
                                 return render_template('index.html')
                 except:
                     pass
                 print(Stream)
                 try:
-                    if Stream[ses_id]:
-                        cookie = str(random.randint(1,999999))
-                        bd[ses_id].append({Username:cookie})
-                        Stream[ses_id].send("%%%" + Username + "$$$") #Отправляем QT стримеру сообщение
-                        resp = make_response(redirect(ses_id))
-                        resp.set_cookie('Cookie', cookie, max_age=60*60)
-                        return resp
+                    sql = '''SELECT socket FROM Session WHERE session = ?'''
+                    task =(int(ses_id))
+                    cur = conn.cursor()
+                    print('='*32)
+                    for ws in cur.execute(sql,(task,)):
+                        if ws[0]:
+                            cookie = str(random.randint(1,999999))
+                            
+                            sql = ''' INSERT INTO Users(username,cookie,status_ban,status_activity,id_session) VALUES(?,?,?,?,?)''' 
+                            task = (Username,cookie,0,0,ses_id)
+                            cur = conn.cursor()
+                            cur.execute(sql,task)
+
+                            ####################################
+                            sql = '''SELECT * FROM Users'''
+                            cur = conn.cursor()
+                            print('+'*32)
+                            for i in cur.execute(sql):
+                                print(i)
+                            print('+'*32)
+
+                            #ДОДЕЛАТЬ WS
+                            ####################################
+
+                            Stream[ses_id].send("%%%" + Username + "$$$") #Отправляем QT стримеру сообщение
+
+                            print("УСПЕХ")
+
+                            resp = make_response(redirect(ses_id))
+                            resp.set_cookie('Cookie', cookie, max_age=60*60)
+                            return resp
                 except:
                     pass
             else:
@@ -75,39 +153,54 @@ def ransddom():
 @app.route('/<int:id_ses>')
 def qwe(id_ses):
     temp = None
+    _id_ses = id_ses
     id_ses = str(id_ses)
     Cookie = request.cookies.get('Cookie', '')
     try:
         if Stream[id_ses] and Cookie:
-            for i in bd[id_ses]:
-                for key,value in i.items():
-                    if value == Cookie:
-                        temp = sn[id_ses]
-                        print(sn[id_ses])
-                        return render_template('page2.html',temp = temp)
-                    else:
-                        return redirect('/')
+            sql = ''' SELECT name_stream FROM Session JOIN Users ON Session.session = Users.id_session WHERE cookie = ? and id_session = ?''' 
+            task = (Cookie,_id_ses)
+            cur = conn.cursor()
+            name_stream = cur.execute(sql,task)
+            if name_stream:
+                for i in name_stream:
+                    temp = str(i[0])
+                    print(temp)
+                return render_template('page2.html',temp = temp)
+            else:
+                return redirect('/')
         else:
             return redirect('/')
     except:
         return redirect('/')
 
+def delete_session(_id_ses):
+    sql = ''' DELETE FROM Session WHERE session = ?''' 
+    task = (_id_ses)
+    cur = conn.cursor()
+    cur.execute(sql,(task,))
+    conn.commit()
+
+
 @sockets.route('/<int:id_ses>') #Сокет для Qt приложения
 def echo_socket(ws,id_ses):  #Получение сокета
     try:
+        Stream.update({str(id_ses): ws})
         ws.send('Pong')
-        id_ses = str(id_ses)
+        sql = ''' INSERT INTO Session(name_stream,socket,session) VALUES(?,?,?)''' 
+        task = (None,str(ws),id_ses)
+        cur = conn.cursor()
+        cur.execute(sql,task)
+    
+        ####################################
+        sql = '''SELECT * FROM Session'''
+        cur = conn.cursor()
+        print('+'*32)
+        for i in cur.execute(sql):
+            print(i)
+        print('+'*32)
+        ####################################
 
-        print(bd)
-        print(ws) #Проверка сокета
-        print(Stream)
-
-        bd.update({id_ses:[]})
-        ignor.update({id_ses:[]})
-        print(bd)
-        print(ws) #Проверка сокета
-        Stream.update({id_ses: ws})
-        print(Stream)
         while not ws.closed: #Пока есть соединение
             message = ws.receive() #Считываем сообщение от QT
             result = re.search(r'[%]{3}([a-zA-ZА-Яа-я]+)[&]{2}([\S ]+)[$]{3}', message)
@@ -115,68 +208,68 @@ def echo_socket(ws,id_ses):  #Получение сокета
                 users = result.group(2).split('&&')
                 if result.group(1) == "MUTE":
                     for user in users:
-                        for i in bd[id_ses]:
-                            for key,value in i.items():
-                                if key == user:
-                                    ignor[id_ses].append(key)
+                        sql = ''' Update Users SET status_ban = '1' WHERE username = ? and id_session = ?''' 
+                        task = (user,id_ses)
+                        cur = conn.cursor()
+                        cur.execute(sql,task)
                 if result.group(1) == "UNMUTE":
                     for user in users:
-                        ignor[id_ses].remove(user)
+                        sql = ''' Update Users SET status_ban = '0' WHERE username = ? and id_session = ?''' 
+                        task = (user,id_ses)
+                        cur = conn.cursor()
+                        cur.execute(sql,task)
                 if result.group(1) == "NAME":
-                    sn.update({id_ses:result.group(2)})
+                    name_stream = str(result.group(2))
+                    sql = ''' Update Session SET name_stream = ? WHERE session = ?''' 
+                    task = (name_stream,id_ses)
+                    cur = conn.cursor()
+                    cur.execute(sql,task)
             else:
                 result = re.findall(r'[^\s]+', message)
                 if result:
                     message = " ".join(result)
-
                     ws.send('Streamer: ' + message) #Отправляем их обратно на QT
                     print('Сообщение - ' + message)
                     dict_elem = link(message)
                     data = {'id': 'streamer','message': message,'title':dict_elem['title'],'website': dict_elem['website'], 'image': dict_elem['image']} #Записываем в Json
-                    socketio.emit(id_ses, data) #Пересылаем сообщение от QT в браузер
+                    socketio.emit(str(id_ses), data) #Пересылаем сообщение от QT в браузер
                     if message == "Disconnect":
-                        print("Сокеты стримера")
-                        print(Stream) #Проверка пустоты
-                        Stream.pop(id_ses)
-                        bd.pop(id_ses)
-                        sn.pop(id_ses)
+                        delete_session(str(id_ses))
+                        Stream.pop(str(id_ses))
                         ws.close() #Qt стример отключился
 
     except TypeError:
-        Stream.pop(id_ses)
-        bd.pop(id_ses)
-        sn.pop(id_ses)
+        Stream.pop(str(id_ses))
+        delete_session(id_ses)
 
 @socketio.on('my event') #socketio на event'ах
 def handle_my_custom_event(json): #Получаем Json
-    print(json)
-    flag = True
-    for i in bd[json['session_id']]:
-        for key,value in i.items():
-            if value == json['id']:
-                test = key
-                if ignor[json['session_id']]:
-                    for i in ignor[json['session_id']]:
-                        if test == i:
-                            flag = False
-                            
+    flag = None
+    sql = ''' SELECT username FROM Users WHERE status_ban = ? and id_session = ? and cookie = ?''' 
+    task = (0,int(json['session_id']),int(json['id']))
+    cur = conn.cursor()
+    usn = cur.execute(sql,task)
+    for i in usn:
+        test = i[0]
+        if test:
+            flag = True
+        else:
+            flag = False
+
     message = json['message'].encode().decode('utf8','replace').replace('<', '&lt')
     result = re.findall(r'[^\s]+', message)
     if result:
+        print(json)
         message = " ".join(result)
         if  flag == True: #Если в Json есть собщение, то
-
             dict_elem = link(message)
-
-            data = {'id': test,'message': message,'title':dict_elem['title'],'website': dict_elem['website'], 'image': dict_elem['image']} #Заменяем знак '<' на спецсимвол для защиты от html разметки 
-            print(json['id'].encode().decode('utf8','replace') + message)
+            data = {'id': test,'message': message,'title':dict_elem['title'],'website': dict_elem['website'], 'image': dict_elem['image']} #Заменяем знак '<' на спецсимвол для защиты от html разметки
             socketio.emit(json['session_id'], data) #Отправляем сообщение в браузер
-
-            print(json['session_id'])
-            print(bd)
-            print(ignor)
-        if Stream[json['session_id']] and flag == True:   
-            Stream[json['session_id']].send(test + ": " + message) #Отправляем QT стримеру сообщение
+        try:
+            if Stream[json['session_id']] and flag == True:  
+                Stream[json['session_id']].send(test + ": " + message) #Отправляем QT стримеру сообщение
+        except:
+            pass
 
 
 def link(msg):
@@ -195,11 +288,10 @@ def link(msg):
         return dict_elem
 
 if __name__ == "__main__":
-    global Stream,ignor,bd,sn
+    create_connection()
+
+    global Stream
     Stream = {}
-    ignor = {} 
-    bd = {}
-    sn = {}
 
     from gevent import pywsgi
     from geventwebsocket.handler import WebSocketHandler

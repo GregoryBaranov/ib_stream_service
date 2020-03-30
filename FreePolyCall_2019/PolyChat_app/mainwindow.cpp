@@ -711,8 +711,6 @@ void MainWindow::disableBtnStyle(QPushButton *btn, QPushButton *disableBtn)
     disableBtn->setStyleSheet(StyleApp::getDarkBtnDisable());
 }
 
-
-
 void MainWindow::on_MessageBoardList_doubleClicked(const QModelIndex &index)
 {
     QString str = index.data().toString();
@@ -824,6 +822,16 @@ void MainWindow::slot_unMuteAllUser()
     }
 }
 
+void MainWindow::slot_unBanAllUser(){
+    popUp->setPopupText("Не реализовано!");
+    popUp->show();
+}
+
+void MainWindow::slot_banAllUser(){
+    popUp->setPopupText("Не реализовано!");
+    popUp->show();
+}
+
 void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &pos)
 {
     /* Создаем объект контекстного меню */
@@ -846,8 +854,8 @@ void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &po
     connect(MuteAll, SIGNAL(triggered()), this, SLOT(slot_muteAllUser()));     // Обработчик вызова диалога редактирования
     connect(UnMuteAll, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));
     connect(Unmute, SIGNAL(triggered()), this, SLOT(slot_unMuteUser()));     // Обработчик вызова диалога редактирования
-//    connect(Unbun, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));
-//    connect(Ban, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));
+    connect(Unbun, SIGNAL(triggered()), this, SLOT(slot_unBanAllUser()));
+    connect(Ban, SIGNAL(triggered()), this, SLOT(slot_banAllUser()));
 
     /* Устанавливаем действия в меню */
     menu->addAction(Mute);
@@ -877,7 +885,6 @@ void MainWindow::FailedConnect()
     ui->Disconnect->setDisabled(true);
 
     ui->lable_session_num->clear();
-//    ui->hostEdit->clear();
 }
 
 QString MainWindow::getHost()

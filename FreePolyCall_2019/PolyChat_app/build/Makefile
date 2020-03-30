@@ -442,11 +442,6 @@ distclean: release-distclean debug-distclean  FORCE
 	-$(DEL_FILE) Makefile
 	-$(DEL_FILE) .qmake.stash
 
-.beforebuild: FORCE
-	chcp 1251
-
-$(MAKEFILE): .beforebuild
-
 release-mocclean:
 	@set MAKEFLAGS=$(MAKEFLAGS)
 	$(MAKE) -f $(MAKEFILE).Release mocclean

@@ -200,7 +200,7 @@ DESTDIR_TARGET = bin\ChatClient.exe
 first: all
 all: Makefile.Debug  bin\ChatClient.exe
 
-bin\ChatClient.exe: .beforebuild C:\Qt\5.12.6\msvc2017_64\lib\Qt5Widgetsd.lib C:\Qt\5.12.6\msvc2017_64\lib\Qt5Guid.lib C:\Qt\5.12.6\msvc2017_64\lib\Qt5WebSocketsd.lib C:\Qt\5.12.6\msvc2017_64\lib\Qt5Networkd.lib C:\Qt\5.12.6\msvc2017_64\lib\Qt5Cored.lib C:\Qt\5.12.6\msvc2017_64\lib\qtmaind.lib tmp_ui\ui_mainwindow.h $(OBJECTS) C:\Git\PolyChat\FreePolyCall_2019\PolyChat_app\build\tmp_o\win32\ChatClient_resource.res
+bin\ChatClient.exe: C:\Qt\5.12.6\msvc2017_64\lib\Qt5Widgetsd.lib C:\Qt\5.12.6\msvc2017_64\lib\Qt5Guid.lib C:\Qt\5.12.6\msvc2017_64\lib\Qt5WebSocketsd.lib C:\Qt\5.12.6\msvc2017_64\lib\Qt5Networkd.lib C:\Qt\5.12.6\msvc2017_64\lib\Qt5Cored.lib C:\Qt\5.12.6\msvc2017_64\lib\qtmaind.lib tmp_ui\ui_mainwindow.h $(OBJECTS) C:\Git\PolyChat\FreePolyCall_2019\PolyChat_app\build\tmp_o\win32\ChatClient_resource.res
 	$(LINKER) $(LFLAGS) /MANIFEST:embed /OUT:$(DESTDIR_TARGET) @<<
 tmp_o\win32\main.obj tmp_o\win32\listmessagemodel.obj tmp_o\win32\mainwindow.obj tmp_o\win32\client.obj tmp_o\win32\messageviewdelegate.obj tmp_o\win32\popup.obj tmp_o\win32\styleapp.obj tmp_o\win32\qrc_image.obj tmp_o\win32\moc_mainwindow.obj tmp_o\win32\moc_client.obj tmp_o\win32\moc_listmessagemodel.obj tmp_o\win32\moc_messageviewdelegate.obj tmp_o\win32\moc_popup.obj
 $(LIBS)
@@ -227,11 +227,6 @@ distclean: clean
 	-$(DEL_FILE) .qmake.stash bin\ChatClient.pdb
 	-$(DEL_FILE) $(DESTDIR_TARGET)
 	-$(DEL_FILE) Makefile.Debug
-
-.beforebuild: FORCE
-	chcp 1251
-
-$(MAKEFILE): .beforebuild
 
 mocclean: compiler_moc_header_clean compiler_moc_objc_header_clean compiler_moc_source_clean
 

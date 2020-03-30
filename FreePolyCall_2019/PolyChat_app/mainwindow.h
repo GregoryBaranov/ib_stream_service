@@ -180,6 +180,8 @@ private slots:
     void slot_unMuteUser();
     void slot_muteAllUser();
     void slot_unMuteAllUser();
+    void slot_banAllUser();
+    void slot_unBanAllUser();
 
 
     void on_MessageBoardList_doubleClicked(const QModelIndex &index);

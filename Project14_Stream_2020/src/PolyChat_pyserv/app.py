@@ -10,10 +10,6 @@ import math, re, sys
 import sqlite3
 from sqlite3 import Error
 from link_preview import link_preview
-#from werkzeug.contrib.cache import MemcachedCache      
-#from __init__ import buf
-#import uuid
-#from flask_caching import Cache
 app = Flask(__name__)
 app.debug = 1
 socketio = SocketIO(app)
@@ -22,11 +18,6 @@ application = app
 app.secret_key = "super secret key"
 
 def create_table(conn, create_table_sql):
-    """ create a table from the create_table_sql statement
-    :param conn: Connection object
-    :param create_table_sql: a CREATE TABLE statement
-    :return:
-    """
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
@@ -34,9 +25,6 @@ def create_table(conn, create_table_sql):
         print(e)
 
 def create_connection():
-    """ create a database connection to a database that resides
-        in the memory
-    """
     global conn
     conn = None
     try: 
@@ -59,9 +47,7 @@ def create_connection():
                                     FOREIGN KEY (id_session) REFERENCES Session (session) 
                                     ON DELETE cascade
                                 );"""
-            # create projects table
             create_table(conn, sql_create_session_table)
-            # create tasks table
             create_table(conn, sql_create_users_table)
         else:
             print("Error! cannot create the database connection.")
@@ -77,10 +63,10 @@ def home():
         if ses_id and Email and Username:
             result = re.search(r'^[a-zA-Zа-яА-Я0-9]{2,20}$', Username)
             if result:
-                try:
-                    sql = ''' SELECT cookie, username  FROM Users WHERE cookie = ? or username = ?''' 
-                    cookie = request.cookies.get('Cookie', '')
-                    task = (cookie,Username)
+                cookie = request.cookies.get('Cookie', '')
+                if cookie:
+                    sql = ''' SELECT cookie, username  FROM Users WHERE cookie = ? and username = ? and id_session = ?''' 
+                    task = (int(cookie),Username,int(ses_id))
                     cur = conn.cursor()
                     cu = cur.execute(sql,task)
                     if cu:
@@ -88,48 +74,67 @@ def home():
                             print(i)
                             if i[0]:
                                 return redirect(ses_id)
-                            else:
-                                flash("Данный никнейм занят другим пользователем")
-                                return render_template('index.html')
-                except:
-                    pass
-                print(Stream)
-                try:
-                    sql = '''SELECT socket FROM Session WHERE session = ?'''
-                    task =(int(ses_id))
+
+                sql = ''' SELECT username  FROM Users WHERE username = ? and id_session = ?''' 
+                task = (Username,int(ses_id))
+                cur = conn.cursor()
+                cu = cur.execute(sql,task)
+                if cu:
+                    for i in cu:
+                        print(i)
+                        if i[0]:
+                            flash("Данный никнейм занят другим пользователем")
+                            return render_template('index.html',ses_id = ses_id)
+                
+                if cookie:
+                    sql = ''' SELECT username FROM Users WHERE cookie = ? and id_session = ?''' 
+                    task = (int(cookie),int(ses_id))
                     cur = conn.cursor()
-                    print('='*32)
-                    for ws in cur.execute(sql,(task,)):
-                        if ws[0]:
-                            cookie = str(random.randint(1,999999))
-                            
-                            sql = ''' INSERT INTO Users(username,cookie,status_ban,status_activity,id_session) VALUES(?,?,?,?,?)''' 
-                            task = (Username,cookie,0,0,ses_id)
-                            cur = conn.cursor()
-                            cur.execute(sql,task)
+                    cu = cur.execute(sql,task)
+                    if cu:
+                        for i in cu:
+                            print(i)
+                            if i[0]:
+                                flash("          Вы уже есть в этой сессии!")
+                                flash("          Ваш Username - " + i[0])
+                                return render_template('index.html',ses_id = ses_id, Username = i[0])
 
-                            ####################################
-                            sql = '''SELECT * FROM Users'''
-                            cur = conn.cursor()
-                            print('+'*32)
-                            for i in cur.execute(sql):
-                                print(i)
-                            print('+'*32)
 
-                            #ДОДЕЛАТЬ WS
-                            ####################################
+                sql = '''SELECT socket FROM Session WHERE session = ?'''
+                task =(int(ses_id))
+                cur = conn.cursor()
+                print('='*32)
+                for ws in cur.execute(sql,(task,)):
+                    if ws[0]:
+                        cookie = str(random.randint(1,999999))
+                        
+                        sql = ''' INSERT INTO Users(username,cookie,status_ban,status_activity,id_session) VALUES(?,?,?,?,?)''' 
+                        task = (Username,int(cookie),0,0,ses_id)
+                        cur = conn.cursor()
+                        cur.execute(sql,task)
 
-                            Stream[ses_id].send("%%%" + Username + "$$$") #Отправляем QT стримеру сообщение
+                        ####################################
+                        sql = '''SELECT * FROM Users'''
+                        cur = conn.cursor()
+                        print('+'*32)
+                        for i in cur.execute(sql):
+                            print(i)
+                        print('+'*32)
 
-                            print("УСПЕХ")
+                        #ДОДЕЛАТЬ WS
+                        ####################################
 
-                            resp = make_response(redirect(ses_id))
-                            resp.set_cookie('Cookie', cookie, max_age=60*60)
-                            return resp
-                except:
-                    pass
+                        Stream[ses_id].send("%%%" + Username + "$$$") #Отправляем QT стримеру сообщение
+
+                        resp = make_response(redirect(ses_id))
+                        resp.set_cookie('Cookie', cookie, max_age=60*60)
+                        return resp
+                    else:
+                        flash("Данной сессии не существует!")
+                        return render_template('index.html',Username = Username)
             else:
-                return render_template('index.html')
+                flash("Username не подходит условиям")
+                return render_template('index.html',ses_id = ses_id)
     return render_template('index.html')
 
 @app.route('/id_ses') #Выдача сессии
@@ -147,7 +152,7 @@ def ransddom():
         if len(Stream.values()) == 90000:
             id_ses = 'සෑම දෙයක්ම තඹ බේසමකින් ආවරණය විය'
             break
-    print(id_ses)
+    print("Выдан - " + id_ses)
     return id_ses
     
 @app.route('/<int:id_ses>')

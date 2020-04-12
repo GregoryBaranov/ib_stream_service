@@ -39,11 +39,11 @@
             <div class="row-2 mt-2">
               <div class="col d-flex justify-content-center">
                 <input type="text" class="btn font-weight-bolder d-flex justify-content-center" pattern="[0-9]{5}"
-                  required id="text_id" name="ses_id" placeholder='SessionID' title="5 цифр" value="12345">
+                  required id="text_id" name="ses_id" placeholder='SessionID' title="5 цифр" value="{{ ses_id }}">
               </div>
               <div class="col d-flex justify-content-center">
                 <input type="text" class="btn font-weight-bolder d-flex justify-content-center" placeholder='Username'  oninput="stst()" name="name_usr" maxlength="20"
-                  required value="Username">
+                  required value="{{ Username }}">
               </div>
               <div class="col d-flex justify-content-center">
                 <input type="email" class="btn font-weight-bolder d-flex justify-content-center"
@@ -59,7 +59,8 @@
           {% with messages = get_flashed_messages() %}
           {% if messages %}
           <div class="alert alert-danger alert-dismissible fade show  role="alert">
-            <strong> {{ messages }} </strong> 
+            <strong> {{ messages[0] }} </strong><br>
+            <strong> {{ messages[1] }} </strong>  
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>

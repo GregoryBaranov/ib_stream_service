@@ -1,0 +1,227 @@
+#particles-js{ 
+position:absolute;
+width: 100%; 
+height: 100%; 
+background-color: #201f1f; 
+background-repeat: no-repeat; 
+bottom: 0;
+} 
+
+#a{
+  z-index: 1;
+  width: 25%;
+  position: absolute;
+  right: 0;
+}
+
+.message{
+  border: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+input:active, :hover, :focus {
+  outline: 0;
+  outline-offset: 0;
+}
+
+main{
+  margin: 1% auto !important;
+}
+
+.modal-body{
+  background: #201f1f;
+  border: 1px double white;
+  border-radius: 35px;
+}
+.modal-content {
+  background: None;
+}
+/* STRUCTURE */
+
+#formContent {
+  max-width: 350px;
+  box-shadow: 0 30px 60px 30px rgba(0,0,0,0.3);
+  text-align: center;
+  border-radius: 35px;  
+  margin: 15% auto !important;
+  border: 1px double white;
+}
+
+.videoContent {
+    width: 100%;
+    min-height: 450px;
+    position: relative;
+    z-index: 1;
+}
+
+
+.headPanel {
+    float: left;
+    width: 75%;
+}
+
+.sidePanel {
+    width: 25%;
+    float: left;
+}
+
+
+
+/* ANIMATIONS */
+
+/* Simple CSS3 Fade-in-down Animation */
+
+.fadeInDown {
+  -webkit-animation-name: fadeInDown;
+  animation-name: fadeInDown;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+@-webkit-keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(0, -100%, 0);
+    transform: translate3d(0, -100%, 0);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(0, -100%, 0);
+    transform: translate3d(0, -100%, 0);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+
+/* Simple CSS3 Fade-in Animation */
+
+@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.fadeIn {
+  opacity:0;
+  -webkit-animation:fadeIn ease-in 1;
+  -moz-animation:fadeIn ease-in 1;
+  animation:fadeIn ease-in 1;
+
+  -webkit-animation-fill-mode:forwards;
+  -moz-animation-fill-mode:forwards;
+  animation-fill-mode:forwards;
+
+  -webkit-animation-duration:1s;
+  -moz-animation-duration:1s;
+  animation-duration:1s;
+}
+
+.fadeIn.first {
+  -webkit-animation-delay: 0.4s;
+  -moz-animation-delay: 0.4s;
+  animation-delay: 0.4s;
+}
+
+.fadeIn.second {
+  -webkit-animation-delay: 0.6s;
+  -moz-animation-delay: 0.6s;
+  animation-delay: 0.6s;
+}
+
+.fadeIn.third {
+  -webkit-animation-delay: 0.8s;
+  -moz-animation-delay: 0.8s;
+  animation-delay: 0.8s;
+}
+
+.fadeIn.fourth {
+  -webkit-animation-delay: 1s;
+  -moz-animation-delay: 1s;
+  animation-delay: 1s;
+}
+
+/* Simple CSS3 Fade-in Animation */
+
+.underlineHover:after {
+  display: block;
+  left: 0;
+  bottom: -10px;
+  width: 0;
+  height: 2px;
+  background-color: #56baed;
+  content: "";
+  transition: width 0.2s;
+}
+
+.underlineHover:hover {
+  color: #0d0d0d;
+}
+
+.underlineHover:hover:after{
+  width: 100%;
+}
+
+h1{
+    color:#fff;
+}
+
+
+body::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+    background-color: #F5F5F5;
+    border-radius: 10px;
+}
+::-webkit-scrollbar
+{
+    width: 10px;
+    background-color: #F5F5F5;
+}
+::-webkit-scrollbar-thumb
+{
+    border-radius: 10px;
+    background-color: #FFF;
+    background-image: -webkit-gradient(linear,
+    40% 0%,
+    75% 84%,
+    from(#4D9C41),
+    to(#19911D),
+    color-stop(.6,#54DE5D))
+}
+
+.btn {
+  display: inline-block;
+  background: transparent;
+  font-style: normal;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 1.325rem;
+  color: black;
+  border-radius: 0;
+  width: 200px;
+  background-position: 1% 50%;
+  background-size: 300% 300%;
+  text-decoration: none;
+  margin: 0.625rem;
+  border-radius: 35px;
+  color: #fff;
+  border-color: #fff;
+}
+
+.btn:hover {
+  background: #fff;
+  color: #000;
+}

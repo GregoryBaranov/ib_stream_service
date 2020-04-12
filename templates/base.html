@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/style2.css') }}">
+</head>
+
+<body>
+  <div class="container-fluid" style="height: 100%; padding: 0px !important;">
+    <nav class="navbar navbar-expand row justify-content-center text-center">
+      <div class="navbar-collapse  col-md-8 justify-content-center text-center" id="mainMenu">
+        <div class="flex-column">
+          <div class="justify-content-center text-center row ml-1">
+            {% if not temp %}
+            <div class="test2">
+              <a class="navbar-brand"> SESSION'S NAME: {{ temp }}</a>
+            </div>
+            {% endif %}
+            <div class="test">
+            </div>
+          </div>
+          <div class="row justify-content-center text-center" style="font-size: 18px !important;">
+            <ul class="navbar-nav  navList ">
+              <li class="nav-item"><a href="/" class="nav-link" style="font-size: 18px !important;"><i
+                    class="fas fa-home"></i>HOME</a></li>
+              <li class="nav-item" type="button"><a class="nav-link btn-hide" id="btn"
+                  style="font-size: 18px !important;"><i id="supa" class="far fa-comment-dots mr-1 blink"></i><i
+                    id="supa2" class="fas fa-users"></i>CHAT</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div>
+    </nav>
+    <div class="d-flex bd-highlight">
+      <div class="p-2 flex-grow-1 bd-highlight bg-primary d-flex" style="min-height: 100vh; max-height: 100vh;"
+        id="screen">Stream</div>
+      <div class="p-2 bd-highlight ml-auto" id="Create" style="max-width: 25%; min-width: 25%;">
+        <div id="output" style="min-height: calc(100vh - 150px); max-height: calc(100vh - 150px);"
+          class="message_holder overflow-auto mb-0">
+        </div>
+
+        <form action="" class="form-control" method="POST">
+          <input type="text" style="width: 100%;" class="message" placeholder="Messages" />
+          <input style="width: 0px; height: 0px; visibility: hidden; " id="as" type="submit">
+        </form>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+  integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+  integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+  integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.cookie.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/scriptus.js') }}"></script>
+
+</html>

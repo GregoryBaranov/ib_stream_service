@@ -113,7 +113,7 @@ def home():
                         cur = conn.cursor()
                         cur.execute(sql,task)
 
-                        ####################################
+                        ###################################
                         sql = '''SELECT * FROM Users'''
                         cur = conn.cursor()
                         print('+'*32)

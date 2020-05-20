@@ -18,6 +18,8 @@ public:
     static QString getDarkMessageBoardList();
     static QString getDarkLineEdit();
     static QString getTitleEdit();
+    static QString getDarkBtnSmile();
+    static QString getDarkAreaEmoji();
 
     //******************************************
 

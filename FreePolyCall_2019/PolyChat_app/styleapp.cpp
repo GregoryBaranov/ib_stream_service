@@ -8,6 +8,14 @@ QString StyleApp::getMainDarkBackground()
            "padding: 10px;";
 }
 
+QString StyleApp::getDarkAreaEmoji()
+{
+    return "background:rgba(62, 62, 62, 0.5);"
+           "color: #fff; "
+           "border: 0px;"
+           "QScrollBar {block: none;}";
+}
+
 QString StyleApp::getDarkBtnStyle()
 {
     return "QPushButton {"
@@ -29,6 +37,19 @@ QString StyleApp::getTitleEdit()
            "}";
 }
 
+QString StyleApp::getDarkBtnSmile(){
+    return "QPushButton {"
+           "background:#3d3d3d;"
+           "qproperty-icon: url(:/image/smileys.png);"
+           "background-repeat: no-repeat; margin: 0px;"
+           "}"
+           "QPushButton:hover { "
+           "qproperty-icon: url(:/image/smileys.png);"
+           "background:#5B5B5B;"
+           "background-repeat: no-repeat; margin: 0px;"
+           "color: #fff;"
+           "}";
+}
 
 QString StyleApp::getDarkBtnMaximize()
 {

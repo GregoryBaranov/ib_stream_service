@@ -98,6 +98,8 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setStyleSheet("font: 12pt Microsoft YaHei UI;");
     this->setMouseTracking(true); // отслеживание курсора мыши без нажатых кнопокы
+    ui->messageEdit->setStyleSheet("font: 12pt Segoe UI Emoji;");
+    ui->MessageBoardList->setStyleSheet("font: 12pt Segoe UI Emoji;");
 
     cursorTracking(); // отслеживание курсора
     shadowEffect(); // эффект тени для растягивания окна приложения
@@ -115,9 +117,40 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
 
     // дефолтная тема приложения
     on_DarkDesign_clicked();
+    setEmoji();
 
     // дефолтный статус о состоянии окна чата
     statusBell = showChat;
+
+    ui->stackedWidgetForMessage->setVisible(false);
+}
+
+void MainWindow::setEmoji(){
+    Emojis e;
+    auto arr = e.getEmoji();
+    int id = -1;
+    for (auto var : arr) {
+        id++;
+        btnEmoji = new QPushButton(this);
+        if(id == 0 || id % 5 == 0){
+            wdgEmoji = new QWidget(this);
+            vlayEmoji = new QHBoxLayout(wdgEmoji);
+        }
+
+        btnEmoji->setText(var);
+        btnEmoji->setFlat(true);
+        btnEmoji->setStyleSheet("text-align: center; font-size: 20px;");
+        btnEmoji->setFixedSize(52, 50);
+        vlayEmoji->addWidget(btnEmoji);
+        ui->verticalLayout->addWidget(wdgEmoji);
+        connect(btnEmoji, SIGNAL(clicked()), this, SLOT(slot_clickOnEmoji()));
+    }
+}
+
+void MainWindow::slot_clickOnEmoji(){
+    QPushButton *button = (QPushButton*) sender();
+    QString text = ui->messageEdit->toPlainText();
+    ui->messageEdit->setText(text + button->text());
 }
 
 void MainWindow::cursorTracking()
@@ -540,7 +573,7 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     // Выставление стиля для дефолтной темы "Dark"
     ui->centralWidget->setStyleSheet(StyleApp::getMainDarkBackground());
     ui->sattingStackedWidget->setStyleSheet(StyleApp::getMainDarkBackground());
-
+    ui->scrollAreaEmoji->setStyleSheet(StyleApp::getDarkAreaEmoji());
     ui->hostEdit->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->spinPort->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->Connect->setStyleSheet(StyleApp::getDarkBtnStyle());
@@ -569,6 +602,7 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->groupBoxPort->setStyleSheet(StyleApp::getTitleEdit());
     ui->groupBoxNumSession->setStyleSheet(StyleApp::getTitleEdit());
     ui->groupBoxTitleSession->setStyleSheet(StyleApp::getTitleEdit());
+    ui->btnSmile->setStyleSheet(StyleApp::getDarkBtnSmile());
 
     ui->ChatBtn->setIcon(QIcon(StyleApp::getBtnShowChatIcon()));
     ui->ChatBtn->setIconSize(QSize(45,45));
@@ -906,4 +940,12 @@ void MainWindow::on_BtnUserControl_clicked() // Открытие/закрыти�
 void MainWindow::on_closeUserListPanel_clicked()
 {
     ui->sattingStackedWidget->setCurrentIndex(0);
+}
+
+void MainWindow::on_btnSmile_clicked()
+{
+    if(ui->stackedWidgetForMessage->isVisible() == true)
+        ui->stackedWidgetForMessage->hide();
+    else
+        ui->stackedWidgetForMessage->show();
 }

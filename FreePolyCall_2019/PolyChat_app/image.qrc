@@ -33,5 +33,6 @@
         <file>image/window-restore.png</file>
         <file>image/icon.ico</file>
         <file>image/screeen_top.ico</file>
+        <file>image/smileys.png</file>
     </qresource>
 </RCC>

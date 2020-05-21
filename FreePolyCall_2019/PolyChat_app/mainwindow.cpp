@@ -392,9 +392,13 @@ void MainWindow::onSendMessageBtnClick() // Слот для кнопки отп�
 
     // to do
     // Сделать регулярку для проверки на множество пробелов
-    if(ui->messageEdit->toPlainText() != "") // Проверка на пустое сообщение
-    {
-        client->sendMessage(ui->messageEdit->toPlainText()); // отправка сообщения
+    QRegExp re( "^\\s+$" );
+    if(re.exactMatch(ui->messageEdit->toPlainText())) // Проверка на пустое сообщение
+        ui->messageEdit->setText("");
+    else {
+        QString msg(ui->messageEdit->toPlainText());
+        msg.replace(QRegularExpression("\\n{0,}\\s+$")," ");
+        client->sendMessage(msg); // отправка сообщения
         ui->messageEdit->clear(); // очищение отправленного сообщения
     }
 }
@@ -452,7 +456,7 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
         popUp->show();
 
-        QRegExp qe( "^\s*$" );
+        QRegExp qe( "^\\s*$" );
 
         if ( qe.exactMatch(ui->TitleEdit->text()))
         {
@@ -586,7 +590,7 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->Disconnect->setStyleSheet(StyleApp::getDarkBtnDisable());
     ui->StartSession->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->StopSession->setStyleSheet(StyleApp::getDarkBtnStyle());
-    ui->send->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->send->setStyleSheet(StyleApp::getDarkBtnSend());
     ui->MessageBoardList->setStyleSheet(StyleApp::getDarkMessageBoardList());
     ui->sattingStackedWidget->setStyleSheet("padding: 10px;");
     ui->messageEdit->setStyleSheet(StyleApp::getMainDarkBackground());
@@ -603,6 +607,8 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->groupBoxNumSession->setStyleSheet(StyleApp::getTitleEdit());
     ui->groupBoxTitleSession->setStyleSheet(StyleApp::getTitleEdit());
     ui->btnSmile->setStyleSheet(StyleApp::getDarkBtnSmile());
+    ui->btnClipImage->setStyleSheet(StyleApp::getDarkBtnClipImg());
+    ui->lineEditUrlImg->setStyleSheet(StyleApp::getDarkLineEdit());
 
     ui->ChatBtn->setIcon(QIcon(StyleApp::getBtnShowChatIcon()));
     ui->ChatBtn->setIconSize(QSize(45,45));
@@ -945,7 +951,32 @@ void MainWindow::on_closeUserListPanel_clicked()
 void MainWindow::on_btnSmile_clicked()
 {
     if(ui->stackedWidgetForMessage->isVisible() == true)
-        ui->stackedWidgetForMessage->hide();
-    else
+        if(ui->stackedWidgetForMessage->currentIndex() == 1){
+            ui->stackedWidgetForMessage->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+            ui->stackedWidgetForMessage->setCurrentIndex(0);
+        }
+        else
+            ui->stackedWidgetForMessage->hide();
+    else{
+        ui->stackedWidgetForMessage->setCurrentIndex(0);
+        ui->stackedWidgetForMessage->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
         ui->stackedWidgetForMessage->show();
+    }
+}
+
+void MainWindow::on_btnClipImage_clicked()
+{
+    if(ui->stackedWidgetForMessage->isVisible() == true)
+        if(ui->stackedWidgetForMessage->currentIndex() == 0){
+            int w = ui->stackedWidgetForMessage->width();
+            ui->stackedWidgetForMessage->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
+            ui->stackedWidgetForMessage->setCurrentIndex(1);
+        }
+        else
+            ui->stackedWidgetForMessage->hide();
+    else {
+        ui->stackedWidgetForMessage->setCurrentIndex(1);
+        ui->stackedWidgetForMessage->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
+        ui->stackedWidgetForMessage->show();
+    }
 }

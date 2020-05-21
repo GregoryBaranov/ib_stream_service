@@ -28,6 +28,20 @@ QString StyleApp::getDarkBtnStyle()
            "}";
 };
 
+QString StyleApp::getDarkBtnSend()
+{
+    return "QPushButton {"
+           "qproperty-icon: url(:/image/sendMsg.png);"
+           "background:#3d3d3d;"
+           "color: #fff;"
+           "}"
+           "QPushButton:hover { "
+           "qproperty-icon: url(:/image/sendMsg.png);"
+           "background:#5B5B5B;"
+           "color: #fff;"
+           "}";
+};
+
 QString StyleApp::getTitleEdit()
 {
     return "QGroupBox {"
@@ -45,6 +59,20 @@ QString StyleApp::getDarkBtnSmile(){
            "}"
            "QPushButton:hover { "
            "qproperty-icon: url(:/image/smileys.png);"
+           "background:#5B5B5B;"
+           "background-repeat: no-repeat; margin: 0px;"
+           "color: #fff;"
+           "}";
+}
+
+QString StyleApp::getDarkBtnClipImg(){
+    return "QPushButton {"
+           "background:#3d3d3d;"
+           "qproperty-icon: url(:/image/clip.png);"
+           "background-repeat: no-repeat; margin: 0px;"
+           "}"
+           "QPushButton:hover { "
+           "qproperty-icon: url(:/image/clip.png);"
            "background:#5B5B5B;"
            "background-repeat: no-repeat; margin: 0px;"
            "color: #fff;"

@@ -198,6 +198,7 @@ private slots:
 
     void on_closeUserListPanel_clicked();
     void on_btnSmile_clicked();
+    void on_btnClipImage_clicked();
 };
 
 #endif // MAINWINDOW_H

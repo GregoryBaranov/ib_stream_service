@@ -19,7 +19,9 @@ public:
     static QString getDarkLineEdit();
     static QString getTitleEdit();
     static QString getDarkBtnSmile();
+    static QString getDarkBtnClipImg();
     static QString getDarkAreaEmoji();
+    static QString getDarkBtnSend();
 
     //******************************************
 

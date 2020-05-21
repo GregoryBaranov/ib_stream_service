@@ -139,8 +139,8 @@ void MainWindow::setEmoji(){
 
         btnEmoji->setText(var);
         btnEmoji->setFlat(true);
-        btnEmoji->setStyleSheet("text-align: center; font-size: 20px;");
-        btnEmoji->setFixedSize(52, 50);
+        btnEmoji->setStyleSheet("text-align: center; font-size: 30px;");
+        btnEmoji->setFixedSize(50, 50);
         vlayEmoji->addWidget(btnEmoji);
         ui->verticalLayout->addWidget(wdgEmoji);
         connect(btnEmoji, SIGNAL(clicked()), this, SLOT(slot_clickOnEmoji()));
@@ -396,7 +396,7 @@ void MainWindow::onSendMessageBtnClick() // Слот для кнопки отп�
     QString msg(ui->messageEdit->toPlainText());
     msg.replace(QRegularExpression("\\n{0,}\\s+$")," ");
     msg.replace(QRegularExpression("\\n{0,}\\s+")," ");
-    QRegExp urlRe( "^(((\\s*\\;?)?(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*\\/?\\;?\\/s?)?){1,})" );
+    QRegExp urlRe( "^(((\\s*\\;?)?(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*\\/?\\;?\\/?s?)?){1,})" );
 
     if(re.exactMatch(ui->messageEdit->toPlainText()) || ui->messageEdit->toPlainText() == ""){
         ui->messageEdit->clear();

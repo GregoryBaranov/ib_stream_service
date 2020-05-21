@@ -13,7 +13,7 @@ QString StyleApp::getDarkAreaEmoji()
     return "background:rgba(62, 62, 62, 0.5);"
            "color: #fff; "
            "border: 0px;"
-           "QScrollBar {block: none;}";
+           "padding: 0px";
 }
 
 QString StyleApp::getDarkBtnStyle()

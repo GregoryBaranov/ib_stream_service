@@ -101,7 +101,7 @@
               </size>
              </property>
              <property name="placeholderText">
-              <string>IMAGE URL</string>
+              <string>IMAGE URL | https://image1.com/;https://image2.com/</string>
              </property>
             </widget>
            </item>

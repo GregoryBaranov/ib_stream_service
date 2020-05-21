@@ -115,6 +115,8 @@ private:
     void settingDesigner(); // Вид и проверки для hostEdit, spinPort, connect;
     int closeApp();
 
+    QString getUrlImage(QString str);
+
     void on_DarkDesign_clicked(); // Слот для переключения на темную тему
     void disableBtnStyle(QPushButton *, QPushButton *);
 

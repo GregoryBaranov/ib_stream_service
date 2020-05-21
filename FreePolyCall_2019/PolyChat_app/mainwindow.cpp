@@ -390,17 +390,36 @@ void MainWindow::onSendMessageBtnClick() // Слот для кнопки отп�
 {
     QString test = ui->messageEdit->toPlainText();
 
-    // to do
-    // Сделать регулярку для проверки на множество пробелов
     QRegExp re( "^\\s+$" );
-    if(re.exactMatch(ui->messageEdit->toPlainText())) // Проверка на пустое сообщение
-        ui->messageEdit->setText("");
-    else {
-        QString msg(ui->messageEdit->toPlainText());
-        msg.replace(QRegularExpression("\\n{0,}\\s+$")," ");
-        client->sendMessage(msg); // отправка сообщения
-        ui->messageEdit->clear(); // очищение отправленного сообщения
+
+
+    QString msg(ui->messageEdit->toPlainText());
+    msg.replace(QRegularExpression("\\n{0,}\\s+$")," ");
+    msg.replace(QRegularExpression("\\n{0,}\\s+")," ");
+    QRegExp urlRe( "^(((\\s*\\;?)?(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*\\/?\\;?\\/s?)?){1,})" );
+
+    if(re.exactMatch(ui->messageEdit->toPlainText()) || ui->messageEdit->toPlainText() == ""){
+        ui->messageEdit->clear();
+        return;
     }
+
+    if(urlRe.exactMatch(ui->lineEditUrlImg->text())){
+        client->sendMessage(msg + getUrlImage(ui->lineEditUrlImg->text()));
+    } else {
+        client->sendMessage(msg);
+    }
+
+    ui->lineEditUrlImg->clear();
+    ui->messageEdit->clear();
+}
+
+QString MainWindow::getUrlImage(QString str){
+    QStringList urls = str.split( ";" );
+    str = "";
+    for(auto value : urls){
+        str += "<br> <a href="+value+" target=\"_blank\"><img src="+value+" width=\"200\" height=\"200\"></a>";
+    }
+    return str;
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -487,8 +506,11 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
         QRegExp re( "([A-zА-я0-9]+)([:]{1})(([\\S+)([\n ]{0,}))" );
 
+        message.replace(QRegularExpression("<br>"), "");
+        message.replace(QRegularExpression("<a.*?>.*?<\\/a.*?>"), "[Изображение]");
+
         // Парсинг сообщения для получения имени и основного текста
-        int lastPos = 0;
+        lastPos = 0;
         while( ( lastPos = re.indexIn( message, lastPos ) ) != -1)
         {
             lastPos += re.matchedLength();

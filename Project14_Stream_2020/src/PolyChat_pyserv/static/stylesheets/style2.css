@@ -23,6 +23,7 @@ input:active,
     font-weight: bold;
 }
 
+
 nav {
     background-color: black !important;
     color: white !important;
@@ -48,11 +49,6 @@ nav {
 
 .nav-item {
     -webkit-appearance: none !important;
-}
-
-#screen {
-    width: 100%;
-    height: 100%;
 }
 
 .blink {

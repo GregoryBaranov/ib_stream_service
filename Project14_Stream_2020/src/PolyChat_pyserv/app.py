@@ -29,7 +29,7 @@ def create_connection():
     conn = None
     try: 
         conn = sqlite3.connect(':memory:')
-        print(sqlite3.version)
+        print("Версия sqlite - " + sqlite3.version)
         if conn is not None:
             sql_create_session_table = """ CREATE TABLE IF NOT EXISTS Session (
                                         id integer PRIMARY KEY,
@@ -53,6 +53,7 @@ def create_connection():
             print("Error! cannot create the database connection.")
     except Error as e:
         print(e)
+    print("Сервер успешно запущен!")
 
 @app.route('/', methods=['GET','POST'])
 def home():

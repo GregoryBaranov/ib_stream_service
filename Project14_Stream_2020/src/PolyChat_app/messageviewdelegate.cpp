@@ -20,22 +20,17 @@
 
 #define STRIPE_WIDTH 30
 
-MessageViewDelegate::MessageViewDelegate(QObject *parent) :
-    QStyledItemDelegate(parent)
-{
-
-}
+MessageViewDelegate::MessageViewDelegate(QObject *parent) : QStyledItemDelegate(parent){}
 
 QWidget *MessageViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
 {
     return nullptr;
 }
-void MessageViewDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
-{
-}
-void MessageViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{
-}
+
+void MessageViewDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const{}
+
+void MessageViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const{}
+
 void MessageViewDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
 {
   editor->setGeometry(option.rect);

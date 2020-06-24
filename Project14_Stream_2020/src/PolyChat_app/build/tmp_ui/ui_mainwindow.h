@@ -145,6 +145,7 @@ public:
 
         label_2 = new QLabel(pnlStream);
         label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setPixmap(QPixmap(QString::fromUtf8("../../../../Users/swall/Desktop/LOGOPOLIKEK.png")));
 
         gridLayout_7->addWidget(label_2, 0, 0, 1, 2);
 

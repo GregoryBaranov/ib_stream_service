@@ -23,6 +23,7 @@
 #include <QAbstractScrollArea>
 #include <QScrollBar>
 #include <QApplication>
+#include "emojis.h"
 
 class MessageViewDelegate;
 
@@ -78,7 +79,7 @@ public:
     ~MainWindow(); // деструктор
 
     void hide_all(QListWidget *listWidjet); // скрывает все не нужные элименты
-    void popUpТotification(QString msg = "", QString totification = "");
+    void popUpView(QString msg = "", QString totification = "");
 
     QImage defautIcon() const;
     void setDefaultIcon(const QImage & img);
@@ -87,6 +88,7 @@ public:
 
     QString getHost();
     unsigned int getPort();
+    void setEmoji();
 
     CheckConnect checkConnect;
 public slots:
@@ -112,6 +114,8 @@ private:
     void mainApplicationDesigner(); // Дефолтный фид приложения
     void settingDesigner(); // Вид и проверки для hostEdit, spinPort, connect;
     int closeApp();
+
+    QString getUrlImage(QString str);
 
     void on_DarkDesign_clicked(); // Слот для переключения на темную тему
     void disableBtnStyle(QPushButton *, QPushButton *);
@@ -146,6 +150,11 @@ private:
     void shadowEffect(); // эффект для растягивания окна приложения
     void disconnectFromServer();
 
+    // для смайликов
+    QPushButton *btnEmoji;
+    QWidget * wdgEmoji;
+    QHBoxLayout *vlayEmoji;
+
     template<class T1, class T2>
     bool checkUserInList(const list<T1> &lst, T2 username); // проверка есть юзер или нет
 
@@ -175,11 +184,14 @@ private slots:
     void slot_UnMuteUser(QListWidgetItem*); // Слот размьюта
     void on_lineSearchUserList_textChanged(const QString &arg1); // при вызове определенного сигнала делаем поиск
     void on_ChatBtn_clicked(); // Скрытие чата
+    void slot_clickOnEmoji();
 
     void slot_muteUser();
     void slot_unMuteUser();
     void slot_muteAllUser();
     void slot_unMuteAllUser();
+    void slot_banAllUser();
+    void slot_unBanAllUser();
 
 
     void on_MessageBoardList_doubleClicked(const QModelIndex &index);
@@ -187,6 +199,8 @@ private slots:
     void on_MessageBoardList_customContextMenuRequested(const QPoint &pos);
 
     void on_closeUserListPanel_clicked();
+    void on_btnSmile_clicked();
+    void on_btnClipImage_clicked();
 };
 
 #endif // MAINWINDOW_H

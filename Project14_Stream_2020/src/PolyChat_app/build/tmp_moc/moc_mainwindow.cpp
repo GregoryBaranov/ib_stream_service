@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[35];
-    char stringdata0[631];
+    QByteArrayData data[37];
+    char stringdata0[665];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -59,13 +59,15 @@ QT_MOC_LITERAL(24, 404, 13), // "slot_muteUser"
 QT_MOC_LITERAL(25, 418, 15), // "slot_unMuteUser"
 QT_MOC_LITERAL(26, 434, 16), // "slot_muteAllUser"
 QT_MOC_LITERAL(27, 451, 18), // "slot_unMuteAllUser"
-QT_MOC_LITERAL(28, 470, 33), // "on_MessageBoardList_doubleCli..."
-QT_MOC_LITERAL(29, 504, 11), // "QModelIndex"
-QT_MOC_LITERAL(30, 516, 5), // "index"
-QT_MOC_LITERAL(31, 522, 27), // "on_MessageBoardList_clicked"
-QT_MOC_LITERAL(32, 550, 46), // "on_MessageBoardList_customCon..."
-QT_MOC_LITERAL(33, 597, 3), // "pos"
-QT_MOC_LITERAL(34, 601, 29) // "on_closeUserListPanel_clicked"
+QT_MOC_LITERAL(28, 470, 15), // "slot_banAllUser"
+QT_MOC_LITERAL(29, 486, 17), // "slot_unBanAllUser"
+QT_MOC_LITERAL(30, 504, 33), // "on_MessageBoardList_doubleCli..."
+QT_MOC_LITERAL(31, 538, 11), // "QModelIndex"
+QT_MOC_LITERAL(32, 550, 5), // "index"
+QT_MOC_LITERAL(33, 556, 27), // "on_MessageBoardList_clicked"
+QT_MOC_LITERAL(34, 584, 46), // "on_MessageBoardList_customCon..."
+QT_MOC_LITERAL(35, 631, 3), // "pos"
+QT_MOC_LITERAL(36, 635, 29) // "on_closeUserListPanel_clicked"
 
     },
     "MainWindow\0previousPositionChanged\0\0"
@@ -80,7 +82,8 @@ QT_MOC_LITERAL(34, 601, 29) // "on_closeUserListPanel_clicked"
     "QListWidgetItem*\0on_lineSearchUserList_textChanged\0"
     "arg1\0on_ChatBtn_clicked\0slot_muteUser\0"
     "slot_unMuteUser\0slot_muteAllUser\0"
-    "slot_unMuteAllUser\0on_MessageBoardList_doubleClicked\0"
+    "slot_unMuteAllUser\0slot_banAllUser\0"
+    "slot_unBanAllUser\0on_MessageBoardList_doubleClicked\0"
     "QModelIndex\0index\0on_MessageBoardList_clicked\0"
     "on_MessageBoardList_customContextMenuRequested\0"
     "pos\0on_closeUserListPanel_clicked"
@@ -93,40 +96,42 @@ static const uint qt_meta_data_MainWindow[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      24,   14, // methods
-       1,  178, // properties
+      26,   14, // methods
+       1,  190, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        2,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,  134,    2, 0x06 /* Public */,
-       4,    1,  137,    2, 0x06 /* Public */,
+       1,    1,  144,    2, 0x06 /* Public */,
+       4,    1,  147,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       6,    1,  140,    2, 0x0a /* Public */,
-       7,    1,  143,    2, 0x08 /* Private */,
-       9,    1,  146,    2, 0x08 /* Private */,
-      11,    0,  149,    2, 0x08 /* Private */,
-      12,    0,  150,    2, 0x08 /* Private */,
-      13,    0,  151,    2, 0x08 /* Private */,
-      14,    0,  152,    2, 0x08 /* Private */,
-      15,    0,  153,    2, 0x08 /* Private */,
-      16,    0,  154,    2, 0x08 /* Private */,
-      17,    0,  155,    2, 0x08 /* Private */,
-      18,    0,  156,    2, 0x08 /* Private */,
-      19,    1,  157,    2, 0x08 /* Private */,
-      21,    1,  160,    2, 0x08 /* Private */,
-      23,    0,  163,    2, 0x08 /* Private */,
-      24,    0,  164,    2, 0x08 /* Private */,
-      25,    0,  165,    2, 0x08 /* Private */,
-      26,    0,  166,    2, 0x08 /* Private */,
-      27,    0,  167,    2, 0x08 /* Private */,
-      28,    1,  168,    2, 0x08 /* Private */,
-      31,    1,  171,    2, 0x08 /* Private */,
-      32,    1,  174,    2, 0x08 /* Private */,
-      34,    0,  177,    2, 0x08 /* Private */,
+       6,    1,  150,    2, 0x0a /* Public */,
+       7,    1,  153,    2, 0x08 /* Private */,
+       9,    1,  156,    2, 0x08 /* Private */,
+      11,    0,  159,    2, 0x08 /* Private */,
+      12,    0,  160,    2, 0x08 /* Private */,
+      13,    0,  161,    2, 0x08 /* Private */,
+      14,    0,  162,    2, 0x08 /* Private */,
+      15,    0,  163,    2, 0x08 /* Private */,
+      16,    0,  164,    2, 0x08 /* Private */,
+      17,    0,  165,    2, 0x08 /* Private */,
+      18,    0,  166,    2, 0x08 /* Private */,
+      19,    1,  167,    2, 0x08 /* Private */,
+      21,    1,  170,    2, 0x08 /* Private */,
+      23,    0,  173,    2, 0x08 /* Private */,
+      24,    0,  174,    2, 0x08 /* Private */,
+      25,    0,  175,    2, 0x08 /* Private */,
+      26,    0,  176,    2, 0x08 /* Private */,
+      27,    0,  177,    2, 0x08 /* Private */,
+      28,    0,  178,    2, 0x08 /* Private */,
+      29,    0,  179,    2, 0x08 /* Private */,
+      30,    1,  180,    2, 0x08 /* Private */,
+      33,    1,  183,    2, 0x08 /* Private */,
+      34,    1,  186,    2, 0x08 /* Private */,
+      36,    0,  189,    2, 0x08 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QPoint,    3,
@@ -151,9 +156,11 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 29,   30,
-    QMetaType::Void, 0x80000000 | 29,   30,
-    QMetaType::Void, QMetaType::QPoint,   33,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 31,   32,
+    QMetaType::Void, 0x80000000 | 31,   32,
+    QMetaType::Void, QMetaType::QPoint,   35,
     QMetaType::Void,
 
  // properties: name, type, flags
@@ -191,10 +198,12 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 17: _t->slot_unMuteUser(); break;
         case 18: _t->slot_muteAllUser(); break;
         case 19: _t->slot_unMuteAllUser(); break;
-        case 20: _t->on_MessageBoardList_doubleClicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
-        case 21: _t->on_MessageBoardList_clicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
-        case 22: _t->on_MessageBoardList_customContextMenuRequested((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
-        case 23: _t->on_closeUserListPanel_clicked(); break;
+        case 20: _t->slot_banAllUser(); break;
+        case 21: _t->slot_unBanAllUser(); break;
+        case 22: _t->on_MessageBoardList_doubleClicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
+        case 23: _t->on_MessageBoardList_clicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
+        case 24: _t->on_MessageBoardList_customContextMenuRequested((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
+        case 25: _t->on_closeUserListPanel_clicked(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -265,13 +274,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 24)
+        if (_id < 26)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 24;
+        _id -= 26;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 24)
+        if (_id < 26)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 24;
+        _id -= 26;
     }
 #ifndef QT_NO_PROPERTIES
     else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty

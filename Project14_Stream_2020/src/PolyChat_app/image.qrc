@@ -31,5 +31,11 @@
         <file>image/window-minimize.png</file>
         <file>image/window-restore-gray.png</file>
         <file>image/window-restore.png</file>
+        <file>image/icon.ico</file>
+        <file>image/screeen_top.ico</file>
+        <file>image/smileys.png</file>
+        <file>image/envelope.png</file>
+        <file>image/sendMsg.png</file>
+        <file>image/clip.png</file>
     </qresource>
 </RCC>

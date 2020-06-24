@@ -16,6 +16,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+    emojis.cpp \
     listmessagemodel.cpp \
         mainwindow.cpp \
     client.cpp \
@@ -25,6 +26,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     client.h \
+    emojis.h \
     listmessagemodel.h \
     messageviewdelegate.h \
     popup.h \

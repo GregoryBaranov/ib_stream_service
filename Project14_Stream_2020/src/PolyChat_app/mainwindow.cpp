@@ -98,6 +98,8 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setStyleSheet("font: 12pt Microsoft YaHei UI;");
     this->setMouseTracking(true); // отслеживание курсора мыши без нажатых кнопокы
+    ui->messageEdit->setStyleSheet("font: 12pt Segoe UI Emoji;");
+    ui->MessageBoardList->setStyleSheet("font: 12pt Segoe UI Emoji;");
 
     cursorTracking(); // отслеживание курсора
     shadowEffect(); // эффект тени для растягивания окна приложения
@@ -115,9 +117,40 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
 
     // дефолтная тема приложения
     on_DarkDesign_clicked();
+    setEmoji();
 
     // дефолтный статус о состоянии окна чата
     statusBell = showChat;
+
+    ui->stackedWidgetForMessage->setVisible(false);
+}
+
+void MainWindow::setEmoji(){
+    Emojis e;
+    auto arr = e.getEmoji();
+    int id = -1;
+    for (auto var : arr) {
+        id++;
+        btnEmoji = new QPushButton(this);
+        if(id == 0 || id % 5 == 0){
+            wdgEmoji = new QWidget(this);
+            vlayEmoji = new QHBoxLayout(wdgEmoji);
+        }
+
+        btnEmoji->setText(var);
+        btnEmoji->setFlat(true);
+        btnEmoji->setStyleSheet("text-align: center; font-size: 30px;");
+        btnEmoji->setFixedSize(50, 50);
+        vlayEmoji->addWidget(btnEmoji);
+        ui->verticalLayout->addWidget(wdgEmoji);
+        connect(btnEmoji, SIGNAL(clicked()), this, SLOT(slot_clickOnEmoji()));
+    }
+}
+
+void MainWindow::slot_clickOnEmoji(){
+    QPushButton *button = (QPushButton*) sender();
+    QString text = ui->messageEdit->toPlainText();
+    ui->messageEdit->setText(text + button->text());
 }
 
 void MainWindow::cursorTracking()
@@ -357,13 +390,36 @@ void MainWindow::onSendMessageBtnClick() // Слот для кнопки отп�
 {
     QString test = ui->messageEdit->toPlainText();
 
-    // to do
-    // Сделать регулярку для проверки на множество пробелов
-    if(ui->messageEdit->toPlainText() != "") // Проверка на пустое сообщение
-    {
-        client->sendMessage(ui->messageEdit->toPlainText()); // отправка сообщения
-        ui->messageEdit->clear(); // очищение отправленного сообщения
+    QRegExp re( "^\\s+$" );
+
+
+    QString msg(ui->messageEdit->toPlainText());
+    msg.replace(QRegularExpression("\\n{0,}\\s+$")," ");
+    msg.replace(QRegularExpression("\\n{0,}\\s+")," ");
+    QRegExp urlRe( "^(((\\s*\\;?)?(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*\\/?\\;?\\/?s?)?){1,})" );
+
+    if(re.exactMatch(ui->messageEdit->toPlainText()) || ui->messageEdit->toPlainText() == ""){
+        ui->messageEdit->clear();
+        return;
     }
+
+    if(urlRe.exactMatch(ui->lineEditUrlImg->text())){
+        client->sendMessage(msg + getUrlImage(ui->lineEditUrlImg->text()));
+    } else {
+        client->sendMessage(msg);
+    }
+
+    ui->lineEditUrlImg->clear();
+    ui->messageEdit->clear();
+}
+
+QString MainWindow::getUrlImage(QString str){
+    QStringList urls = str.split( ";" );
+    str = "";
+    for(auto value : urls){
+        str += "<br> <a href="+value+" target=\"_blank\"><img src="+value+" width=\"200\" height=\"200\"></a>";
+    }
+    return str;
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -419,11 +475,11 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
         popUp->show();
 
-        QRegExp qe( "^\s*$" );
+        QRegExp qe( "^\\s*$" );
 
         if ( qe.exactMatch(ui->TitleEdit->text()))
         {
-            ui->TitleEdit->setText("Default Stream");
+            ui->TitleEdit->setText("");
         }
 
         client->sendMessage("%%%NAME&& " + ui->TitleEdit->text() + "$$$");
@@ -450,13 +506,16 @@ void MainWindow::onReceiveMessage(QString message) // Слот для получ
 
         QRegExp re( "([A-zА-я0-9]+)([:]{1})(([\\S+)([\n ]{0,}))" );
 
+        message.replace(QRegularExpression("<br>"), "");
+        message.replace(QRegularExpression("<a.*?>.*?<\\/a.*?>"), "[Изображение]");
+
         // Парсинг сообщения для получения имени и основного текста
-        int lastPos = 0;
+        lastPos = 0;
         while( ( lastPos = re.indexIn( message, lastPos ) ) != -1)
         {
             lastPos += re.matchedLength();
             listCounterName.push_back(re.cap(1));
-            popUpТotification(re.cap(1), " написал сообщение!");
+            popUpView(re.cap(1), " написал сообщение!");
             listCounterMsg.push_back(re.cap(3) + " \n");
             listDateMessage.push_back(currTime.toString("hh:mm:ss"));
         }
@@ -487,7 +546,7 @@ int MainWindow::getMsgBoardWidth()
     return  msgBoardWidth;
 }
 
-void MainWindow::popUpТotification(QString msg, QString totification)
+void MainWindow::popUpView(QString msg, QString totification)
 {
     if(statusBell == hideChat)
     {
@@ -540,7 +599,7 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     // Выставление стиля для дефолтной темы "Dark"
     ui->centralWidget->setStyleSheet(StyleApp::getMainDarkBackground());
     ui->sattingStackedWidget->setStyleSheet(StyleApp::getMainDarkBackground());
-
+    ui->scrollAreaEmoji->setStyleSheet(StyleApp::getDarkAreaEmoji());
     ui->hostEdit->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->spinPort->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->Connect->setStyleSheet(StyleApp::getDarkBtnStyle());
@@ -553,7 +612,7 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->Disconnect->setStyleSheet(StyleApp::getDarkBtnDisable());
     ui->StartSession->setStyleSheet(StyleApp::getDarkBtnStyle());
     ui->StopSession->setStyleSheet(StyleApp::getDarkBtnStyle());
-    ui->send->setStyleSheet(StyleApp::getDarkBtnStyle());
+    ui->send->setStyleSheet(StyleApp::getDarkBtnSend());
     ui->MessageBoardList->setStyleSheet(StyleApp::getDarkMessageBoardList());
     ui->sattingStackedWidget->setStyleSheet("padding: 10px;");
     ui->messageEdit->setStyleSheet(StyleApp::getMainDarkBackground());
@@ -569,11 +628,13 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
     ui->groupBoxPort->setStyleSheet(StyleApp::getTitleEdit());
     ui->groupBoxNumSession->setStyleSheet(StyleApp::getTitleEdit());
     ui->groupBoxTitleSession->setStyleSheet(StyleApp::getTitleEdit());
-
-    ui->label->setText(StyleApp::getLogoPolytech());
+    ui->btnSmile->setStyleSheet(StyleApp::getDarkBtnSmile());
+    ui->btnClipImage->setStyleSheet(StyleApp::getDarkBtnClipImg());
+    ui->lineEditUrlImg->setStyleSheet(StyleApp::getDarkLineEdit());
 
     ui->ChatBtn->setIcon(QIcon(StyleApp::getBtnShowChatIcon()));
     ui->ChatBtn->setIconSize(QSize(45,45));
+    ui->label->setPixmap(StyleApp::getLogoPolytech());
 
     ui->Settings->setIcon(QIcon(StyleApp::getBtnShowSettingIcon()));
     ui->Settings->setIconSize(QSize(35,35));
@@ -712,8 +773,6 @@ void MainWindow::disableBtnStyle(QPushButton *btn, QPushButton *disableBtn)
     disableBtn->setStyleSheet(StyleApp::getDarkBtnDisable());
 }
 
-
-
 void MainWindow::on_MessageBoardList_doubleClicked(const QModelIndex &index)
 {
     QString str = index.data().toString();
@@ -825,6 +884,16 @@ void MainWindow::slot_unMuteAllUser()
     }
 }
 
+void MainWindow::slot_unBanAllUser(){
+    popUp->setPopupText("Не реализовано!");
+    popUp->show();
+}
+
+void MainWindow::slot_banAllUser(){
+    popUp->setPopupText("Не реализовано!");
+    popUp->show();
+}
+
 void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &pos)
 {
     /* Создаем объект контекстного меню */
@@ -847,8 +916,8 @@ void MainWindow::on_MessageBoardList_customContextMenuRequested(const QPoint &po
     connect(MuteAll, SIGNAL(triggered()), this, SLOT(slot_muteAllUser()));     // Обработчик вызова диалога редактирования
     connect(UnMuteAll, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));
     connect(Unmute, SIGNAL(triggered()), this, SLOT(slot_unMuteUser()));     // Обработчик вызова диалога редактирования
-//    connect(Unbun, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));
-//    connect(Ban, SIGNAL(triggered()), this, SLOT(slot_unMuteAllUser()));
+    connect(Unbun, SIGNAL(triggered()), this, SLOT(slot_unBanAllUser()));
+    connect(Ban, SIGNAL(triggered()), this, SLOT(slot_banAllUser()));
 
     /* Устанавливаем действия в меню */
     menu->addAction(Mute);
@@ -878,7 +947,6 @@ void MainWindow::FailedConnect()
     ui->Disconnect->setDisabled(true);
 
     ui->lable_session_num->clear();
-//    ui->hostEdit->clear();
 }
 
 QString MainWindow::getHost()
@@ -900,4 +968,37 @@ void MainWindow::on_BtnUserControl_clicked() // Открытие/закрыти�
 void MainWindow::on_closeUserListPanel_clicked()
 {
     ui->sattingStackedWidget->setCurrentIndex(0);
+}
+
+void MainWindow::on_btnSmile_clicked()
+{
+    if(ui->stackedWidgetForMessage->isVisible() == true)
+        if(ui->stackedWidgetForMessage->currentIndex() == 1){
+            ui->stackedWidgetForMessage->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+            ui->stackedWidgetForMessage->setCurrentIndex(0);
+        }
+        else
+            ui->stackedWidgetForMessage->hide();
+    else{
+        ui->stackedWidgetForMessage->setCurrentIndex(0);
+        ui->stackedWidgetForMessage->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+        ui->stackedWidgetForMessage->show();
+    }
+}
+
+void MainWindow::on_btnClipImage_clicked()
+{
+    if(ui->stackedWidgetForMessage->isVisible() == true)
+        if(ui->stackedWidgetForMessage->currentIndex() == 0){
+            int w = ui->stackedWidgetForMessage->width();
+            ui->stackedWidgetForMessage->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
+            ui->stackedWidgetForMessage->setCurrentIndex(1);
+        }
+        else
+            ui->stackedWidgetForMessage->hide();
+    else {
+        ui->stackedWidgetForMessage->setCurrentIndex(1);
+        ui->stackedWidgetForMessage->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
+        ui->stackedWidgetForMessage->show();
+    }
 }

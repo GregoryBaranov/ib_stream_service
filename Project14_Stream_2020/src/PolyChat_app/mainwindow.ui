@@ -24,7 +24,92 @@
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="1" column="0">
+       <item row="0" column="0" colspan="4">
+        <widget class="QListView" name="MessageBoardList">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QPushButton" name="btnSmile">
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="4">
+        <widget class="QStackedWidget" name="stackedWidgetForMessage">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>200</height>
+          </size>
+         </property>
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="page_3">
+          <layout class="QGridLayout" name="gridLayout_12">
+           <item row="0" column="0">
+            <widget class="QScrollArea" name="scrollAreaEmoji">
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="scrollAreaWidgetContents">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>59</width>
+                <height>24</height>
+               </rect>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_11">
+               <item row="0" column="0">
+                <layout class="QVBoxLayout" name="verticalLayout"/>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_4">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLineEdit" name="lineEditUrlImg">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>50</height>
+              </size>
+             </property>
+             <property name="placeholderText">
+              <string>IMAGE URL | https://image1.com/;https://image2.com/</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item row="2" column="0">
         <widget class="QTextEdit" name="messageEdit">
          <property name="maximumSize">
           <size>
@@ -32,13 +117,21 @@
            <height>60</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI Emoji</family>
+          </font>
+         </property>
+         <property name="placeholderText">
+          <string/>
+         </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="2" column="3">
         <widget class="QPushButton" name="send">
          <property name="minimumSize">
           <size>
-           <width>80</width>
+           <width>60</width>
            <height>60</height>
           </size>
          </property>
@@ -49,7 +142,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Send</string>
+          <string/>
          </property>
          <property name="autoDefault">
           <bool>true</bool>
@@ -59,10 +152,16 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QListView" name="MessageBoardList">
-         <property name="styleSheet">
-          <string notr="true"/>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="btnClipImage">
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
@@ -102,6 +201,9 @@
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap>../../../../Users/swall/Desktop/LOGOPOLIKEK.png</pixmap>
          </property>
         </widget>
        </item>

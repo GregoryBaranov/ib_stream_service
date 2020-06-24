@@ -103,12 +103,16 @@ private:
 
     Client* client;
 
+    QTimer *timerForConnect;
+
     PopUp *popUp;
 
     QPropertyAnimation *animationStackedWidget;
     QPropertyAnimation *animationPnlChat;
 
     int numberListMsg;
+
+    int timerAttemptConnect = 0;
 
     void btn_max();  // свёртывание и развертывание программы в маленький и большой режимы
     void mainApplicationDesigner(); // Дефолтный фид приложения
@@ -193,6 +197,7 @@ private slots:
     void slot_banAllUser();
     void slot_unBanAllUser();
 
+    void slot_TimerForConnectAlarm();
 
     void on_MessageBoardList_doubleClicked(const QModelIndex &index);
     void on_MessageBoardList_clicked(const QModelIndex &index);

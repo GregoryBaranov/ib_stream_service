@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "styleapp.h"
 #include <QGraphicsDropShadowEffect>
+#include <QThread>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -360,7 +361,26 @@ void MainWindow::onConnectBtnClick() // Слот для кнопки соеди�
     }
     else
     {
-        client->connectSocket(getHost(), getPort());
+        if(timerAttemptConnect == 0)
+        {
+            timerAttemptConnect = 1;
+            client->connectSocket(getHost(), getPort());
+            timerForConnect = new QTimer();
+            connect(timerForConnect, SIGNAL(timeout()), this, SLOT(slot_TimerForConnectAlarm()));
+            timerForConnect->start(1000); // И запустим таймер
+        }
+    }
+}
+
+void MainWindow::slot_TimerForConnectAlarm() // таймер для защиты от двойного подключения
+{
+    ui->Connect->setText("Connect "+QString::number(timerAttemptConnect));
+    timerAttemptConnect++;
+    if(timerAttemptConnect == 7)
+    {
+        timerForConnect->stop();
+        timerAttemptConnect = 0;
+        ui->Connect->setText("Connect");
     }
 }
 

@@ -48,6 +48,7 @@ before_build.depends = FORCE
 before_build.commands = chcp 1251
 
 RESOURCES += \
+    emoji.qrc \
     image.qrc
 
 win32 : MOC_DIR = $$OUT_PWD/tmp_moc

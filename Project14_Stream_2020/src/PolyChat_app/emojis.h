@@ -2,13 +2,12 @@
 #define EMOJIS_H
 
 #include <QString>
-#include "list"
 
 class Emojis
 {
 public:
     Emojis();
-    std::list<QString> getEmoji();
+    QStringList getEmoji();
 };
 
 #endif // EMOJIS_H

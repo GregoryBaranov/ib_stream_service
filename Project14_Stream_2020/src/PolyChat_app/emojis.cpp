@@ -14,6 +14,7 @@ QStringList Emojis::getEmoji()
     }
 
     QStringList listEmoji = allEmoji.split(";");
+    listEmoji.removeLast();
 
     return listEmoji;
 }

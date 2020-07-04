@@ -131,6 +131,7 @@ void MainWindow::setEmoji(){
     auto arr = e.getEmoji();
     int id = -1;
     for (auto var : arr) {
+        if(var == "\r\n") continue;
         id++;
         btnEmoji = new QPushButton(this);
         if(id == 0 || id % 5 == 0){

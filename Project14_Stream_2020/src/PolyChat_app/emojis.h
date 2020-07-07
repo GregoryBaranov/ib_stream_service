@@ -6,8 +6,10 @@
 class Emojis
 {
 public:
-    Emojis();
     QStringList getEmoji();
+    static Emojis *instance();
+private:
+    Emojis();
 };
 
 #endif // EMOJIS_H

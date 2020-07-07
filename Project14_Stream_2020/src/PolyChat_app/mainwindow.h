@@ -188,7 +188,7 @@ private slots:
     void slot_UnMuteUser(QListWidgetItem*); // Слот размьюта
     void on_lineSearchUserList_textChanged(const QString &arg1); // при вызове определенного сигнала делаем поиск
     void on_ChatBtn_clicked(); // Скрытие чата
-    void slot_clickOnEmoji();
+    void cellSelected(const QModelIndex &);
 
     void slot_muteUser();
     void slot_unMuteUser();

@@ -127,32 +127,49 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
 }
 
 void MainWindow::setEmoji(){
-    Emojis e;
-    auto arr = e.getEmoji();
-    int id = -1;
-    for (auto var : arr) {
-        if(var == "\r\n") continue;
-        id++;
-        btnEmoji = new QPushButton(this);
-        if(id == 0 || id % 5 == 0){
-            wdgEmoji = new QWidget(this);
-            vlayEmoji = new QHBoxLayout(wdgEmoji);
-        }
 
-        btnEmoji->setText(var);
-        btnEmoji->setFlat(true);
-        btnEmoji->setStyleSheet("text-align: center; font-size: 30px;");
-        btnEmoji->setFixedSize(50, 50);
-        vlayEmoji->addWidget(btnEmoji);
-        ui->verticalLayout->addWidget(wdgEmoji);
-        connect(btnEmoji, SIGNAL(clicked()), this, SLOT(slot_clickOnEmoji()));
+    Emojis* provider = Emojis::instance();
+    ui->tableEmoji->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableEmoji->setSelectionMode(QAbstractItemView::NoSelection);
+    ui->tableEmoji->setShowGrid(false);
+
+    auto arr = provider->getEmoji();
+    ui->tableEmoji->setRowCount(arr.size() / 10 + 1);
+    ui->tableEmoji->setColumnCount(10);
+    ui->tableEmoji->setFrameShape(QFrame::StyledPanel);
+    ui->tableEmoji->setFrameShadow(QFrame::Plain);
+    ui->tableEmoji->setLineWidth(0);
+    ui->tableEmoji->setStyleSheet("font: 16pt Segoe UI Emoji; ");
+
+    int x = 0;
+    int y = 0;
+    for (auto var : arr) {
+        ui->tableEmoji->setItem(x, y, new QTableWidgetItem(var));
+        y++;
+        if(y % 10 == 0 && y != 0)
+        {
+            y = 0;
+            x++;
+        }
     }
+
+    auto sizeCell = ui->tableEmoji->size().width() / 10;
+    ui->tableEmoji->horizontalHeader()->setDefaultSectionSize(sizeCell);
+   // ui->tableEmoji->verticalHeader()->setDefaultSectionSize(sizeCell * 2);
+
+    ui->tableEmoji->verticalHeader()->setVisible(false);
+    ui->tableEmoji->horizontalHeader()->setVisible(false);
+
+    connect(ui->tableEmoji, SIGNAL(clicked(const QModelIndex &)),
+            this, SLOT(cellSelected(const QModelIndex &)));
 }
 
-void MainWindow::slot_clickOnEmoji(){
-    QPushButton *button = (QPushButton*) sender();
+void MainWindow::cellSelected(const QModelIndex &index)
+{
+
+    auto txt = index.data().toString();
     QString text = ui->messageEdit->toPlainText();
-    ui->messageEdit->setText(text + button->text());
+    ui->messageEdit->setText(text + txt);
 }
 
 void MainWindow::cursorTracking()

@@ -51,6 +51,14 @@ MainWindow::MainWindow(QWidget *parent) :
     // connect двойного клика в виджете по значению
     connect(ui->listViewUser, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
             this, SLOT(slot_UnMuteUser(QListWidgetItem*)));
+
+    // connect слушаем изменение в QTextEdit
+    connect(ui->messageEdit, SIGNAL(textChanged()),
+             this, SLOT(MessageEditChanged()));
+
+    // connect для смайликов
+    connect(ui->tableEmoji, SIGNAL(clicked(const QModelIndex &)),
+            this, SLOT(cellSelected(const QModelIndex &)));
 }
 
 MainWindow::~MainWindow()
@@ -86,7 +94,6 @@ void MainWindow::settingDesigner() // Вид и проверки для hostEdit
     ui->hostEdit->setPlaceholderText("127.0.0.1");
 //    ui->hostEdit->setText("31.10.65.179");
     ui->hostEdit->setText("127.0.0.1");
-//    ui->TitleEdit->setText("Title stream");
 
     ui->spinPort->setMaximum(999999999);
     ui->spinPort->setValue(5000);
@@ -126,6 +133,7 @@ void MainWindow::mainApplicationDesigner() // Дефолтный фид прил
     ui->stackedWidgetForMessage->setVisible(false);
 }
 
+// создание панели смайликов
 void MainWindow::setEmoji(){
 
     Emojis* provider = Emojis::instance();
@@ -133,7 +141,52 @@ void MainWindow::setEmoji(){
     ui->tableEmoji->setSelectionMode(QAbstractItemView::NoSelection);
     ui->tableEmoji->setShowGrid(false);
 
-    auto arr = provider->getEmoji();
+    auto arr = provider->getEmoji(provider->ALL); // получаем список смайликов
+    addEmojiToTable(arr);
+}
+
+void MainWindow::slot_PeopleEmoji()
+{
+    ui->tableEmoji->clear();
+    Emojis* provider = Emojis::instance();
+    auto arr = provider->getEmoji(Emojis::PEOPLE); // получаем список смайликов
+    addEmojiToTable(arr);
+}
+
+void MainWindow::slot_SmileyEmoji()
+{
+    ui->tableEmoji->clear();
+    Emojis* provider = Emojis::instance();
+    auto arr = provider->getEmoji(Emojis::SMILEY); // получаем список смайликов
+    addEmojiToTable(arr);
+}
+
+void MainWindow::slot_AllEmoji()
+{
+    ui->tableEmoji->clear();
+    Emojis* provider = Emojis::instance();
+    auto arr = provider->getEmoji(Emojis::ALL); // получаем список смайликов
+    addEmojiToTable(arr);
+}
+
+void MainWindow::slot_ClothingEmoji()
+{
+    ui->tableEmoji->clear();
+    Emojis* provider = Emojis::instance();
+    auto arr = provider->getEmoji(Emojis::CLOTHING); // получаем список смайликов
+    addEmojiToTable(arr);
+}
+
+void MainWindow::slot_GesturesEmoji()
+{
+    ui->tableEmoji->clear();
+    Emojis* provider = Emojis::instance();
+    auto arr = provider->getEmoji(Emojis::GESTURES); // получаем список смайликов
+    addEmojiToTable(arr);
+}
+
+void MainWindow::addEmojiToTable(QStringList arr)
+{
     ui->tableEmoji->setRowCount(arr.size() / 10 + 1);
     ui->tableEmoji->setColumnCount(10);
     ui->tableEmoji->setFrameShape(QFrame::StyledPanel);
@@ -143,7 +196,8 @@ void MainWindow::setEmoji(){
 
     int x = 0;
     int y = 0;
-    for (auto var : arr) {
+    for (auto var : arr) // заполняем таблицу смайликами
+    {
         ui->tableEmoji->setItem(x, y, new QTableWidgetItem(var));
         y++;
         if(y % 10 == 0 && y != 0)
@@ -154,19 +208,20 @@ void MainWindow::setEmoji(){
     }
 
     auto sizeCell = ui->tableEmoji->size().width() / 10;
-    ui->tableEmoji->horizontalHeader()->setDefaultSectionSize(sizeCell);
+    ui->tableEmoji->horizontalHeader()->setDefaultSectionSize(sizeCell / 2);
    // ui->tableEmoji->verticalHeader()->setDefaultSectionSize(sizeCell * 2);
 
     ui->tableEmoji->verticalHeader()->setVisible(false);
     ui->tableEmoji->horizontalHeader()->setVisible(false);
+}
 
-    connect(ui->tableEmoji, SIGNAL(clicked(const QModelIndex &)),
-            this, SLOT(cellSelected(const QModelIndex &)));
+void MainWindow::MessageEditChanged()
+{
+    ui->messageEdit->verticalScrollBar()->setValue(ui->messageEdit->verticalScrollBar()->maximum());
 }
 
 void MainWindow::cellSelected(const QModelIndex &index)
 {
-
     auto txt = index.data().toString();
     QString text = ui->messageEdit->toPlainText();
     ui->messageEdit->setText(text + txt);
@@ -683,6 +738,11 @@ void MainWindow::on_DarkDesign_clicked() // Метод для переключе
 
 void MainWindow::on_To_Ban_Button_clicked() // Панелька со списком юзеров со статусом бан
 {
+    /*
+    * TO DO
+    * Сделать когда реализуют на сервере
+    * Можно реализовать также как и мут
+    */
 }
 
 void MainWindow::on_Mute_Button_clicked() // Сигнал о мьюте пользователя
@@ -1039,4 +1099,37 @@ void MainWindow::on_btnClipImage_clicked()
         ui->stackedWidgetForMessage->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
         ui->stackedWidgetForMessage->show();
     }
+}
+
+void MainWindow::on_tableEmoji_customContextMenuRequested(const QPoint &pos)
+{
+    /* Создаем объект контекстного меню */
+    QMenu * menu = new QMenu();
+
+    /* Создаём действия для контекстного меню */
+    menu->setStyleSheet(StyleApp::getDarkContextMenu());
+
+    QAction * All = new QAction(trUtf8("All"), this);
+    QAction * Smiley = new QAction(trUtf8("Smiley"), this);
+    QAction * Gestures = new QAction(trUtf8("Gestures"), this);
+    QAction * People = new QAction(trUtf8("People"), this);
+    QAction * Clothing = new QAction(trUtf8("Clothing"), this);
+
+    /* Подключаем СЛОТы обработчики для действий контекстного меню */
+    connect(All, SIGNAL(triggered()), this, SLOT(slot_AllEmoji()));
+    connect(Smiley, SIGNAL(triggered()), this, SLOT(slot_SmileyEmoji()));
+    connect(Gestures, SIGNAL(triggered()), this, SLOT(slot_GesturesEmoji()));
+    connect(People, SIGNAL(triggered()), this, SLOT(slot_PeopleEmoji()));
+    connect(Clothing, SIGNAL(triggered()), this, SLOT(slot_ClothingEmoji()));
+
+    /* Устанавливаем действия в меню */
+    menu->addAction(All);
+    menu->addAction(Smiley);
+    menu->addAction(Gestures);
+    menu->addAction(People);
+    menu->addAction(Clothing);
+
+    /* Вызываем контекстное меню */
+    menu->popup(ui->tableEmoji->viewport()->mapToGlobal(pos));
+//    context->exec(pos);
 }

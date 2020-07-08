@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>Emoji/emoji.txt</file>
+        <file>Emoji/emoji.json</file>
     </qresource>
 </RCC>

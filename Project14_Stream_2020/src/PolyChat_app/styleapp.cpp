@@ -142,7 +142,7 @@ QString StyleApp::getDarkContextMenu()
            "color: #fff;"
            "border: 2px solid #000;"
            "padding: 10px;"
-           "font-size: 20px;"
+           "font-size: 15px;"
            "text-align: center;"
            "}"
            "QMenu::item:selected {"

@@ -165,6 +165,7 @@ private:
     template<class T1, class T2>
     QString muteOrUnMute(const list<T1> &lst, T2 msg, T2 lastName);
 
+    void addEmojiToTable(QStringList arr);
 protected:
     // функции отслеживания мыши
     void mousePressEvent(QMouseEvent *event); // Позиция клика
@@ -173,6 +174,7 @@ protected:
 
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
+
 
 private slots:
     void onReceiveMessage(QString message); // Слот для получения сообщения
@@ -189,6 +191,7 @@ private slots:
     void on_lineSearchUserList_textChanged(const QString &arg1); // при вызове определенного сигнала делаем поиск
     void on_ChatBtn_clicked(); // Скрытие чата
     void cellSelected(const QModelIndex &);
+    void MessageEditChanged();
 
     void slot_muteUser();
     void slot_unMuteUser();
@@ -206,6 +209,13 @@ private slots:
     void on_closeUserListPanel_clicked();
     void on_btnSmile_clicked();
     void on_btnClipImage_clicked();
+
+    void on_tableEmoji_customContextMenuRequested(const QPoint &pos);
+    void slot_PeopleEmoji();
+    void slot_SmileyEmoji();
+    void slot_ClothingEmoji();
+    void slot_GesturesEmoji();
+    void slot_AllEmoji();
 };
 
 #endif // MAINWINDOW_H

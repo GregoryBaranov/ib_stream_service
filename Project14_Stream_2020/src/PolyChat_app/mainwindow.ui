@@ -86,6 +86,9 @@
               <layout class="QGridLayout" name="gridLayout_11">
                <item row="0" column="0">
                 <widget class="QTableWidget" name="tableEmoji">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::CustomContextMenu</enum>
+                 </property>
                  <property name="lineWidth">
                   <number>0</number>
                  </property>

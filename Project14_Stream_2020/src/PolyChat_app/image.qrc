@@ -37,5 +37,8 @@
         <file>image/envelope.png</file>
         <file>image/sendMsg.png</file>
         <file>image/clip.png</file>
+        <file>image/hat.png</file>
+        <file>image/person.png</file>
+        <file>image/rock.png</file>
     </qresource>
 </RCC>
